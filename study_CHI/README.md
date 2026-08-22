@@ -13,6 +13,8 @@ This directory contains the current study materials for the CHI 2027 paper.
 
 ## Application architecture
 
+The implemented Study 1 entry point is `apps/study1_validation.py`; its participant-safe domain, state, token, and logging modules are under `src/xai_as_closure/`.
+
 Study 1 and Study 2 each require a dedicated application:
 
 - The **Study 1 validation app** receives experts from Qualtrics, presents the

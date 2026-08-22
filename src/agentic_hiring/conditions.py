@@ -130,3 +130,6 @@ def hic_stage2_prompt(condition: "Condition") -> str:
 # Backward-compatibility alias
 post_recommendation_prompt = hic_stage2_prompt
 
+# Historical name used by the inherited HAI tests and entry points.
+control_prompt = hic_stage2_prompt
+

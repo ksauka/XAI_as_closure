@@ -49,6 +49,14 @@ For the existing local environment, run project commands with
 `/home/kudzai/miniconda3/envs/esd_platform/bin/python` when Conda activation is
 not available in the shell.
 
+## Run Study 1
+
+Launch the dedicated validation app with:
+
+    streamlit run apps/study1_validation.py
+
+Local runs permit pilot mode. Production must set `STUDY1_ALLOW_PILOT=false`, provide `STUDY_LINK_SECRET`, and pass a signed Qualtrics launch token. Logs default to the Git-ignored `study_CHI/data/raw/study1/` directory; set `STUDY1_DATA_ROOT` to protected research storage for deployment.
+
 ## HAI Legacy Implementation
 
 This history-free workspace was created from the complete local HAI project so
