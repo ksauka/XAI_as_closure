@@ -7,7 +7,7 @@ advice.
 
 ## CHI 2027 Research Design
 
-The project contains two linked studies:
+The project contains two studies in one research programme:
 
 1. **Study 1: expert validation.** Domain experts independently evaluate six
    candidate profiles against a locked job description and recruitment policy.
@@ -58,81 +58,20 @@ Launch the dedicated validation app with:
 
 Local runs permit pilot mode. Production must set `STUDY1_ALLOW_PILOT=false`, provide `STUDY_LINK_SECRET`, and pass a signed Qualtrics launch token. Logs default to the Git-ignored `study_CHI/data/raw/study1/` directory; set `STUDY1_DATA_ROOT` to protected research storage for deployment.
 
-## HAI Legacy Implementation
+## Copied HAI Source Snapshot
 
-This history-free workspace was created from the complete local HAI project so
-useful application, Qualtrics, logging, and analysis components can be migrated
-deliberately. HAI materials remain under `docs/HAI/` and `study_HAI/`; the
-original HAI application remains under `src/agentic_hiring/` and `apps/`.
+This repository was initialized from a complete local copy of the earlier HAI project so useful implementation and study-design elements could be inspected and adopted without depending on another repository. The copied snapshot remains under `docs/HAI/`, `study_HAI/`, `src/agentic_hiring/`, the eight legacy condition apps, and the inherited analysis files.
 
-The original HAI artifact and its history remain in the separate
-`ksauka/Agentic-AI-interogative-agendas` repository. New CHI development
-belongs here.
+There is no Git submodule, second remote, sibling-checkout import, or runtime link to the old HAI repository. A clean clone of `XAI_as_closure` must contain everything needed for CHI development.
 
-### Original HAI Overview
+When adopting an HAI component:
 
-Research prototype for a controlled agentic hiring-support study on explanation, anthropomorphic delivery, trust, overreliance, and verification in agentic AI decision support. The project implements a Streamlit workflow in which the hiring case remains fixed while provenance cues, conversational style, and Human Intervention Checkpoints (interrogative agendas) vary across conditions.
+1. Copy the relevant code, material, or pattern into a CHI-owned location such as `src/xai_as_closure/` or `study_CHI/`.
+2. Adapt it to the current CHI protocol and terminology.
+3. Add CHI-specific tests and documentation.
+4. Keep the copied legacy source only as provenance; do not make active CHI code import from it.
 
-## Overview
-
-The application evaluates a fictional candidate against internal hiring materials: company context, role requirements, and screening policy. It is designed as an experimental research instrument, not as a real hiring or screening system.
-
-The study uses a 2 x 2 x 2 condition structure:
-
-- Explainability: low or high provenance visibility
-- Anthropomorphic cues: low or high
-- Human Intervention Checkpoints: absent or present
-
-## Repository Structure
-
-```text
-apps/                  Streamlit entry points for the eight study conditions
-scripts/               Dataset and knowledge-base preparation utilities
-src/agentic_hiring/    Shared retrieval, recommendation, rendering, and logging code
-study/                 Study materials, measures, protocol, and local data workspace
-tests/                 Automated validation tests
-outputs/               Generated analysis outputs and reports
-```
-
-## Setup
-
-```bash
-python -m pip install -r requirements.txt
-cp .env.example .env
-```
-
-Add your OpenAI API key to `.env` or your deployment secrets:
-
-```bash
-OPENAI_API_KEY=your-api-key
-AGENTIC_REQUIRE_LIVE_RAG=true
-```
-
-For study deployment, keep `AGENTIC_REQUIRE_LIVE_RAG=true` so sessions cannot continue without the live retrieval and generation backend.
-
-## Prepare the Knowledge Base
-
-```bash
-PYTHONPATH=src python scripts/build_internal_knowledge_base.py
-```
-
-This indexes the internal company context, role description, and screening policy used by the study assistant. Candidate CVs are handled as session-specific inputs.
-
-## Run an App
-
-Launch one assigned condition, for example:
-
-```bash
-python -m streamlit run apps/app_01_lowE_lowA_noIA.py
-```
-
-The eight app entry points in `apps/` correspond to the full condition matrix.
-
-## Test
-
-```bash
-PYTHONPATH=src python -m unittest discover -s tests -v
-```
+The copied HAI snapshot is inactive and is not the CHI source of truth. Its historical documentation belongs under `docs/HAI/` and `study_HAI/`, not in the active CHI setup instructions.
 
 ## Research Use
 
