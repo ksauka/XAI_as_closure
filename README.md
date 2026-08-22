@@ -17,10 +17,13 @@ The project contains two linked studies:
    assigned to one of eight between-subject conditions in a 2 x 2 x 2 design:
    provenance traceability, anthropomorphic delivery, and cognitive forcing.
 
-Qualtrics manages consent, eligibility, random assignment, survey measures, and
-completion routing. The interactive application records pseudonymous,
-trial-level behavioral events. Survey and application records are joined using
-a study linkage identifier rather than a directly identifying recruitment ID.
+Both studies use dedicated applications. Qualtrics manages consent, eligibility,
+participant linkage, questionnaire measures, and completion routing. The Study 1
+validation app presents and randomizes the expert-validation materials, locks
+independent judgments, and records profile-level evidence and timing. The Study 2
+experimental app delivers the assigned condition across six repeated trials.
+Survey and application records are joined using a pseudonymous study linkage
+identifier rather than a directly identifying recruitment ID.
 
 Canonical CHI sources:
 
