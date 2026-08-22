@@ -8,6 +8,8 @@ This directory contains the current study materials for the CHI 2027 paper.
 - `recruitment_policy.md`: locked screening policy and two-outcome decision rule.
 - `six_candidate_profiles.md`: human-readable six-profile trial set.
 - `six_profiles_case_set.json`: structured implementation source for the six trials.
+- `STUDY1_VALIDATION_PROTOCOL.md`: locked two-phase expert-validation procedure.
+- `APPLICATION_LOGGING_ARCHITECTURE.md`: Qualtrics linkage, app flow, and event schema.
 
 ## Application architecture
 
@@ -21,6 +23,9 @@ Study 1 and Study 2 each require a dedicated application:
 - The **Study 2 experimental app** receives the assigned between-subjects
   condition from Qualtrics and delivers six randomized unaided-then-aided
   candidate trials under that fixed condition.
+  Cognitive forcing, when assigned, occurs after the complete recommendation is
+  visible and before the final aided decision. A neutral evidence-recall prompt
+  follows every trial.
 
 Qualtrics remains the consent, eligibility, linkage, questionnaire, and
 completion-routing layer. Both applications generate pseudonymous event logs.

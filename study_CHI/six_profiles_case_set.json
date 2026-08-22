@@ -7,7 +7,12 @@
     "Advance to Hire",
     "Reject"
   ],
-  "citation_scope": "AI citations span three documents: company profile (company_*), job description (jd_*), and candidate CV (cv_*).",
+  "citation_scope": "AI citations span three documents: recruitment policy (pol_*), job description (jd_*), and candidate CV (cv_*).",
+  "source_namespaces": {
+    "pol_": "recruitment_policy.md",
+    "jd_": "job_description.md",
+    "cv_": "candidate_cv sections embedded in each profile"
+  },
   "trial_composition": {
     "correct_advance": 2,
     "correct_reject": 2,
