@@ -29,6 +29,20 @@ docs/CHI2027/       CHI 2027 manuscript and bibliography
 study_CHI/          Locked role, policy, profile, and case-set materials
 ```
 
+## Environment
+
+The project uses the `esd_platform` Conda environment with Python 3.12.
+Recreate it from the repository root with:
+
+```bash
+conda env create -f environment.yml
+conda activate esd_platform
+```
+
+For the existing local environment, run project commands with
+`/home/kudzai/miniconda3/envs/esd_platform/bin/python` when Conda activation is
+not available in the shell.
+
 ## HAI Legacy Implementation
 
 This history-free workspace was created from the complete local HAI project so
