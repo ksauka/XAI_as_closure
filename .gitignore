@@ -1,0 +1,52 @@
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Secrets and local environments
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+.venv/
+venv/
+
+# Python and notebooks
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# Participant-level and analysis data stay outside the code repository.
+**/data/raw/**
+**/data/processed/**
+**/data/private/**
+**/interaction_logs/**
+data_clean/
+*.sav
+
+# Generated outputs may contain participant-level or derived data.
+outputs/*
+!outputs/.gitkeep
+
+# Generated vector databases are rebuilt from versioned study materials.
+**/vector_store/
+
+# Local scratch and incoming files are not publication artifacts.
+docs/incoming/*
+!docs/incoming/README.md
