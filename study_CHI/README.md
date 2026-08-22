@@ -10,6 +10,7 @@ This directory contains the current study materials for the CHI 2027 paper.
 - `six_profiles_case_set.json`: structured implementation source for the six trials.
 - `STUDY1_VALIDATION_PROTOCOL.md`: locked two-phase expert-validation procedure.
 - `APPLICATION_LOGGING_ARCHITECTURE.md`: Qualtrics linkage, app flow, and event schema.
+- `../docs/CHI2027/PROJECT_HANDOFF.md`: implementation status, setup, launch blockers, and next-work order.
 
 ## Application architecture
 

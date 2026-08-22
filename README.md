@@ -29,6 +29,7 @@ Canonical CHI sources:
 
 ```text
 docs/research_brief.md                         Current two-study research brief
+docs/CHI2027/PROJECT_HANDOFF.md                Cross-machine status and remaining-work handoff
 docs/CHI2027/                                  CHI 2027 manuscript and bibliography
 study_CHI/STUDY1_VALIDATION_PROTOCOL.md        Expert-validation procedure
 study_CHI/APPLICATION_LOGGING_ARCHITECTURE.md  Qualtrics, app, and event architecture
