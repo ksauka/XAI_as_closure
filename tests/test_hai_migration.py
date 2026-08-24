@@ -7,6 +7,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from streamlit.testing.v1 import AppTest
+
 from xai_as_closure.cases import CaseRepository
 from xai_as_closure.conditions import get_study2_condition
 from xai_as_closure.decision_agent import AgenticHiringDecisionAgent
@@ -70,9 +72,7 @@ class MigratedAgentTests(unittest.TestCase):
         agent = AgenticHiringDecisionAgent(condition=condition, cases=self.cases)
         for _ in range(3):
             session.advance_introduction()
-        session.submit_unaided(
-            {"decision": "Reject candidate", "confidence": 70}
-        )
+        session.submit_unaided({"decision": "Reject candidate", "confidence": 70})
         session.request_agent_assessment(agent)
         response = session.examine_agent_assessment(agent, "caution")
         self.assertEqual(response["kind"], "caution")
@@ -91,6 +91,54 @@ class MigratedInfrastructureTests(unittest.TestCase):
             "study2_schemas.py",
         ):
             self.assertFalse((source_root / filename).exists(), filename)
+
+    def test_production_apps_accept_streamlit_community_secrets(self) -> None:
+        app_root = Path(__file__).resolve().parents[1] / "apps"
+        cases = (
+            (
+                "study1_validation.py",
+                "xai_as_closure.study1_app.test_github_connection",
+                {},
+                "STUDY1_DATA_ROOT",
+            ),
+            (
+                "study2_01_lowP_lowA_noF.py",
+                "xai_as_closure.study2_app.test_github_connection",
+                {"cond": "P0_A0_F0"},
+                "STUDY2_DATA_ROOT",
+            ),
+        )
+        for filename, connection_target, extra_query, data_root_key in cases:
+            with self.subTest(app=filename), tempfile.TemporaryDirectory() as directory:
+                app = AppTest.from_file(str(app_root / filename))
+                app.query_params = {
+                    "PROLIFIC_PID": "5f8e3c2a1b9d4e6f7a8b9c0d",
+                    **extra_query,
+                }
+                app.secrets = {
+                    "GITHUB_REPO": "owner/private-study-data",
+                    "GITHUB_TOKEN": "test-token",
+                    data_root_key: directory,
+                }
+                with patch(
+                    connection_target, return_value=(True, "connected")
+                ) as check:
+                    app.run(timeout=20)
+                self.assertFalse(app.exception)
+                self.assertEqual(check.call_count, 1)
+                self.assertFalse(
+                    any("storage" in error.value.lower() for error in app.error)
+                )
+
+    def test_production_app_blocks_when_cloud_secrets_are_missing(self) -> None:
+        app_path = Path(__file__).resolve().parents[1] / "apps" / "study1_validation.py"
+        app = AppTest.from_file(str(app_path))
+        app.query_params = {"PROLIFIC_PID": "5f8e3c2a1b9d4e6f7a8b9c0d"}
+        app.run(timeout=20)
+        self.assertFalse(app.exception)
+        self.assertTrue(
+            any("storage is not configured" in error.value for error in app.error)
+        )
 
     def test_github_archive_uses_the_hai_logger_and_event_payload(self) -> None:
         cases = CaseRepository()
@@ -140,9 +188,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
         agent = AgenticHiringDecisionAgent(condition=condition, cases=cases)
         for _ in range(3):
             session.advance_introduction()
-        session.submit_unaided(
-            {"decision": "Reject candidate", "confidence": 65}
-        )
+        session.submit_unaided({"decision": "Reject candidate", "confidence": 65})
         session.request_agent_assessment(agent)
         session.examine_agent_assessment(agent, "support")
         session.submit_aided(

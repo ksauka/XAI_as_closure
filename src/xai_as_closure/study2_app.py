@@ -16,6 +16,7 @@ from streamlit.errors import StreamlitSecretNotFoundError
 from .cases import POLICY_PATH, ROLE_PATH, CaseRepository
 from .conditions import get_study2_condition
 from .decision_agent import Study2DecisionAgent
+from .github_saver import test_github_connection
 from .logger import DEFAULT_LOG_DIR, EventLogger, load_state, restored_logger
 from .study2 import Study2Session, Study2WorkflowError
 from .study2_delivery import (
@@ -77,6 +78,36 @@ def _prolific_gate() -> None:
             st.rerun()
         st.error("Please enter your Prolific ID before continuing.")
     st.stop()
+
+
+def _check_private_storage() -> None:
+    """Require working private-GitHub storage for production launches."""
+    production_launch = bool(_query("PROLIFIC_PID") or _query("pid"))
+    repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
+    token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
+    if not repo or not token:
+        message = (
+            "Private study-data storage is not configured. Please notify the "
+            "researcher before continuing."
+        )
+        if production_launch:
+            st.error(message)
+            st.stop()
+        st.warning(f"Pilot mode: {message}")
+        return
+    status_key = "_study2_github_storage_ready"
+    if status_key not in st.session_state:
+        success, _detail = test_github_connection(token, repo)
+        st.session_state[status_key] = success
+    if not st.session_state[status_key]:
+        message = (
+            "Private study-data storage could not be reached. Please notify the "
+            "researcher before continuing."
+        )
+        if production_launch:
+            st.error(message)
+            st.stop()
+        st.warning(f"Pilot mode: {message}")
 
 
 def _safe_qualtrics_return(raw_return: str) -> str | None:
@@ -683,6 +714,7 @@ def run(locked_condition_id: str) -> None:
     apply_anthrokit_theme(st)
     _read_qualtrics_params()
     _prolific_gate()
+    _check_private_storage()
     try:
         _initialize(locked_condition_id)
     except (Study2WorkflowError, ValueError) as exc:

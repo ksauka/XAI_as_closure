@@ -329,9 +329,7 @@ class Study2InfrastructureTests(unittest.TestCase):
             logger.save_state(state)
             reloaded = load_state("sessiontest", log_dir=Path(directory))
             self.assertEqual(reloaded, state)
-            self.assertIsNone(
-                load_state("no-such-session", log_dir=Path(directory))
-            )
+            self.assertIsNone(load_state("no-such-session", log_dir=Path(directory)))
 
     def test_hai_logger_builds_and_pushes_private_github_payload(self) -> None:
         condition = get_study2_condition("P0_A0_F0")

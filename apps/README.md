@@ -1,6 +1,6 @@
 # Application Entry Points
 
-Active CHI 2027 applications:
+Active study applications:
 
 - `study1_validation.py`: shared six-profile expert-validation application;
 - `study2_01_lowP_lowA_noF.py`: `P0_A0_F0`;
