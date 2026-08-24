@@ -4,8 +4,8 @@
   "company": "Suvh Trust Bank",
   "hard_criterion": "Holds either IAPP AIGP or ISO/IEC 42001 Lead Implementer certification (job description Section 4.1).",
   "outcome_set": [
-    "Advance to Hire",
-    "Reject"
+    "Advance candidate to human interview",
+    "Reject candidate"
   ],
   "citation_scope": "AI citations span three documents: recruitment policy (pol_*), job description (jd_*), and candidate CV (cv_*).",
   "source_namespaces": {
@@ -30,32 +30,57 @@
           {
             "id": "cv_summary",
             "heading": "Professional Summary",
-            "text": "AI governance professional with experience owning AI risk and conformity assessment for regulated AI systems."
+            "text": "AI governance professional with experience owning AI risk and conformity assessment for regulated AI systems. Comfortable operating across technical, risk, and compliance teams, with a track record of building governance documentation that holds up to audit and regulatory scrutiny."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Zenith Technical University**\n\nDegree: Bachelor of Science in Machine Learning Engineering\n\nCore Competencies: Neural network architecture, computer vision, algorithmic optimization, deep learning frameworks (TensorFlow/PyTorch), and predictive model training."
           },
           {
             "id": "cv_role_1",
             "heading": "AI Governance Specialist, Halden Data Services (2021–present)",
-            "text": "Conducted and signed off formal AI risk and conformity assessments for high-risk AI systems under the EU AI Act and ISO/IEC 42001. Designed governance frameworks and control mechanisms, and advised business and technical teams on Responsible AI."
+            "text": "Conducted and signed off formal AI risk and conformity assessments for high-risk AI systems under the EU AI Act and ISO/IEC 42001. Designed governance frameworks and control mechanisms, and advised business and technical teams on Responsible AI. Regularly presented assessment findings to senior stakeholders and maintained the audit trail supporting each sign-off. Owned the tracking of remediation actions arising from each assessment through to closure."
           },
           {
             "id": "cv_role_2",
             "heading": "Risk and Compliance Analyst, Kessel Group (2018–2021)",
-            "text": "Supported AI risk assessment and compliance documentation, working across data science, risk, and legal functions on model governance and stakeholder reporting."
+            "text": "Supported AI risk assessment and compliance documentation, working across data science, risk, and legal functions on model governance and stakeholder reporting. Also contributed to internal training materials on AI risk documentation standards. Liaised regularly with the legal team on interpretation of emerging regulatory guidance."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Risk Analyst, Bramford Insurance (2015–2018)",
+            "text": "Analysed operational and third-party risk across insurance product lines, producing risk registers and quarterly reporting for the risk committee. Contributed to the design of the risk committee's quarterly reporting template."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Compliance Assistant, Bramford Insurance (2012–2015)",
+            "text": "Supported the compliance team with policy administration, filing, and routine regulatory correspondence during an internal graduate rotation programme. Cross-trained junior colleagues on the department's document-control procedures."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Retail Operations Assistant, Northfield Stores (2009–2012)",
+            "text": "Worked part-time in store operations and inventory management while completing university studies. Balanced this role with part-time coursework toward a postgraduate qualification."
           },
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "IAPP Artificial Intelligence Governance Professional (AIGP), current and valid."
+            "text": "- Google Data Analytics Professional Certificate, current and valid.\n- IAPP Artificial Intelligence Governance Professional (AIGP), current and valid.\n- Certified ScrumMaster (CSM), current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- Microsoft Certified: Azure Fundamentals, current and valid."
           },
           {
             "id": "cv_skills",
             "heading": "Skills and Knowledge",
             "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; stakeholder management across business, compliance, and technical functions."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Long-distance cycling, amateur woodworking, and volunteering as treasurer for a local community choir."
           }
         ]
       },
       "fixed_assessment": {
-        "recommendation": "Advance to Hire",
+        "recommendation": "Advance candidate to human interview",
         "rationale": "The candidate holds a current IAPP AIGP certification and has directly conducted and signed off AI risk and conformity assessments. The profile therefore meets the mandatory certification and general experience requirements.",
         "supporting_ids": [
           "pol_3_2",
@@ -78,32 +103,57 @@
           {
             "id": "cv_summary",
             "heading": "Professional Summary",
-            "text": "AI governance professional with experience leading AI conformity assessment and control frameworks for regulated AI."
+            "text": "AI governance professional with experience leading AI conformity assessment and control frameworks for regulated AI. Known for translating technical risk findings into clear guidance for non-technical leadership."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Aventine Global University**\n\nDegree: Bachelor of Science in Data Analytics & Intelligence Systems\n\nCore Competencies: Corporate business intelligence, predictive modeling, large-scale data visualization (Tableau/PowerBI), SQL database design, and statistical data mining."
           },
           {
             "id": "cv_role_1",
             "heading": "AI Assurance Lead, Brightline Analytics (2021–present)",
-            "text": "Independently conducted and signed off AI risk and conformity assessments for high-risk systems under ISO/IEC 42001 and the EU AI Act. Built and maintained governance frameworks and advised leadership on Responsible AI and compliance."
+            "text": "Independently conducted and signed off AI risk and conformity assessments for high-risk systems under ISO/IEC 42001 and the EU AI Act. Built and maintained governance frameworks and advised leadership on Responsible AI and compliance. Chaired a cross-functional working group on high-risk AI system controls and mentored two junior analysts. Coordinated closely with external auditors during two annual assurance cycles."
           },
           {
             "id": "cv_role_2",
             "heading": "Model Risk Associate, Verda Financial (2018–2021)",
-            "text": "Worked on model risk and compliance documentation across risk, data science, and legal teams, supporting AI governance reporting and stakeholder coordination for regulated systems."
+            "text": "Worked on model risk and compliance documentation across risk, data science, and legal teams, supporting AI governance reporting and stakeholder coordination for regulated systems. Also assisted with quarterly model-risk reporting to the risk committee. Helped standardise the team's evidence-collection checklist for conformity assessments."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Business Analyst, Ferrow Insurance Group (2015–2018)",
+            "text": "Gathered and documented business requirements for internal risk-reporting systems, working closely with actuarial and IT teams. Supported onboarding of new analysts into the risk-reporting function."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Risk Analyst, Ferrow Insurance Group (2012–2015)",
+            "text": "Supported the production of monthly risk dashboards and assisted with data quality checks across reporting pipelines. Took on ad hoc analysis requests from the actuarial team during peak reporting periods."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Administrative Assistant, Hallmark Retail Group (2009–2012)",
+            "text": "Provided administrative and scheduling support for a retail operations team while studying part-time toward a business degree. Balanced this role with evening study toward a professional qualification."
           },
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "ISO/IEC 42001 Lead Implementer certification, current and valid."
+            "text": "- AWS Certified Cloud Practitioner, current and valid.\n- ISO/IEC 42001 Lead Implementer certification, current and valid.\n- Certified Business Analysis Professional (CBAP), current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- PRINCE2 Foundation, current and valid."
           },
           {
             "id": "cv_skills",
             "heading": "Skills and Knowledge",
             "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; consulting and stakeholder management across functions."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Enjoys sailing, amateur photography, and coaching a youth sports team on weekends."
           }
         ]
       },
       "fixed_assessment": {
-        "recommendation": "Advance to Hire",
+        "recommendation": "Advance candidate to human interview",
         "rationale": "The candidate holds a current ISO/IEC 42001 Lead Implementer certification and has independently conducted and signed off AI risk and conformity assessments. The profile therefore meets the mandatory certification and general experience requirements.",
         "supporting_ids": [
           "pol_3_2",
@@ -126,32 +176,57 @@
           {
             "id": "cv_summary",
             "heading": "Professional Summary",
-            "text": "Data scientist experienced in building and evaluating machine-learning models for analytics products."
+            "text": "Data scientist experienced in building and evaluating machine-learning models for analytics products. Enjoys turning ambiguous business questions into reproducible modelling pipelines."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Bayside Polytech**\n\nDegree: Bachelor of Technology in Applied Machine Learning\n\nCore Competencies: End-to-end model deployment, MLOps, cloud computing infrastructure (AWS/GCP), pipeline automation, and API integration."
           },
           {
             "id": "cv_role_1",
             "heading": "Data Scientist, Northwind Analytics (2021–present)",
-            "text": "Built, trained, and evaluated machine-learning models for customer analytics and forecasting. Worked on feature engineering, model performance, and deployment alongside the engineering team, focusing on model accuracy and delivery."
+            "text": "Built, trained, and evaluated machine-learning models for customer analytics and forecasting. Worked on feature engineering, model performance, and deployment alongside the engineering team, focusing on model accuracy and delivery. Presented model performance results to product and marketing stakeholders on a monthly cadence. Collaborated with the platform team to move several models into a shared production pipeline."
           },
           {
             "id": "cv_role_2",
             "heading": "Data Analyst, Cedar Insights (2018–2021)",
-            "text": "Produced dashboards, reports, and statistical analyses for business teams across marketing and operations. Focused on data preparation, visualisation, and communicating findings to non-technical colleagues."
+            "text": "Produced dashboards, reports, and statistical analyses for business teams across marketing and operations. Focused on data preparation, visualisation, and communicating findings to non-technical colleagues. Also maintained a small internal library of reusable reporting templates for the analytics team. Ran lightweight A/B tests to validate model changes before rollout."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Junior Data Analyst, Pemberton Retail (2015–2018)",
+            "text": "Built sales and inventory reports for regional store managers, using SQL and spreadsheet-based analysis. Helped the marketing team interpret campaign-performance dashboards during quarterly planning."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Marketing Assistant, Pemberton Retail (2012–2015)",
+            "text": "Supported campaign tracking and customer-survey analysis for the marketing team. Took part in a company-wide hackathon focused on customer-churn prediction."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Retail Sales Associate, Cranmoor Electronics (2009–2012)",
+            "text": "Worked in customer-facing sales while completing an undergraduate degree in statistics. Balanced this role with online coursework in applied statistics."
           },
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "Microsoft Certified: Azure Data Scientist Associate, current and valid."
+            "text": "- Google Data Analytics Professional Certificate, current and valid.\n- Microsoft Certified: Azure Data Scientist Associate, current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- Tableau Desktop Specialist, current and valid.\n- Certified ScrumMaster (CSM), current and valid."
           },
           {
             "id": "cv_skills",
             "heading": "Skills and Knowledge",
             "text": "Strong in machine-learning modelling, Python, SQL, and data analysis, with experience across the full modelling lifecycle from data preparation to deployment. Focused on predictive analytics and model performance."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Interests include competitive chess, hiking, and building small personal data-visualisation projects."
           }
         ]
       },
       "fixed_assessment": {
-        "recommendation": "Reject",
+        "recommendation": "Reject candidate",
         "rationale": "The profile shows an Azure Data Scientist certification, not AIGP or ISO/IEC 42001 Lead Implementer, and it does not demonstrate AI governance or conformity-assessment experience. The mandatory requirement is not met.",
         "supporting_ids": [
           "pol_3_3",
@@ -174,32 +249,57 @@
           {
             "id": "cv_summary",
             "heading": "Professional Summary",
-            "text": "Compliance officer with experience in financial regulatory compliance and reporting."
+            "text": "Compliance officer with experience in financial regulatory compliance and reporting. Comfortable working under tight regulatory deadlines and coordinating multiple stakeholders."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Vaelen University**\n\nDegree: Bachelor of Science in Big Data Analytics & Quantitative Science\n\nCore Competencies: Advanced statistical theory, mathematical modeling, quantitative economics, stochastic processes, and large dataset analysis (R/SAS)."
           },
           {
             "id": "cv_role_1",
             "heading": "Compliance Officer, Halcyon Bank (2021–present)",
-            "text": "Handled financial regulatory compliance, anti-money-laundering checks, and regulatory reporting for a retail bank. Coordinated external audits, maintained compliance documentation, and liaised with regulators and internal finance and audit teams."
+            "text": "Handled financial regulatory compliance, anti-money-laundering checks, and regulatory reporting for a retail bank. Coordinated external audits, maintained compliance documentation, and liaised with regulators and internal finance and audit teams. Trained new compliance analysts on regulatory reporting procedures and internal escalation processes. Maintained the department's regulatory-deadline tracker across multiple concurrent filings."
           },
           {
             "id": "cv_role_2",
             "heading": "Compliance Administrator, Lumen Finance (2018–2021)",
-            "text": "Supported regulatory filing, record-keeping, and internal compliance processes in a financial services setting, working closely with finance, audit, and operations colleagues on regulatory deadlines."
+            "text": "Supported regulatory filing, record-keeping, and internal compliance processes in a financial services setting, working closely with finance, audit, and operations colleagues on regulatory deadlines. Also supported preparation of materials for the quarterly compliance committee. Supported onboarding of new compliance administrators into filing procedures."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Compliance Analyst, Merrow Insurance (2015–2018)",
+            "text": "Monitored transaction alerts for anti-money-laundering compliance and escalated flagged cases for review. Assisted with preparation for two regulator site visits."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Auditor, Merrow Insurance (2012–2015)",
+            "text": "Assisted with internal audit fieldwork across finance and operations, documenting findings for senior auditors. Helped digitise a portion of the team's paper-based record-keeping process."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Bank Teller, Cresthill Community Bank (2009–2012)",
+            "text": "Handled routine customer transactions and cash management while completing a finance degree part-time. Balanced this role with evening study toward a finance-related qualification."
           },
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "CFA Institute Investment Foundations Certificate, current and valid."
+            "text": "- Certified Business Analysis Professional (CBAP), current and valid.\n- CFA Institute Investment Foundations Certificate, current and valid.\n- Certified Anti-Money Laundering Specialist (CAMS), current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- PRINCE2 Foundation, current and valid."
           },
           {
             "id": "cv_skills",
             "heading": "Skills and Knowledge",
             "text": "Financial regulatory compliance, anti-money-laundering, audit coordination, and regulatory reporting, with strong attention to documentation and regulatory detail in a financial services setting."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Enjoys long-distance running, amateur baking, and serving on the committee of a local running club."
           }
         ]
       },
       "fixed_assessment": {
-        "recommendation": "Reject",
+        "recommendation": "Reject candidate",
         "rationale": "The profile shows a finance-focused certification, not AIGP or ISO/IEC 42001 Lead Implementer, and its compliance experience is not specific to AI governance. The mandatory requirement is not met.",
         "supporting_ids": [
           "pol_3_3",
@@ -222,32 +322,57 @@
           {
             "id": "cv_summary",
             "heading": "Professional Summary",
-            "text": "AI project manager experienced in delivering AI and machine-learning initiatives across their lifecycle."
+            "text": "AI project manager experienced in delivering AI and machine-learning initiatives across their lifecycle. Known for keeping cross-functional delivery teams aligned under tight timelines."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Meridian Science University**\n\nDegree: Bachelor of Engineering in Artificial Intelligence & Machine Learning\n\nCore Competencies: Robotics integration, natural language processing (NLP), reinforcement learning, autonomous systems, and high-performance computing."
           },
           {
             "id": "cv_role_1",
             "heading": "AI Project Manager, Saukala Global (2021–present)",
-            "text": "Led delivery of AI and machine-learning projects from business case to operationalisation, coordinating data science, engineering, and business stakeholders. Managed project risk, timelines, and delivery governance, and contributed to Responsible AI discussions during delivery."
+            "text": "Led delivery of AI and machine-learning projects from business case to operationalisation, coordinating data science, engineering, and business stakeholders. Managed project risk, timelines, and delivery governance, and contributed to Responsible AI discussions during delivery. Ran fortnightly steering meetings with business sponsors and maintained the project risk log throughout delivery. Facilitated retrospectives at the end of each project phase to capture lessons learned."
           },
           {
             "id": "cv_role_2",
             "heading": "Programme Coordinator, Suvion Digital (2018–2021)",
-            "text": "Coordinated cross-functional technology programmes, managing stakeholders, delivery milestones, and reporting in a fast-moving environment."
+            "text": "Coordinated cross-functional technology programmes, managing stakeholders, delivery milestones, and reporting in a fast-moving environment. Also introduced a standard status-reporting template later adopted across the wider programme office. Coordinated vendor onboarding for two external delivery partners."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Project Coordinator, Vantree Systems (2015–2018)",
+            "text": "Coordinated scheduling, budgets, and vendor communication for enterprise software delivery projects. Supported budget tracking and variance reporting across a multi-project portfolio."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Project Analyst, Vantree Systems (2012–2015)",
+            "text": "Supported project managers with status tracking, meeting minutes, and resource scheduling across multiple concurrent projects. Helped standardise the team's project-status reporting template."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Customer Support Representative, Orlin Telecom (2009–2012)",
+            "text": "Handled customer service enquiries and escalations while completing a business administration degree part-time. Balanced this role with evening coursework in project management."
           },
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "PMI Certified Professional in Managing AI (PMI-CPMAI), current and valid. This is an AI project management certification."
+            "text": "- Google Project Management Professional Certificate, current and valid.\n- PMI Certified Professional in Managing AI (PMI-CPMAI), current and valid. This is an AI project management certification.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- Certified ScrumMaster (CSM), current and valid.\n- Microsoft Certified: Azure AI Fundamentals, current and valid."
           },
           {
             "id": "cv_skills",
             "heading": "Skills and Knowledge",
             "text": "AI and machine-learning project delivery; generative AI familiarity; stakeholder management across business and technical teams; awareness of Responsible AI and the EU AI Act."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Enjoys sailing, board-game design, and mentoring early-career project coordinators through a professional association."
           }
         ]
       },
       "fixed_assessment": {
-        "recommendation": "Advance to Hire",
+        "recommendation": "Advance candidate to human interview",
         "rationale": "The candidate holds a current professional certification in managing AI and has led cross-functional AI projects with governance responsibilities. This evidence satisfies the certification and general experience requirements.",
         "supporting_ids": [
           "pol_3_2",
@@ -270,32 +395,57 @@
           {
             "id": "cv_summary",
             "heading": "Professional Summary",
-            "text": "AI governance professional with experience in AI risk assessment and Responsible AI advisory."
+            "text": "AI governance professional with experience in AI risk assessment and Responsible AI advisory. Works well translating regulatory obligations into practical, auditable controls."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Horizon Institute for Advanced Studies**\n\nDegree: Bachelor of Science in Computational Data Analytics\n\nCore Competencies: Data ethics and governance, enterprise data architecture, predictive analytics, data cleansing, and algorithmic fairness validation."
           },
           {
             "id": "cv_role_1",
             "heading": "AI Governance Advisor, Aldbrook Data (2021–present)",
-            "text": "Conducted AI risk and conformity assessments for high-risk AI systems, advised teams on Responsible AI, and supported governance frameworks across data science, risk, and compliance functions under the EU AI Act."
+            "text": "Conducted AI risk and conformity assessments for high-risk AI systems, advised teams on Responsible AI, and supported governance frameworks across data science, risk, and compliance functions under the EU AI Act. Partnered closely with legal counsel to interpret emerging EU AI Act guidance for the bank's high-risk systems. Contributed to the team's internal library of governance case studies used in training."
           },
           {
             "id": "cv_role_2",
             "heading": "Governance Analyst, Kessel Group (2018–2021)",
-            "text": "Worked on AI governance documentation, risk registers, and compliance reporting, coordinating across technical and business stakeholders on regulated AI systems."
+            "text": "Worked on AI governance documentation, risk registers, and compliance reporting, coordinating across technical and business stakeholders on regulated AI systems. Also helped establish an internal AI-risk-register template still in use today. Supported preparation of materials for two regulator information requests."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Risk Analyst, Corvane Insurance (2015–2018)",
+            "text": "Analysed operational risk exposure across underwriting lines and produced quarterly risk reporting. Helped onboard new analysts into the governance-documentation process."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Risk Assistant, Corvane Insurance (2012–2015)",
+            "text": "Supported the risk team with data collection and reporting for the annual risk assessment cycle. Took part in a cross-team working group on AI incident reporting."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Office Administrator, Millbrook Legal Services (2009–2012)",
+            "text": "Provided general administrative support to a small legal practice while completing a governance-related qualification part-time. Balanced this role with part-time study toward a professional qualification."
           },
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "IAPP Artificial Intelligence Governance Professional (AIGP), current and valid."
+            "text": "- Certified Information Privacy Professional (CIPP/E), current and valid.\n- IAPP Artificial Intelligence Governance Professional (AIGP), current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- Certified ScrumMaster (CSM), current and valid.\n- AWS Certified Cloud Practitioner, current and valid."
           },
           {
             "id": "cv_skills",
             "heading": "Skills and Knowledge",
             "text": "AI and machine-learning systems including generative AI; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment; stakeholder management across functions."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Enjoys pottery, hill walking, and volunteering with a local citizens' advice service."
           }
         ]
       },
       "fixed_assessment": {
-        "recommendation": "Reject",
+        "recommendation": "Reject candidate",
         "rationale": "The candidate demonstrates AI governance, risk-assessment, and cross-functional advisory experience, but the reviewed evidence does not show either required professional certification. The mandatory requirement is therefore not met.",
         "supporting_ids": [
           "pol_3_3",

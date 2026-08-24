@@ -1,0 +1,169 @@
+"""Regression tests for the migrated HAI architecture and infrastructure."""
+
+from __future__ import annotations
+
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+from xai_as_closure.cases import CaseRepository
+from xai_as_closure.conditions import get_study2_condition
+from xai_as_closure.decision_agent import AgenticHiringDecisionAgent
+from xai_as_closure.logger import EventLogger
+from xai_as_closure.session_flatten import (
+    flatten_event_rows,
+    flatten_participant_rows,
+    flatten_trial_rows,
+)
+from xai_as_closure.study2 import Study2Session
+
+
+class MigratedAgentTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.cases = CaseRepository()
+
+    def test_audit_exposes_the_complete_hai_pipeline(self) -> None:
+        output = AgenticHiringDecisionAgent(
+            condition="P1_A1_F0", cases=self.cases
+        ).assess("C-01")
+        self.assertEqual(
+            output.audit_payload()["pipeline"],
+            [
+                "evidence_store",
+                "plan",
+                "retrieve",
+                "evaluate",
+                "recommend",
+                "render",
+            ],
+        )
+        self.assertEqual(len(output.claims), 3)
+
+    def test_bounded_examination_is_interactive_and_cannot_change_verdict(self) -> None:
+        for condition_id in ("P0_A0_F0", "P0_A1_F0", "P1_A0_F0", "P1_A1_F0"):
+            agent = AgenticHiringDecisionAgent(condition=condition_id, cases=self.cases)
+            output = agent.assess("C-05")
+            response = agent.examine("C-05", "policy")
+            self.assertEqual(
+                output.recommendation, "Advance candidate to human interview"
+            )
+            self.assertIn("mandatory certification", response.response_text)
+            self.assertEqual(
+                bool(response.visible_sources), condition_id.startswith("P1_")
+            )
+            if "_A1_" in condition_id:
+                self.assertIn(" I ", f" {response.response_text} ")
+            else:
+                self.assertNotIn(" I ", f" {response.response_text} ")
+
+    def test_session_retains_challenge_history(self) -> None:
+        condition = get_study2_condition("P1_A1_F0")
+        session = Study2Session.create(
+            session_id="s2_migration",
+            participant_id="participant-migration",
+            prolific_pid="participant-migration",
+            condition=condition,
+            seed="migration-test",
+            cases=self.cases,
+        )
+        agent = AgenticHiringDecisionAgent(condition=condition, cases=self.cases)
+        for _ in range(3):
+            session.advance_introduction()
+        session.submit_unaided(
+            {"decision": "Reject candidate", "confidence": 70}
+        )
+        session.request_agent_assessment(agent)
+        response = session.examine_agent_assessment(agent, "caution")
+        self.assertEqual(response["kind"], "caution")
+        self.assertEqual(
+            len(session.current_trial()["agent_output"]["challenge_history"]), 1
+        )
+
+
+class MigratedInfrastructureTests(unittest.TestCase):
+    def test_no_parallel_study2_compatibility_wrappers_remain(self) -> None:
+        source_root = Path(__file__).resolve().parents[1] / "src" / "xai_as_closure"
+        for filename in (
+            "study2_conditions.py",
+            "study2_storage.py",
+            "study2_agent.py",
+            "study2_schemas.py",
+        ):
+            self.assertFalse((source_root / filename).exists(), filename)
+
+    def test_github_archive_uses_the_hai_logger_and_event_payload(self) -> None:
+        cases = CaseRepository()
+        condition = get_study2_condition("P1_A0_F1")
+        session = Study2Session.create(
+            session_id="migrationarchive",
+            participant_id="prolific-migration",
+            prolific_pid="prolific-migration",
+            condition=condition,
+            seed="archive-test",
+            cases=cases,
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            logger = EventLogger(
+                condition,
+                "prolific-migration",
+                session_id=session.state["session_id"],
+                log_dir=Path(directory),
+            )
+            logger.log("session_created")
+            logger.session_meta = dict(session.state)
+            archive = logger.github_payload()
+            self.assertEqual(archive["session_id"], "migrationarchive")
+            self.assertEqual(len(archive["events"]), 1)
+            with patch(
+                "xai_as_closure.logger.save_to_github",
+                return_value=(True, None),
+            ) as save:
+                success = logger.push_to_github(
+                    repo="owner/private-data",
+                    github_token="secret-token",
+                )
+            self.assertTrue(success)
+            self.assertIn("sessions/xai_as_closure/study2/", save.call_args.args[1])
+
+    def test_session_flatten_outputs_participant_trial_and_event_rows(self) -> None:
+        cases = CaseRepository()
+        condition = get_study2_condition("P1_A1_F0")
+        session = Study2Session.create(
+            session_id="s2_flatten",
+            participant_id="participant-flatten",
+            prolific_pid="participant-flatten",
+            condition=condition,
+            seed="flatten-test",
+            cases=cases,
+        )
+        agent = AgenticHiringDecisionAgent(condition=condition, cases=cases)
+        for _ in range(3):
+            session.advance_introduction()
+        session.submit_unaided(
+            {"decision": "Reject candidate", "confidence": 65}
+        )
+        session.request_agent_assessment(agent)
+        session.examine_agent_assessment(agent, "support")
+        session.submit_aided(
+            {"decision": "Advance candidate to human interview", "confidence": 80}
+        )
+        session.submit_evidence_recall("The certification and experience mattered.")
+        event = {
+            "event_id": "s2_flatten:000001",
+            "event_sequence": 1,
+            "event_type": "agent_assessment_presented",
+            "payload": {"reference": "C-01"},
+        }
+        archive = {"state": session.state, "events": [event]}
+        participant = flatten_participant_rows([archive])
+        trials = flatten_trial_rows([archive], cases)
+        events = flatten_event_rows([archive])
+        self.assertEqual(len(participant), 1)
+        self.assertEqual(len(trials), 1)
+        self.assertEqual(trials[0]["challenge_count"], 1)
+        self.assertEqual(len(events), 1)
+
+
+if __name__ == "__main__":
+    unittest.main()

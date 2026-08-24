@@ -19,18 +19,17 @@ evidence engagement before the final decision.
 ### Study 1: Expert Validation
 
 Study 1 establishes the profile-level ground truth required to score appropriate
-reliance in Study 2. Qualtrics handles consent, eligibility, expert background,
-pseudonymous linkage, and completion routing. A dedicated validation application
-presents the role, policy, and six anonymized profiles.
+reliance in Study 2. Qualtrics is limited to consent, pseudonymous linkage,
+completion, closing information, and debrief. One shared validation application
+serves multiple experts and presents the role, policy, and all six anonymized
+profiles in a participant-specific randomized order.
 
-The application has two locked phases:
-
-1. Experts independently classify all six profiles in randomized order. For
-   each profile they record Advance or Reject, accepted-certification status,
-   confidence, decisive evidence, and ambiguity or realism concerns.
-2. Only after all independent judgments are locked, experts review the exact AI
-   recommendation artifacts intended for Study 2 and assess their realism and
-   plausibility.
+For every candidate, each expert records Advance candidate to human
+interview or Reject candidate,
+certification classification, confidence, decisive evidence, ambiguity or
+missing information, and realism or unintended cues. Study 1 contains no AI
+recommendation, rationale, provenance, anthropomorphism, cognitive forcing, or
+experimental condition; it ends after the sixth candidate judgment.
 
 Profiles that fail the prespecified agreement or intended-reason criteria are
 revised and revalidated. Validated files are versioned and frozen before Study 2.
@@ -55,18 +54,37 @@ Each trial records an unaided decision before the AI appears and an aided
 decision after the AI workflow. This permits appropriate reliance to be scored
 in both directions and identifies assistant-induced reversals.
 
+The Study 2 assistant is a bounded agentic workflow. For each candidate it
+constructs the fixed screening plan, retrieves the configured passages from the
+current policy, job description, and candidate file, evaluates those materials,
+and delivers the frozen recommendation and rationale. This makes the execution
+stateful and inspectable without allowing uncontrolled generation to change the
+experimental stimuli. After recommendation reveal, the assistant supports the
+same bounded evidence-examination choices in every cell: strongest support,
+strongest caution, mandatory-rule application, and missing or uncertain
+information. These stateful responses cannot change the fixed verdict. In
+forcing-present conditions, the participant must
+re-enter the mandatory certification requirement from the complete job
+description before the recommendation can be requested or revealed.
+
 ## Manipulation Invariants
 
 - The recommendation and substantive rationale are fixed for each profile.
 - Provenance changes traceability only: high provenance adds source labels and
   inspectable passage links; low provenance omits that source mapping.
-- Anthropomorphic delivery changes communication register and interface cues,
-  not evidence, recommendation, confidence, or argument content.
-- Cognitive forcing occurs after the complete AI recommendation is visible and
-  before the final aided decision.
-- In forcing-present conditions, participants identify evidence supporting the
-  recommendation and evidence that could count against it. The task is identical
-  across provenance and anthropomorphic-delivery conditions.
+- Anthropomorphic delivery uses the frozen `anthrokit-hiring-study2-v2`
+  register. Each profile has a complete LowA/HighA assessment-card pair. Low
+  delivery is procedural, impersonal, and system-labelled; high delivery is
+  first-person, mildly hedged, warmer, and adviser-like. The same registered
+  verdict and semantic claims appear in each pair, and persona names, emoji,
+  humor, emotional claims, and live LLM rewriting are excluded. The paired
+  complete responses are length-controlled.
+- Cognitive forcing occurs after the unaided decision and before the AI
+  recommendation is requested or visible.
+- In forcing-present conditions, participants type or paste the mandatory
+  certification requirement from the complete job description. The task is
+  identical across provenance and anthropomorphic-delivery conditions and does
+  not operate on the recommendation or citation apparatus.
 - The role, policy, full candidate file, and decision options remain available
   in every condition.
 
@@ -94,10 +112,13 @@ evidence in a neutral prompt administered consistently across trials.
 
 ## Data Architecture
 
-Both studies use Qualtrics-linked applications. Qualtrics and application data
-are joined through a pseudonymous linkage identifier. The applications record
-append-only session, trial, and event logs. Direct recruitment-platform
-identifiers and contact information are not written to application logs.
+Both studies use Qualtrics-linked applications. Study 1 uses pseudonymous
+linkage; Qualtrics is only its consent, linkage, and closing shell. Study 2
+retains the working HAI integration in which Qualtrics passes the Prolific ID,
+condition, and return URL, and its protected JSONL/private-GitHub logs retain the
+Prolific ID required by the existing cleaning and merge pipeline. Study 2 also
+uses Qualtrics for condition assignment and questionnaires. Contact information
+and Qualtrics Response IDs are not collected by the applications.
 
 The Study 1 protocol, application architecture, logging schema, scoring rules,
 power analysis, and preregistration must be locked before data collection.

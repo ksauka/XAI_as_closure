@@ -1,0 +1,301 @@
+{
+  "case_set_id": "ai_governance_lead_six_profiles_v1",
+  "role": "AI Governance Lead",
+  "company": "Suvh Trust Bank",
+  "hard_criterion": "Holds either IAPP AIGP or ISO/IEC 42001 Lead Implementer certification (job description Section 4.1).",
+  "outcome_set": [
+    "Advance candidate to human interview",
+    "Reject candidate"
+  ],
+  "citation_scope": "AI citations span three documents: company profile (company_*), job description (jd_*), and candidate CV (cv_*).",
+  "trial_composition": {
+    "correct_advance": 2,
+    "correct_reject": 2,
+    "false_advance": 1,
+    "false_reject": 1
+  },
+  "profiles": [
+    {
+      "case_id": "P1_correct_advance",
+      "reference": "C-01",
+      "trial_type": "correct_advance",
+      "ground_truth": "Advance candidate to human interview",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "AI governance professional with experience owning AI risk and conformity assessment for regulated AI systems."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "AI Governance Specialist, Halden Data Services (2021–present)",
+            "text": "Conducted and signed off formal AI risk and conformity assessments for high-risk AI systems under the EU AI Act and ISO/IEC 42001. Designed governance frameworks and control mechanisms, and advised business and technical teams on Responsible AI."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Risk and Compliance Analyst, Kessel Group (2018–2021)",
+            "text": "Supported AI risk assessment and compliance documentation, working across data science, risk, and legal functions on model governance and stakeholder reporting."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "IAPP Artificial Intelligence Governance Professional (AIGP), current and valid."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; stakeholder management across business, compliance, and technical functions."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Advance candidate to human interview",
+        "supporting_ids": [
+          "pol_3_2",
+          "jd_4_1",
+          "jd_5_1",
+          "cv_role_1",
+          "cv_certifications"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "Holds AIGP (cv_certifications) + strong on all general reqs. AI correctly advances; cites cert + experience + jd_4_1."
+    },
+    {
+      "case_id": "P2_correct_advance",
+      "reference": "C-02",
+      "trial_type": "correct_advance",
+      "ground_truth": "Advance candidate to human interview",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "AI governance professional with experience leading AI conformity assessment and control frameworks for regulated AI."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "AI Assurance Lead, Brightline Analytics (2021–present)",
+            "text": "Independently conducted and signed off AI risk and conformity assessments for high-risk systems under ISO/IEC 42001 and the EU AI Act. Built and maintained governance frameworks and advised leadership on Responsible AI and compliance."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Model Risk Associate, Verda Financial (2018–2021)",
+            "text": "Worked on model risk and compliance documentation across risk, data science, and legal teams, supporting AI governance reporting and stakeholder coordination for regulated systems."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "ISO/IEC 42001 Lead Implementer certification, current and valid."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; consulting and stakeholder management across functions."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Advance candidate to human interview",
+        "supporting_ids": [
+          "pol_3_2",
+          "jd_4_1",
+          "jd_5_1",
+          "cv_role_1",
+          "cv_certifications"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "Holds ISO 42001 (cv_certifications) + strong on all general reqs. AI correctly advances."
+    },
+    {
+      "case_id": "P3_correct_reject",
+      "reference": "C-03",
+      "trial_type": "correct_reject",
+      "ground_truth": "Reject candidate",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "Data scientist experienced in building and evaluating machine-learning models for analytics products."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "Data Scientist, Northwind Analytics (2021–present)",
+            "text": "Built, trained, and evaluated machine-learning models for customer analytics and forecasting. Worked on feature engineering, model performance, and deployment alongside the engineering team, focusing on model accuracy and delivery."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Data Analyst, Cedar Insights (2018–2021)",
+            "text": "Produced dashboards, reports, and statistical analyses for business teams across marketing and operations. Focused on data preparation, visualisation, and communicating findings to non-technical colleagues."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "Microsoft Certified: Azure Data Scientist Associate, current and valid."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "Strong in machine-learning modelling, Python, SQL, and data analysis, with experience across the full modelling lifecycle from data preparation to deployment. Focused on predictive analytics and model performance."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Reject candidate",
+        "supporting_ids": [
+          "pol_3_3",
+          "jd_4_1",
+          "jd_5_1",
+          "cv_role_1",
+          "cv_certifications"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "No cert + fails general reqs (no governance/assessment/compliance; only technical modelling). AI correctly rejects."
+    },
+    {
+      "case_id": "P4_correct_reject",
+      "reference": "C-04",
+      "trial_type": "correct_reject",
+      "ground_truth": "Reject candidate",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "Compliance officer with experience in financial regulatory compliance and reporting."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "Compliance Officer, Halcyon Bank (2021–present)",
+            "text": "Handled financial regulatory compliance, anti-money-laundering checks, and regulatory reporting for a retail bank. Coordinated external audits, maintained compliance documentation, and liaised with regulators and internal finance and audit teams."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Compliance Administrator, Lumen Finance (2018–2021)",
+            "text": "Supported regulatory filing, record-keeping, and internal compliance processes in a financial services setting, working closely with finance, audit, and operations colleagues on regulatory deadlines."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "CFA Institute Investment Foundations Certificate, current and valid."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "Financial regulatory compliance, anti-money-laundering, audit coordination, and regulatory reporting, with strong attention to documentation and regulatory detail in a financial services setting."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Reject candidate",
+        "supporting_ids": [
+          "pol_3_3",
+          "jd_4_1",
+          "jd_5_3",
+          "cv_role_1",
+          "cv_certifications"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "No cert + fails general reqs (compliance but zero AI; no AI/ML understanding). AI correctly rejects."
+    },
+    {
+      "case_id": "P5_false_advance",
+      "reference": "C-05",
+      "trial_type": "false_advance",
+      "ground_truth": "Reject candidate",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "AI project manager experienced in delivering AI and machine-learning initiatives across their lifecycle."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "AI Project Manager, Saukala Global (2021–present)",
+            "text": "Led delivery of AI and machine-learning projects from business case to operationalisation, coordinating data science, engineering, and business stakeholders. Managed project risk, timelines, and delivery governance, and contributed to Responsible AI discussions during delivery."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Programme Coordinator, Suvion Digital (2018–2021)",
+            "text": "Coordinated cross-functional technology programmes, managing stakeholders, delivery milestones, and reporting in a fast-moving environment."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "PMI Certified Professional in Managing AI (PMI-CPMAI), current and valid. This is an AI project management certification."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "AI and machine-learning project delivery; generative AI familiarity; stakeholder management across business and technical teams; awareness of Responsible AI and the EU AI Act."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Advance candidate to human interview",
+        "supporting_ids": [
+          "pol_3_2",
+          "jd_4_1",
+          "jd_5_2",
+          "cv_role_1",
+          "cv_certifications"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "FALSE ADVANCE. Holds CPMAI (a PM cert, stated as such in cv_certifications), strong on general reqs, but does NOT hold AIGP or ISO 42001. AI cites cv_certifications+jd_4_1 and wrongly treats CPMAI as satisfying 4.1. Catchable WITHIN cited evidence: CPMAI is a project-management cert, and jd_4_1 requires AIGP or 42001. Ground truth = Reject."
+    },
+    {
+      "case_id": "P6_false_reject",
+      "reference": "C-06",
+      "trial_type": "false_reject",
+      "ground_truth": "Advance candidate to human interview",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "AI governance professional with experience in AI risk assessment and Responsible AI advisory."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "AI Governance Advisor, Aldbrook Data (2021–present)",
+            "text": "Conducted AI risk and conformity assessments for high-risk AI systems, advised teams on Responsible AI, and supported governance frameworks across data science, risk, and compliance functions under the EU AI Act."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Governance Analyst, Kessel Group (2018–2021)",
+            "text": "Worked on AI governance documentation, risk registers, and compliance reporting, coordinating across technical and business stakeholders on regulated AI systems."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "IAPP Artificial Intelligence Governance Professional (AIGP), current and valid."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "AI and machine-learning systems including generative AI; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment; stakeholder management across functions."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Reject candidate",
+        "supporting_ids": [
+          "pol_3_3",
+          "jd_4_1",
+          "jd_4_2",
+          "cv_role_1",
+          "cv_role_2"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "FALSE REJECT. Holds AIGP in cv_certifications (SAME section/position as P1,P2), strong on general reqs. AI cites ONLY cv_role_1, cv_role_2 (+jd_4_1/4_2) and OMITS cv_certifications, then rejects for 'no certification'. Catchable ONLY BEYOND cited evidence: reading down to cv_certifications shows valid AIGP. Ground truth = Advance."
+    }
+  ]
+}

@@ -1,12 +1,7 @@
 # AI Governance Lead — Six Candidate Profiles
 
-> **Researcher-facing master.** The Study 1 application renders only the
-> participant-facing candidate CV sections. It never displays the AI
-> recommendation, cited-source list, ground truth, trial type, design notes, or
-> structured-case identifiers. Ground truth and trial type are never
-> participant-facing in either study.
-
 Role: AI Governance Lead, Suvh Trust Bank. Hard criterion (Job Description 4.1): holds IAPP AIGP **or** ISO/IEC 42001 Lead Implementer.  
+Decision (two-way, terminal): **Advance candidate to human interview** / **Reject candidate**.  
 Governing documents: AI Governance Recruitment Policy, Job Description, Candidate CV. Identical tenure (2021–present; 2018–2021); reference numbers only.  
 Every candidate holds a real certification; disqualification is inferred by checking the certificate against Section 4.1. All six recommendations cite the same three sources. Cited passages are correct; on the two error profiles the recommendation is wrong.  
 

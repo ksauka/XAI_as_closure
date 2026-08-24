@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import hashlib
 import json
-import random
 import re
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
+from .study2_delivery import DeliveryCard, delivery_card, delivery_claims
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 MATERIAL_ROOT = PROJECT_ROOT / "study_CHI"
@@ -33,12 +34,13 @@ INTERNAL_FIELDS = frozenset(
 
 @dataclass(frozen=True)
 class CvSection:
+    id: str
     heading: str
     text: str
 
 
 @dataclass(frozen=True)
-class PhaseACase:
+class ParticipantCase:
     reference: str
     sections: tuple[CvSection, ...]
 
@@ -55,28 +57,16 @@ class ArtifactVariant:
     provenance: bool
     anthropomorphic: bool
 
-    @property
-    def key(self) -> str:
-        return f"E{int(self.provenance)}_A{int(self.anthropomorphic)}"
-
 
 @dataclass(frozen=True)
 class RecommendationArtifact:
     reference: str
     recommendation: str
     rationale: str
-    lead: str
+    delivery: DeliveryCard
     sources: tuple[EvidencePassage, ...]
     provenance: bool
     anthropomorphic: bool
-
-
-VARIANTS = (
-    ArtifactVariant(False, False),
-    ArtifactVariant(True, False),
-    ArtifactVariant(False, True),
-    ArtifactVariant(True, True),
-)
 
 
 def material_manifest() -> dict[str, Any]:
@@ -89,7 +79,7 @@ def material_manifest() -> dict[str, Any]:
         digest.update(path.name.encode("ascii"))
         digest.update(content)
     return {
-        "material_set": "study1_six_profiles_v1",
+        "material_set": "chi_six_profiles_v1",
         "manifest_sha256": digest.hexdigest(),
         "files": files,
     }
@@ -134,26 +124,26 @@ class CaseRepository:
         return str(self._data["company"])
 
     def randomized_order(self, seed: str) -> tuple[str, ...]:
-        order = list(self.references)
-        random.Random(hashlib.sha256(seed.encode("utf-8")).digest()).shuffle(order)
-        return tuple(order)
+        return tuple(
+            sorted(
+                self.references,
+                key=lambda reference: hashlib.sha256(
+                    f"{seed}\0{reference}".encode()
+                ).digest(),
+            )
+        )
 
-    def phase_a_case(self, reference: str) -> PhaseACase:
+    def participant_case(self, reference: str) -> ParticipantCase:
         case = self._case(reference)
         sections = tuple(
-            CvSection(heading=section["heading"], text=section["text"])
+            CvSection(
+                id=str(section["id"]),
+                heading=section["heading"],
+                text=section["text"],
+            )
             for section in case["candidate_cv"]["sections"]
         )
-        return PhaseACase(reference=case["reference"], sections=sections)
-
-    def balanced_artifact_assignments(
-        self, profile_order: Iterable[str], seed: str
-    ) -> dict[str, ArtifactVariant]:
-        offset = int(hashlib.sha256(seed.encode("utf-8")).hexdigest(), 16) % len(VARIANTS)
-        return {
-            reference: VARIANTS[(offset + index) % len(VARIANTS)]
-            for index, reference in enumerate(profile_order)
-        }
+        return ParticipantCase(reference=case["reference"], sections=sections)
 
     def artifact(
         self, reference: str, variant: ArtifactVariant
@@ -161,10 +151,7 @@ class CaseRepository:
         case = self._case(reference)
         assessment = case["fixed_assessment"]
         recommendation = str(assessment["recommendation"])
-        if variant.anthropomorphic:
-            lead = f"I recommend **{recommendation}**."
-        else:
-            lead = f"Recommendation: **{recommendation}**."
+        delivery = delivery_card(reference, anthropomorphic=variant.anthropomorphic)
         sources: tuple[EvidencePassage, ...] = ()
         if variant.provenance:
             sources = tuple(
@@ -175,22 +162,35 @@ class CaseRepository:
             reference=reference,
             recommendation=recommendation,
             rationale=str(assessment["rationale"]),
-            lead=lead,
+            delivery=delivery,
             sources=sources,
             provenance=variant.provenance,
             anthropomorphic=variant.anthropomorphic,
         )
 
-    def internal_assessment_for_log(self, reference: str) -> dict[str, Any]:
-        """Return internal metadata for protected logs, never for UI rendering."""
-        case = self._case(reference)
-        assessment = case["fixed_assessment"]
+    def assessment_specification(self, reference: str) -> dict[str, Any]:
+        """Return the frozen AI assessment contract for internal pipeline use."""
+        assessment = self._case(reference)["fixed_assessment"]
         return {
-            "case_id": case["case_id"],
-            "trial_type": case["trial_type"],
-            "ground_truth": case["ground_truth"],
-            "recommendation": assessment["recommendation"],
-            "supporting_ids": list(assessment["supporting_ids"]),
+            "recommendation": str(assessment["recommendation"]),
+            "rationale": str(assessment["rationale"]),
+            "claims": delivery_claims(reference),
+        }
+
+    def assessment_sources(self, reference: str) -> tuple[EvidencePassage, ...]:
+        """Resolve the agent's registered evidence set independent of P level."""
+        case = self._case(reference)
+        return tuple(
+            self._resolve_source(case, source_id)
+            for source_id in case["fixed_assessment"]["supporting_ids"]
+        )
+
+    def analysis_labels(self, reference: str) -> dict[str, str]:
+        """Return protected trial labels for post-collection analysis only."""
+        case = self._case(reference)
+        return {
+            "trial_type": str(case["trial_type"]),
+            "ground_truth": str(case["ground_truth"]),
         }
 
     def _case(self, reference: str) -> dict[str, Any]:
@@ -199,9 +199,7 @@ class CaseRepository:
         except KeyError as exc:
             raise KeyError(f"Unknown candidate reference: {reference}") from exc
 
-    def _resolve_source(
-        self, case: dict[str, Any], source_id: str
-    ) -> EvidencePassage:
+    def _resolve_source(self, case: dict[str, Any], source_id: str) -> EvidencePassage:
         if source_id.startswith("jd_"):
             clause = source_id.removeprefix("jd_").replace("_", ".")
             heading, text = self._role_clauses[clause]
@@ -220,7 +218,8 @@ class CaseRepository:
             )
         if source_id.startswith("cv_"):
             section = next(
-                item for item in case["candidate_cv"]["sections"]
+                item
+                for item in case["candidate_cv"]["sections"]
                 if item["id"] == source_id
             )
             return EvidencePassage(
@@ -232,14 +231,50 @@ class CaseRepository:
 
     def _validate(self) -> None:
         if len(self._cases) != 6:
-            raise ValueError("Study 1 requires exactly six candidate profiles.")
+            raise ValueError(
+                "The CHI case set requires exactly six candidate profiles."
+            )
         if len(set(self._cases)) != 6:
             raise ValueError("Candidate references must be unique.")
+        expected_composition = Counter(self._data.get("trial_composition", {}))
+        actual_composition = Counter(
+            case.get("trial_type") for case in self._cases.values()
+        )
+        if actual_composition != expected_composition:
+            raise ValueError("Trial composition does not match the case-set contract.")
+        expected_outcomes = {
+            "correct_advance": ("Advance", "Advance candidate to human interview"),
+            "correct_reject": ("Reject", "Reject candidate"),
+            "false_advance": ("Reject", "Advance candidate to human interview"),
+            "false_reject": ("Advance", "Reject candidate"),
+        }
         for reference, case in self._cases.items():
             assessment = case["fixed_assessment"]
-            if assessment["recommendation"] not in {"Advance to Hire", "Reject"}:
+            if assessment["recommendation"] not in {
+                "Advance candidate to human interview",
+                "Reject candidate",
+            }:
                 raise ValueError(f"Invalid recommendation for {reference}.")
             if not assessment.get("rationale"):
                 raise ValueError(f"Missing fixed rationale for {reference}.")
-            for source_id in assessment["supporting_ids"]:
+            card_low = delivery_card(reference, anthropomorphic=False)
+            card_high = delivery_card(reference, anthropomorphic=True)
+            if (
+                not card_low.text
+                or not card_high.text
+                or not delivery_claims(reference)
+            ):
+                raise ValueError(f"Missing paired delivery register for {reference}.")
+            observed_outcome = (case.get("ground_truth"), assessment["recommendation"])
+            if observed_outcome != expected_outcomes.get(case.get("trial_type")):
+                raise ValueError(
+                    f"Ground truth and recommendation mismatch for {reference}."
+                )
+            supporting_ids = assessment.get("supporting_ids", [])
+            namespaces = {source_id.split("_", 1)[0] for source_id in supporting_ids}
+            if namespaces != {"pol", "jd", "cv"}:
+                raise ValueError(
+                    f"Supporting evidence must span policy, role, and CV for {reference}."
+                )
+            for source_id in supporting_ids:
                 self._resolve_source(case, source_id)

@@ -1,153 +1,140 @@
 # Study 1 Expert-Validation Protocol
 
-## Purpose
+## Purpose and Contribution
 
 Study 1 establishes a defensible profile-level ground truth for the six
-candidate cases used in Study 2. It also checks that the candidate files and the
-assistant's correct and incorrect recommendations are realistic enough to
-support the experimental task.
+candidate cases used in Study 2. It tests whether eligible experts classify each
+profile consistently against the written job description and recruitment policy,
+whether they rely on the intended decisive evidence, and whether any profile
+contains ambiguity, missing information, unrealistic details, or unintended cues.
 
-Study 1 is not a manipulation experiment and is not delivered solely in
-Qualtrics. Qualtrics provides the recruitment and survey shell; a dedicated
-validation application delivers the controlled profile task and records the
-behavioral trace.
+Study 1 is not an explainability, anthropomorphism, trust, or appropriate-reliance
+experiment. It contains no AI recommendation, rationale, provenance display,
+agentic interaction, cognitive-forcing intervention, or experimental condition.
+Those elements belong to Study 2.
 
-## Eligibility
+## Participants and Eligibility
+
+Multiple experts complete the validation independently. Every expert reviews all
+six candidates in a participant-specific randomized order; the study is not split
+into separate candidate or condition applications. Sessions are isolated through
+pseudonymous linkage so that one shared validation application can serve all
+experts.
 
 Experts must have relevant recruitment, human-resources, hiring, compliance, AI
 governance, or closely related screening experience. The final eligibility
 criteria, minimum experience, recruitment source, compensation, target sample,
-and exclusion rules must be fixed before launch.
+and exclusion rules must be fixed before launch. Eligibility may be verified
+during recruitment rather than repeated in Qualtrics.
 
 Study 1 experts cannot participate in Study 2.
 
-## Systems
+## System Boundary
 
 ### Qualtrics
 
-Qualtrics records:
+For Study 1, Qualtrics is deliberately minimal. It records:
 
 - consent;
-- eligibility;
-- expert background and relevant experience;
-- a pseudonymous linkage identifier;
-- application launch and return status; and
-- completion and debrief responses.
+- a pseudonymous linkage identifier and application launch status; and
+- verified completion, closing information, and debrief.
+
+Qualtrics does not deliver the candidate task or duplicate its responses.
 
 ### Validation Application
 
-The application records the profile judgments, evidence responses, profile
-order, document interactions, response timing, phase completion, and material
-versions. It must not receive names, email addresses, or raw recruitment-platform
-identifiers.
+One shared validation application records all six candidate judgments for each
+expert, the randomized order, document interactions, response timing, completion,
+and material versions. It must not receive names, email addresses, raw
+recruitment-platform identifiers, or raw Qualtrics Response IDs.
 
 ## Source Materials
 
 Every expert receives the same versioned materials:
 
 - AI Governance Lead job description;
-- recruitment policy and non-substitutable certification rule;
-- six candidate profiles identified only as C-01 through C-06; and
-- in Phase B only, the recommendation artifacts intended for Study 2.
+- recruitment policy and non-substitutable certification rule; and
+- six participant-facing candidate profiles identified only as C-01 through
+  C-06.
 
-Labels such as false advance, false reject, qualified, unqualified, and ground
-truth are never shown in the participant interface.
+Labels such as false advance, false reject, qualified, unqualified, ground truth,
+and trial type are never shown. AI recommendations and their associated
+renderings are also never shown in Study 1.
 
-## Phase A: Independent Ground-Truth Judgments
+## Procedure
 
-The role description and recruitment policy remain available throughout Phase A.
-The six profiles are presented in a participant-specific randomized order.
+The role description and recruitment policy remain available throughout the
+task. The application presents the six profiles one at a time in a
+participant-specific randomized order.
 
-For each profile, the expert records:
+For every candidate, the expert records exactly:
 
-1. Advance to Hire or Reject.
-2. Whether the profile shows a current IAPP AIGP certification, a current
-   ISO/IEC 42001 Lead Implementer certification, or neither accepted
-   certification.
-3. Confidence in the judgment.
+1. Advance candidate to human interview or Reject candidate.
+2. Certification classification, typed as free text naming the accepted
+   mandatory requirement the expert located in the profile, or "None" if it
+   is not present. This is a recall measure, not a recognition measure: the
+   expert is not shown the certification names as selectable options, and the
+   prompt does not name "certification" directly.
+3. Confidence in the judgment, from 0 to 100.
 4. The decisive evidence, in an open-ended response.
-5. Any ambiguity, missing information, or realism concern.
-6. An optional overall suitability assessment that is analytically separate
-   from the mandatory-criterion judgment.
+5. Any ambiguity or missing information, in an open-ended response.
+6. Any unrealistic detail or unintended cue that might signal how the candidate
+   should be classified, in an open-ended response.
 
-The application logs document opening, section visibility, response changes
-before submission, and elapsed time. It does not interpret a click as evidence
-that the expert understood the document.
+The final two fields require an explicit response such as “None” when the expert
+has no concern. A submitted candidate judgment cannot be edited. After the sixth
+judgment is submitted, the application records completion and returns the expert
+to Qualtrics. There is no second task phase.
 
-A submitted profile judgment cannot be edited. After all six profile judgments
-are submitted, Phase A is permanently locked for that session.
-
-## Phase Separation
-
-No AI recommendation, rationale, provenance link, correctness label, or intended
-trial type is displayed before Phase A is locked. This prevents the assistant's
-output from contaminating the expert ground-truth judgment.
-
-The application displays a clear transition before Phase B and explains that the
-next task concerns the realism of system outputs, not reconsideration of the
-locked hiring judgments.
-
-## Phase B: Recommendation-Artifact Validation
-
-Experts review recommendation artifacts only after all independent judgments
-are locked. For each assigned artifact, they rate:
-
-- plausibility that an AI screening assistant could produce the recommendation;
-- realism and coherence of the rationale;
-- clarity of the recommendation;
-- whether the artifact inadvertently reveals the study's intended error;
-- whether any statement invents or misstates source evidence; and
-- any wording or interface problem that could make the recommendation
-  implausible for reasons unrelated to the intended experimental error.
-
-Experts are not asked to treat plausibility as correctness. A false
-recommendation must remain incorrect against the locked criterion while still
-being credible as an AI error.
-
-The provenance and anthropomorphic renderings should be distributed across
-experts using a balanced assignment so that no expert must review every
-profile-by-rendering combination. Cognitive forcing is a workflow intervention
-and is usability-tested separately rather than treated as a recommendation
-artifact.
+The application may log document opening, candidate-section visibility,
+submission, and elapsed time. A click or dwell interval is a behavioral trace,
+not evidence that the expert understood a document.
 
 ## Validation Analysis
 
 Before launch, the preregistration must define:
 
-- the minimum per-profile decision agreement;
+- the minimum per-profile Advance or Reject agreement;
 - the target inter-rater reliability and confidence interval;
 - the intended-reason coding rule;
-- the artifact-plausibility threshold;
+- how ambiguity, missing information, realism concerns, and unintended cues are
+  coded and used in the pass decision;
 - treatment of missing or low-effort responses; and
-- the number of independent coders for open-ended evidence.
+- the number of independent coders for open-ended responses.
 
 Fleiss' kappa and profile-level agreement are reported for Advance or Reject.
-Certification classification is summarized separately. Open-ended decisive
-evidence is coded for whether the mandatory criterion drove the judgment.
+Certification classification, now a free-text field, is coded against the
+correct certification for each profile (correct, incorrect, or missing) before
+agreement is summarized separately from the Advance or Reject judgment.
+Open-ended decisive evidence is coded for whether the mandatory criterion drove
+the judgment.
+Ambiguity and cue responses are reviewed to identify profile features that could
+invalidate or contaminate the intended ground truth.
 
 ## Revision Gate
 
 A profile does not pass merely because its modal decision matches the authors'
 intended ground truth. It must also be decided for the intended reason and must
-not depend on incidental ambiguity.
+not depend on incidental ambiguity or unintended cues.
 
-When a profile or recommendation artifact fails:
+When a profile fails:
 
 1. Record the failed criterion.
-2. Revise only the affected material.
+2. Revise only the affected profile or governing material.
 3. Increment the material version.
 4. Revalidate the revised material with eligible experts.
 5. Preserve an audit record of the change without combining obsolete and revised
    ratings as though they concerned the same stimulus.
 
-Study 2 cannot launch until every profile and required recommendation artifact
-passes the prespecified validation rules.
+Study 2 cannot launch until every profile passes the prespecified Study 1
+validation rules.
 
 ## Freeze and Outputs
 
-The validated job description, policy, profiles, structured case set, rationale
-content, and renderings receive immutable version identifiers and file hashes.
-Study 2 logs those identifiers on every session and trial.
+The validated job description, policy, participant-facing profiles, and
+structured case set receive immutable version identifiers and file hashes. Study
+2 then uses those frozen materials as its ground-truth basis and logs their
+identifiers on every session and trial.
 
 Study 1 produces:
 
@@ -156,6 +143,6 @@ Study 1 produces:
 - profile-level decision and certification agreement;
 - inter-rater reliability;
 - coded decisive-evidence results;
-- artifact plausibility summaries;
+- coded ambiguity, missing-information, realism, and unintended-cue findings;
 - a material revision history; and
 - the final frozen material manifest.

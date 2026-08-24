@@ -1,38 +1,35 @@
-"""Streamlit application for the two-phase Study 1 expert validation."""
+"""Streamlit application for single-phase Study 1 expert validation."""
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qsl, unquote, urlencode, urlparse, urlunparse
 
 import streamlit as st
+from streamlit.errors import StreamlitSecretNotFoundError
 
 from .cases import POLICY_PATH, ROLE_PATH, CaseRepository
-from .storage import SessionStore, pseudonymize_linkage, stable_session_id
+from .github_saver import save_to_github
+from .storage import SessionStore, stable_session_id
 from .study1 import Study1Session, WorkflowError
-from .tokens import (
-    TokenError,
-    create_completion_token,
-    safe_qualtrics_return_url,
-    verify_token,
-)
 
 
 def _secret(name: str, default: str = "") -> str:
     try:
         value = st.secrets.get(name)
-    except Exception:
+    except StreamlitSecretNotFoundError:
         value = None
     return str(value or os.getenv(name, default))
 
 
 def _query(name: str) -> str:
-    try:
-        value = st.query_params.get(name, "")
-    except Exception:
-        return ""
+    value = st.query_params.get(name, "")
     if isinstance(value, list):
         return str(value[0]) if value else ""
     return str(value)
@@ -50,6 +47,21 @@ def _apply_theme() -> None:
         h1 { font-size: 1.85rem; letter-spacing: 0; }
         h2 { font-size: 1.28rem; letter-spacing: 0; margin-top: 1.25rem; }
         h3 { font-size: 1.05rem; letter-spacing: 0; }
+        h4 {
+            font-size: 1.02rem;
+            letter-spacing: 0;
+            margin-top: 1.4rem;
+            padding-bottom: .3rem;
+            border-bottom: 1px solid #dce1e6;
+        }
+        h5 {
+            font-size: .92rem;
+            letter-spacing: 0;
+            font-weight: 600;
+            color: #53606d;
+            margin-top: .9rem;
+            margin-bottom: .1rem;
+        }
         [data-testid="stSidebar"] {
             background: #f4f6f8;
             border-right: 1px solid #dce1e6;
@@ -71,21 +83,6 @@ def _apply_theme() -> None:
             font-weight: 650;
             margin-bottom: .2rem;
         }
-        .recommendation-panel {
-            background: #ffffff;
-            border: 1px solid #cbd3dc;
-            border-left: 5px solid #176b87;
-            border-radius: 6px;
-            padding: 1rem 1.15rem;
-            margin: 1rem 0;
-        }
-        .recommendation-panel p { margin: .35rem 0; line-height: 1.55; }
-        .source-passage {
-            background: #f7f9fb;
-            border: 1px solid #dce1e6;
-            padding: .9rem 1rem;
-            margin: .5rem 0 1rem;
-        }
         .completion-panel {
             background: #f2f8f4;
             border: 1px solid #9cc7a8;
@@ -103,7 +100,8 @@ def _apply_theme() -> None:
 
 
 def _elapsed() -> float:
-    return round(time.perf_counter() - st.session_state.get("_study1_started", time.perf_counter()), 3)
+    started = st.session_state.get("_study1_started", time.perf_counter())
+    return round(time.perf_counter() - started, 3)
 
 
 def _position(session: Study1Session, reference: str) -> int:
@@ -131,37 +129,116 @@ def _log(
     )
 
 
-def _load_launch() -> tuple[str, str, str, bool]:
-    secret = _secret("STUDY_LINK_SECRET")
-    token = _query("token")
-    if token:
-        if not secret:
-            raise TokenError("The study server is missing its launch-token secret.")
-        payload = verify_token(token, secret)
-        phase = str(payload.get("phase", "both"))
-        if phase not in {"both", "phase_a"}:
-            raise TokenError("This token is not permitted to start Study 1.")
-        return (
-            str(payload["linkage_id"]),
-            str(payload.get("return_route", "")),
-            secret,
-            False,
+def _sync_github() -> None:
+    """Back up the session state and events to the private GitHub repo.
+
+    Streamlit Community Cloud's filesystem is ephemeral, so this mirrors
+    Study 2's after-every-trial backup rather than relying on local JSONL alone.
+    """
+    repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
+    token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
+    if not repo or not token:
+        return
+    session: Study1Session = st.session_state["_study1_session"]
+    store: SessionStore = st.session_state["_study1_store"]
+    session_id = session.state["session_id"]
+    payload = {
+        "session_id": session_id,
+        "participant_id": st.session_state.get("prolific_pid", ""),
+        "prolific_pid": st.session_state.get("prolific_pid", ""),
+        "saved_at_utc": datetime.now(timezone.utc).isoformat(),
+        **session.state,
+        "events": store.read_events(session_id),
+    }
+    date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    path = f"sessions/xai_as_closure/study1/{date_str}/{session_id}.json"
+    success, _error = save_to_github(
+        repo,
+        path,
+        json.dumps(payload, indent=2, ensure_ascii=True, default=str),
+        f"Session: {session_id} | study1",
+        token,
+    )
+    if not success:
+        st.warning(
+            "The private GitHub backup could not be updated. The local "
+            "session log remains available; please notify the researcher."
         )
-    allow_pilot = _secret("STUDY1_ALLOW_PILOT", "true").lower() in {"1", "true", "yes"}
-    if not allow_pilot:
-        raise TokenError("A valid Qualtrics launch token is required.")
-    pilot_id = st.session_state.setdefault("_study1_pilot_id", os.urandom(16).hex())
-    return pilot_id, _query("return"), secret or "local-pilot-secret", True
+
+
+def _read_launch_params() -> None:
+    """Read the Prolific-issued participant id, matching Study 2's flow."""
+    pid = _query("PROLIFIC_PID") or _query("pid")
+    if "prolific_pid" not in st.session_state and pid:
+        st.session_state["prolific_pid"] = pid
+    if "return_raw" not in st.session_state and _query("return"):
+        st.session_state["return_raw"] = _query("return")
+
+
+def _prolific_gate() -> None:
+    """Manual fallback identical to Study 2's, for direct/local links."""
+    if st.session_state.get("prolific_pid"):
+        return
+    st.header("Welcome to the study task")
+    st.write(
+        "Enter your Prolific ID to link this task to your survey responses. "
+        "The ID is normally filled automatically by the study link."
+    )
+    prolific_id = st.text_input(
+        "Prolific ID",
+        placeholder="e.g., 5f8e3c2a1b9d4e6f7a8b9c0d",
+        max_chars=128,
+    )
+    if st.button("Begin study task", type="primary"):
+        if prolific_id.strip():
+            st.session_state["prolific_pid"] = prolific_id.strip()
+            st.rerun()
+        st.error("Please enter your Prolific ID before continuing.")
+    st.stop()
+
+
+def _safe_qualtrics_return(raw_return: str) -> str | None:
+    if not raw_return:
+        return None
+    decoded = unquote(raw_return)
+    if not decoded.startswith(("http://", "https://")):
+        decoded = f"https://{decoded}"
+    try:
+        parsed = urlparse(decoded)
+    except ValueError:
+        return None
+    host = (parsed.hostname or "").lower()
+    if parsed.scheme not in {"http", "https"} or not (
+        host == "qualtrics.com" or host.endswith(".qualtrics.com")
+    ):
+        return None
+    return decoded
+
+
+def _build_final_return(raw_return: str, prolific_pid: str, session_id: str) -> str | None:
+    safe_return = _safe_qualtrics_return(raw_return)
+    if not safe_return:
+        return None
+    parsed = urlparse(safe_return)
+    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
+    query.setdefault("PROLIFIC_PID", prolific_pid)
+    query.setdefault("session_id", session_id)
+    query.setdefault("done", "1")
+    return urlunparse(parsed._replace(query=urlencode(query, doseq=True)))
 
 
 def _initialize() -> None:
     if "_study1_session" in st.session_state:
         return
-    linkage_id, return_route, secret, pilot = _load_launch()
-    linkage_hash = pseudonymize_linkage(linkage_id, secret)
+    prolific_id = str(st.session_state["prolific_pid"]).strip()
+    linkage_hash = hashlib.sha256(prolific_id.encode("utf-8")).hexdigest()
     session_id = stable_session_id(linkage_hash)
     data_root = _secret("STUDY1_DATA_ROOT")
-    store = SessionStore(Path(data_root) if data_root else None) if data_root else SessionStore()
+    store = (
+        SessionStore(Path(data_root) if data_root else None)
+        if data_root
+        else SessionStore()
+    )
     cases = CaseRepository()
     stored = store.load(session_id)
     if stored:
@@ -176,17 +253,16 @@ def _initialize() -> None:
         )
         store.save(session.state)
         event = "session_created"
+    pilot = not bool(_query("PROLIFIC_PID") or _query("pid"))
     st.session_state["_study1_started"] = time.perf_counter()
     st.session_state["_study1_session"] = session
     st.session_state["_study1_store"] = store
-    st.session_state["_study1_secret"] = secret
-    st.session_state["_study1_return"] = return_route
     st.session_state["_study1_pilot"] = pilot
     _log(
         event,
         component="launch",
         payload={
-            "launch_token_validated": not pilot,
+            "prolific_id_from_url": not pilot,
             "pilot_mode": pilot,
             "case_set_id": cases.case_set_id,
         },
@@ -194,14 +270,14 @@ def _initialize() -> None:
 
 
 def _header(session: Study1Session) -> None:
-    st.markdown('<div class="study-kicker">STUDY 1 · EXPERT VALIDATION</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="study-kicker">STUDY 1 · EXPERT VALIDATION</div>',
+        unsafe_allow_html=True,
+    )
     st.title("Candidate screening task")
-    if session.phase == "phase_a":
-        count = len(session.state["phase_a_responses"])
-        st.progress(count / 6, text=f"Independent judgments: {count} of 6 submitted")
-    elif session.phase == "phase_b":
-        count = len(session.state["phase_b_responses"])
-        st.progress(count / 6, text=f"Recommendation artifacts: {count} of 6 reviewed")
+    if session.phase == "screening":
+        count = len(session.state["responses"])
+        st.progress(count / 6, text=f"Candidate judgments: {count} of 6 submitted")
     else:
         st.progress(1.0, text="Task complete")
 
@@ -234,7 +310,9 @@ def _document_navigation(session: Study1Session) -> bool:
             _log("document_opened", component="policy", payload={"document": "policy"})
             st.rerun()
         st.divider()
-        st.caption("Fictional materials for research. Do not use for real hiring decisions.")
+        st.caption(
+            "Fictional materials for research. Do not use for real hiring decisions."
+        )
         if st.session_state.get("_study1_pilot"):
             st.warning("Pilot mode")
     return False
@@ -242,29 +320,44 @@ def _document_navigation(session: Study1Session) -> bool:
 
 def _render_cv(reference: str) -> None:
     session: Study1Session = st.session_state["_study1_session"]
-    case = session.cases.phase_a_case(reference) if session.phase == "phase_a" else session.cases.phase_a_case(reference)
-    st.subheader(f"Candidate {case.reference}")
+    case = session.cases.participant_case(reference)
+    st.subheader(f"Candidate {case.reference} Curriculum vitae")
+    in_experience = False
     for section in case.sections:
-        st.markdown(f"#### {section.heading}")
+        if section.id.startswith("cv_role_"):
+            if not in_experience:
+                st.markdown("#### Experience")
+                in_experience = True
+            st.markdown(f"##### {section.heading}")
+        else:
+            in_experience = False
+            st.markdown(f"#### {section.heading}")
         st.write(section.text)
 
 
-def _mark_presented(phase: str, reference: str, payload: dict[str, Any]) -> None:
-    key = f"_presented_{phase}_{reference}"
+def _mark_presented(reference: str, payload: dict[str, Any]) -> None:
+    key = f"_presented_{reference}"
     if not st.session_state.get(key):
-        _log("profile_presented" if phase == "phase_a" else "artifact_presented", reference=reference, component="candidate", payload=payload)
+        _log(
+            "profile_presented",
+            reference=reference,
+            component="candidate",
+            payload=payload,
+        )
         st.session_state[key] = True
 
 
-def _phase_a(session: Study1Session) -> None:
+def _screening(session: Study1Session) -> None:
     reference = session.current_reference()
     if reference is None:
-        st.rerun()
-    assert reference is not None
+        raise WorkflowError("There is no active validation profile.")
     _mark_presented(
-        "phase_a",
         reference,
-        {"visible_cv_section_count": len(session.cases.phase_a_case(reference).sections)},
+        {
+            "visible_cv_section_count": len(
+                session.cases.participant_case(reference).sections
+            )
+        },
     )
     st.info(
         "Judge the candidate independently against the job description and recruitment policy. "
@@ -272,48 +365,41 @@ def _phase_a(session: Study1Session) -> None:
     )
     _render_cv(reference)
 
-    with st.form(f"phase_a_{reference}", clear_on_submit=False):
+    with st.form(f"screening_{reference}", clear_on_submit=False):
         decision = st.radio(
             "Screening decision",
-            ["Advance to Hire", "Reject"],
+            ["Advance candidate to human interview", "Reject candidate"],
             index=None,
-            key=f"phase_a_decision_{reference}",
+            key=f"screening_decision_{reference}",
         )
-        certification = st.radio(
-            "Which accepted mandatory certification is shown in the profile?",
-            [
-                "IAPP AIGP",
-                "ISO/IEC 42001 Lead Implementer",
-                "Neither accepted certification",
-            ],
-            index=None,
-            key=f"phase_a_certification_{reference}",
+        certification = st.text_input(
+            "Type the accepted mandatory requirement shown in the profile, "
+            "or “None” if it is not present.",
+            key=f"screening_certification_{reference}",
         )
         confidence = st.slider(
-            "Confidence in this decision", 0, 100, 50, format="%d%%",
-            key=f"phase_a_confidence_{reference}",
+            "Confidence in this decision",
+            0,
+            100,
+            50,
+            format="%d%%",
+            key=f"screening_confidence_{reference}",
         )
         decisive_evidence = st.text_area(
             "What evidence was decisive for your judgment?",
             max_chars=1500,
-            key=f"phase_a_evidence_{reference}",
+            key=f"screening_evidence_{reference}",
         )
         ambiguity = st.text_area(
-            "Describe any ambiguity, missing information, or realism concern. Enter “None” if there is none.",
+            "Describe any ambiguity or missing information. Enter “None” if there is none.",
             max_chars=1500,
-            key=f"phase_a_ambiguity_{reference}",
+            key=f"screening_ambiguity_{reference}",
         )
-        suitability = st.selectbox(
-            "Optional: overall suitability apart from the mandatory criterion",
-            [
-                "Not assessed",
-                "Very unsuitable",
-                "Unsuitable",
-                "Neither unsuitable nor suitable",
-                "Suitable",
-                "Very suitable",
-            ],
-            key=f"phase_a_suitability_{reference}",
+        realism_cues = st.text_area(
+            "Does anything feel unrealistic or unintentionally signal how this "
+            "candidate should be classified? Enter “None” if not.",
+            max_chars=1500,
+            key=f"screening_realism_cues_{reference}",
         )
         submitted = st.form_submit_button(
             "Lock and submit judgment", type="primary", use_container_width=True
@@ -321,202 +407,58 @@ def _phase_a(session: Study1Session) -> None:
 
     if submitted:
         try:
-            locked_reference = session.submit_phase_a(
+            locked_reference = session.submit_judgment(
                 {
                     "decision": decision,
-                    "certification": certification,
+                    "certification": certification.strip(),
                     "confidence": confidence,
                     "decisive_evidence": decisive_evidence.strip(),
                     "ambiguity": ambiguity.strip(),
-                    "overall_suitability": suitability,
+                    "realism_cues": realism_cues.strip(),
                 }
             )
         except WorkflowError as exc:
             st.error(str(exc))
             return
         _log(
-            "phase_a_judgment_submitted",
+            "candidate_judgment_submitted",
             reference=locked_reference,
             component="judgment_form",
-            payload=session.state["phase_a_responses"][locked_reference],
-        )
-        if session.phase == "phase_b":
-            _log("phase_a_locked", component="phase_transition", payload={"judgment_count": 6})
-            st.session_state["_show_phase_b_transition"] = True
-        st.rerun()
-
-
-def _render_source(reference: str, source_index: int) -> None:
-    session: Study1Session = st.session_state["_study1_session"]
-    artifact = session.recommendation_artifact()
-    source = artifact.sources[source_index]
-    st.markdown(
-        f'<div class="source-passage"><strong>{source.label}</strong><br>{source.text}</div>',
-        unsafe_allow_html=True,
-    )
-    if st.button("Close source passage", key=f"close_source_{reference}_{source_index}"):
-        _log(
-            "provenance_source_closed",
-            reference=reference,
-            component="source_passage",
-            payload={"source_label": source.label, "source_index": source_index},
-        )
-        st.session_state["_study1_source"] = None
-        st.rerun()
-
-
-def _phase_b(session: Study1Session) -> None:
-    if st.session_state.pop("_show_phase_b_transition", False):
-        st.success(
-            "All independent judgments are now locked. The next phase evaluates whether "
-            "the displayed AI outputs are realistic and clear; it does not reopen your decisions."
-        )
-
-    reference = session.current_reference()
-    if reference is None:
-        st.rerun()
-    assert reference is not None
-    artifact = session.recommendation_artifact()
-    assignment = session.state["artifact_assignments"][reference]
-    _mark_presented(
-        "phase_b",
-        reference,
-        {
-            "artifact_variant": assignment["variant"],
-            "provenance": assignment["provenance"],
-            "anthropomorphic": assignment["anthropomorphic"],
-            "internal_assessment": session.cases.internal_assessment_for_log(reference),
-        },
-    )
-
-    st.info(
-        "Evaluate whether this is a plausible AI screening output. Plausibility is "
-        "separate from whether you agree with the recommendation."
-    )
-    _render_cv(reference)
-    st.markdown(
-        f'<div class="recommendation-panel"><p>{artifact.lead}</p>'
-        f'<p><strong>Assessment rationale</strong><br>{artifact.rationale}</p></div>',
-        unsafe_allow_html=True,
-    )
-
-    if artifact.sources:
-        st.markdown("#### Evidence used")
-        for index, source in enumerate(artifact.sources):
-            if st.button(source.label, key=f"source_{reference}_{index}"):
-                st.session_state["_study1_source"] = index
-                _log(
-                    "provenance_source_opened",
-                    reference=reference,
-                    component="source_passage",
-                    payload={"source_label": source.label, "source_index": index},
-                )
-                st.rerun()
-        active_source = st.session_state.get("_study1_source")
-        if active_source is not None:
-            _render_source(reference, int(active_source))
-            return
-
-    scale = [
-        "1 · Not at all",
-        "2",
-        "3",
-        "4 · Moderately",
-        "5",
-        "6",
-        "7 · Completely",
-    ]
-    with st.form(f"phase_b_{reference}"):
-        ai_plausibility = st.select_slider(
-            "How plausible is it that an AI screening assistant could produce this output?",
-            options=scale,
-            value="4 · Moderately",
-            key=f"phase_b_plausibility_{reference}",
-        )
-        rationale_realism = st.select_slider(
-            "How realistic and coherent is the rationale?",
-            options=scale,
-            value="4 · Moderately",
-            key=f"phase_b_realism_{reference}",
-        )
-        clarity = st.select_slider(
-            "How clear is the recommendation and its basis?",
-            options=scale,
-            value="4 · Moderately",
-            key=f"phase_b_clarity_{reference}",
-        )
-        reveals_error = st.radio(
-            "Does the wording make any intended system error too obvious or artificial?",
-            ["No", "Unsure", "Yes"],
-            index=None,
-            key=f"phase_b_reveals_{reference}",
-        )
-        evidence_accuracy = st.radio(
-            "Does the output invent or misstate evidence from the available materials?",
-            [
-                "No unsupported or misstated evidence",
-                "Unsure",
-                "Contains unsupported or misstated evidence",
-            ],
-            index=None,
-            key=f"phase_b_accuracy_{reference}",
-        )
-        comments = st.text_area(
-            "Optional: note any wording or interface issue that reduces realism.",
-            max_chars=1500,
-            key=f"phase_b_comments_{reference}",
-        )
-        submitted = st.form_submit_button(
-            "Submit artifact review", type="primary", use_container_width=True
-        )
-
-    if submitted:
-        try:
-            reviewed_reference = session.submit_phase_b(
-                {
-                    "ai_plausibility": scale.index(ai_plausibility) + 1,
-                    "rationale_realism": scale.index(rationale_realism) + 1,
-                    "clarity": scale.index(clarity) + 1,
-                    "reveals_error": reveals_error,
-                    "evidence_accuracy": evidence_accuracy,
-                    "comments": comments.strip(),
-                    "artifact_variant": assignment["variant"],
-                }
-            )
-        except WorkflowError as exc:
-            st.error(str(exc))
-            return
-        _log(
-            "phase_b_artifact_submitted",
-            reference=reviewed_reference,
-            component="artifact_form",
-            payload=session.state["phase_b_responses"][reviewed_reference],
+            payload=session.state["responses"][locked_reference],
         )
         if session.complete:
-            _log("session_completed", component="completion", payload={"phase_a_count": 6, "phase_b_count": 6})
-        st.session_state["_study1_source"] = None
+            _log(
+                "session_completed",
+                component="completion",
+                payload={
+                    "judgment_count": 6,
+                    "total_duration_seconds": session.state["total_duration_seconds"],
+                },
+            )
+        _sync_github()
         st.rerun()
 
 
 def _complete(session: Study1Session) -> None:
     st.markdown(
         '<div class="completion-panel"><strong>Task complete</strong><br>'
-        "All independent judgments and recommendation-artifact reviews were recorded.</div>",
+        "All six independent candidate judgments were recorded.</div>",
         unsafe_allow_html=True,
     )
-    secret = st.session_state["_study1_secret"]
-    completion_token = create_completion_token(
-        session_id=session.state["session_id"],
-        linkage_hash=session.state["linkage_hash"],
-        secret=secret,
-    )
-    return_url = safe_qualtrics_return_url(
-        st.session_state.get("_study1_return", ""), completion_token
+    return_url = _build_final_return(
+        str(st.session_state.get("return_raw", "")),
+        str(st.session_state["prolific_pid"]),
+        str(session.state["session_id"]),
     )
     if return_url:
-        st.link_button("Return to survey", return_url, type="primary", use_container_width=True)
+        st.link_button(
+            "Return to survey", return_url, type="primary", use_container_width=True
+        )
     else:
-        st.info("You may now return to the survey tab. No valid Qualtrics return route was supplied.")
+        st.info(
+            "You may now return to the survey tab. No valid Qualtrics return "
+            "route was supplied."
+        )
 
 
 def run() -> None:
@@ -527,9 +469,11 @@ def run() -> None:
         initial_sidebar_state="expanded",
     )
     _apply_theme()
+    _read_launch_params()
+    _prolific_gate()
     try:
         _initialize()
-    except TokenError as exc:
+    except WorkflowError as exc:
         st.error(f"Study link unavailable: {exc}")
         st.stop()
 
@@ -537,9 +481,7 @@ def run() -> None:
     _header(session)
     if _document_navigation(session):
         return
-    if session.phase == "phase_a":
-        _phase_a(session)
-    elif session.phase == "phase_b":
-        _phase_b(session)
+    if session.phase == "screening":
+        _screening(session)
     else:
         _complete(session)

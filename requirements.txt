@@ -1,13 +1,1 @@
 streamlit>=1.31.0
-openai>=2.0.0
-numpy>=1.26.0
-PyYAML>=6.0
-requests>=2.31.0
-chromadb>=1.0.0
-langchain>=1.0.0
-langchain-openai>=1.0.0
-langchain-community>=0.3.0
-faiss-cpu>=1.7.0
-langchain-text-splitters>=1.0.0
-pypdf>=5.0.0
-sentence-transformers>=3.0.0

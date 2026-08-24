@@ -10,6 +10,7 @@
 .env.*
 !.env.example
 .streamlit/secrets.toml
+.streamlit/secrets.toml *
 .venv/
 venv/
 
@@ -37,16 +38,13 @@ __pycache__/
 **/data/processed/**
 **/data/private/**
 **/interaction_logs/**
-data_clean/
 *.sav
 
 # Generated outputs may contain participant-level or derived data.
 outputs/*
 !outputs/.gitkeep
 
-# Generated vector databases are rebuilt from versioned study materials.
-**/vector_store/
-
 # Local scratch and incoming files are not publication artifacts.
 docs/incoming/*
 !docs/incoming/README.md
+docs/CHI2027/PROJECT_HANDOFF*.md
