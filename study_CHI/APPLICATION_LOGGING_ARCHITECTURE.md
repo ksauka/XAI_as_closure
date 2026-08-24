@@ -82,7 +82,7 @@ Anthropomorphic delivery is also frozen. The audit payload records
 `anthrokit-hiring-study2-v2` and its assigned LowA or HighA token preset, while
 participant state contains the complete paired response card, condition-visible
 sources, and any bounded evidence-examination history.
-Study 2 uses `study2-state-v6`, `study2-event-v6`, and `study2-app-v6` so pilot
+Study 2 uses `study2-state-v6`, `study2-event-v7`, and `study2-app-v7` so pilot
 sessions created before the frozen delivery specification cannot be mixed with
 the active instrument.
 
@@ -127,7 +127,9 @@ Study 1 records, where applicable:
 
 - session created and resumed;
 - launch-token validation;
-- role and policy opened or revisited;
+- every role and policy opening or revisit, paired to its return event by a
+  document-visit identifier, with click-to-return and visible-document dwell
+  time until the expert returns to the candidate;
 - randomized profile order;
 - profile and section visibility;
 - candidate decision, certification classification, confidence, decisive
@@ -150,7 +152,9 @@ Study 2 records, where applicable:
 - AI recommendation and rendering displayed;
 - bounded evidence-examination selection and agent response;
 - provenance source labels and passage links displayed;
-- link opening, passage visibility, return, and dwell;
+- every reference-document and evidence-card opening, paired return,
+  click-to-return time, and visible-document dwell time until the participant
+  returns to the candidate;
 - cognitive-forcing prompt, document access, submitted response, completion, and
   elapsed time;
 - aided decision, confidence, and timing;

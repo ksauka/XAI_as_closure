@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qsl, unquote, urlencode, urlparse, urlunparse
+from uuid import uuid4
 
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
@@ -317,6 +318,10 @@ def _header(session: Study1Session) -> None:
 def _document_navigation(session: Study1Session) -> bool:
     view = st.session_state.get("_study1_document")
     if view:
+        visit = st.session_state.get("_study1_document_visit") or {}
+        if not isinstance(visit.get("viewed_at_monotonic"), (int, float)):
+            visit["viewed_at_monotonic"] = time.perf_counter()
+            st.session_state["_study1_document_visit"] = visit
         title, path = (
             ("AI Governance Lead job description", ROLE_PATH)
             if view == "role"
@@ -324,22 +329,90 @@ def _document_navigation(session: Study1Session) -> bool:
         )
         st.subheader(title)
         st.markdown(path.read_text(encoding="utf-8"))
-        if st.button("Back to candidate", type="primary", key=f"back_{view}"):
-            _log("document_closed", component=view, payload={"document": view})
+        return_target = "candidate" if session.phase == "screening" else "completion"
+        back_label = (
+            "Back to candidate"
+            if return_target == "candidate"
+            else "Back to task completion"
+        )
+        if st.button(back_label, type="primary", key=f"back_{view}"):
+            returned_at = time.perf_counter()
+            clicked_at = visit.get("clicked_at_monotonic")
+            viewed_at = visit.get("viewed_at_monotonic")
+            click_to_return_seconds = (
+                round(returned_at - float(clicked_at), 3)
+                if isinstance(clicked_at, (int, float))
+                else None
+            )
+            dwell_seconds = (
+                round(returned_at - float(viewed_at), 3)
+                if isinstance(viewed_at, (int, float))
+                else None
+            )
+            _log(
+                "document_closed",
+                reference=session.current_reference(),
+                component=view,
+                payload={
+                    "document_visit_id": visit.get("document_visit_id"),
+                    "document": view,
+                    "origin": visit.get("origin"),
+                    "return_target": return_target,
+                    "click_to_return_seconds": click_to_return_seconds,
+                    "dwell_seconds": dwell_seconds,
+                },
+            )
             st.session_state["_study1_document"] = None
+            st.session_state["_study1_document_visit"] = None
+            _sync_github()
             st.rerun()
         return True
 
+    reference = session.current_reference()
     with st.sidebar:
         st.subheader("Reference documents")
         st.caption("These documents remain available throughout the task.")
         if st.button("Open job description", use_container_width=True):
+            visit = {
+                "document_visit_id": uuid4().hex,
+                "document": "role",
+                "origin": "sidebar_reference_documents",
+                "clicked_at_monotonic": time.perf_counter(),
+            }
             st.session_state["_study1_document"] = "role"
-            _log("document_opened", component="role", payload={"document": "role"})
+            st.session_state["_study1_document_visit"] = visit
+            _log(
+                "document_opened",
+                reference=reference,
+                component="role",
+                payload={
+                    key: value
+                    for key, value in visit.items()
+                    if not key.endswith("_monotonic")
+                },
+            )
+            _sync_github()
             st.rerun()
         if st.button("Open recruitment policy", use_container_width=True):
+            visit = {
+                "document_visit_id": uuid4().hex,
+                "document": "policy",
+                "origin": "sidebar_reference_documents",
+                "clicked_at_monotonic": time.perf_counter(),
+            }
             st.session_state["_study1_document"] = "policy"
-            _log("document_opened", component="policy", payload={"document": "policy"})
+            st.session_state["_study1_document_visit"] = visit
+            _log(
+                "document_opened",
+                reference=reference,
+                component="policy",
+                payload={
+                    key: value
+                    for key, value in visit.items()
+                    if not key.endswith("_monotonic")
+                },
+            )
+            _sync_github()
             st.rerun()
         st.divider()
         st.caption(
@@ -487,10 +560,7 @@ def _complete(session: Study1Session) -> None:
             "Return to survey", return_url, type="primary", use_container_width=True
         )
     else:
-        st.info(
-            "You may now return to the survey tab. No valid Qualtrics return "
-            "route was supplied."
-        )
+        st.info("Please return to your survey tab and continue.")
 
 
 def run() -> None:

@@ -9,6 +9,7 @@ import time
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qsl, unquote, urlencode, urlparse, urlunparse
+from uuid import uuid4
 
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
@@ -272,6 +273,14 @@ def _document_view(session: Study2Session) -> bool:
     view = st.session_state.get("_study2_document")
     if not view:
         return False
+    visit = st.session_state.get("_study2_document_visit") or {}
+    if not isinstance(visit.get("clicked_at_monotonic"), (int, float)):
+        legacy_opened_at = st.session_state.get("_study2_document_opened_at")
+        if isinstance(legacy_opened_at, (int, float)):
+            visit["clicked_at_monotonic"] = legacy_opened_at
+    if not isinstance(visit.get("viewed_at_monotonic"), (int, float)):
+        visit["viewed_at_monotonic"] = time.perf_counter()
+    st.session_state["_study2_document_visit"] = visit
     if view in {"role", "policy"}:
         title, path = (
             ("AI Governance Lead job description", ROLE_PATH)
@@ -316,10 +325,17 @@ def _document_view(session: Study2Session) -> bool:
             if session.state.get("introduction_step") == "complete"
             else None
         )
-        opened_at = st.session_state.get("_study2_document_opened_at")
+        returned_at = time.perf_counter()
+        clicked_at = visit.get("clicked_at_monotonic")
+        viewed_at = visit.get("viewed_at_monotonic")
+        click_to_return_seconds = (
+            round(returned_at - float(clicked_at), 3)
+            if isinstance(clicked_at, (int, float))
+            else None
+        )
         dwell_seconds = (
-            round(time.perf_counter() - float(opened_at), 3)
-            if isinstance(opened_at, (int, float))
+            round(returned_at - float(viewed_at), 3)
+            if isinstance(viewed_at, (int, float))
             else None
         )
         active_source = st.session_state.get("_study2_active_source") or {}
@@ -328,8 +344,16 @@ def _document_view(session: Study2Session) -> bool:
             reference=reference,
             component=view,
             payload={
+                "document_visit_id": visit.get("document_visit_id"),
                 "document": view,
+                "origin": visit.get("origin"),
                 "source_label": active_source.get("label"),
+                "return_target": (
+                    "candidate"
+                    if session.state.get("introduction_step") == "complete"
+                    else "study_introduction"
+                ),
+                "click_to_return_seconds": click_to_return_seconds,
                 "dwell_seconds": dwell_seconds,
             },
         )
@@ -337,6 +361,8 @@ def _document_view(session: Study2Session) -> bool:
         st.session_state["_study2_document_focus"] = None
         st.session_state["_study2_active_source"] = None
         st.session_state["_study2_document_opened_at"] = None
+        st.session_state["_study2_document_visit"] = None
+        _sync_github()
         st.rerun()
     return True
 
@@ -350,24 +376,68 @@ def _sidebar(session: Study2Session) -> None:
     with st.sidebar:
         st.subheader("Reference documents")
         st.caption("Available throughout every candidate trial.")
-        if st.button("Open job description", use_container_width=True):
+        document_active = bool(st.session_state.get("_study2_document"))
+        if document_active:
+            st.caption("Use the return button in the document before opening another.")
+        if st.button(
+            "Open job description",
+            use_container_width=True,
+            disabled=document_active,
+        ):
+            visit = {
+                "document_visit_id": uuid4().hex,
+                "document": "role",
+                "origin": "sidebar_reference_documents",
+                "clicked_at_monotonic": time.perf_counter(),
+            }
             st.session_state["_study2_document"] = "role"
             st.session_state["_study2_document_focus"] = None
-            st.session_state["_study2_document_opened_at"] = time.perf_counter()
+            st.session_state["_study2_active_source"] = None
+            st.session_state["_study2_document_opened_at"] = visit[
+                "clicked_at_monotonic"
+            ]
+            st.session_state["_study2_document_visit"] = visit
             _log(
                 "document_opened",
                 reference=active_reference,
                 component="role",
+                payload={
+                    key: value
+                    for key, value in visit.items()
+                    if not key.endswith("_monotonic")
+                },
             )
+            _sync_github()
             st.rerun()
-        if st.button("Open recruitment policy", use_container_width=True):
+        if st.button(
+            "Open recruitment policy",
+            use_container_width=True,
+            disabled=document_active,
+        ):
+            visit = {
+                "document_visit_id": uuid4().hex,
+                "document": "policy",
+                "origin": "sidebar_reference_documents",
+                "clicked_at_monotonic": time.perf_counter(),
+            }
             st.session_state["_study2_document"] = "policy"
-            st.session_state["_study2_document_opened_at"] = time.perf_counter()
+            st.session_state["_study2_document_focus"] = None
+            st.session_state["_study2_active_source"] = None
+            st.session_state["_study2_document_opened_at"] = visit[
+                "clicked_at_monotonic"
+            ]
+            st.session_state["_study2_document_visit"] = visit
             _log(
                 "document_opened",
                 reference=active_reference,
                 component="policy",
+                payload={
+                    key: value
+                    for key, value in visit.items()
+                    if not key.endswith("_monotonic")
+                },
             )
+            _sync_github()
             st.rerun()
         st.divider()
         st.caption("The AI is advisory. You make every final screening decision.")
@@ -477,22 +547,32 @@ def _render_agent_output(session: Study2Session, reference: str) -> None:
                         help=str(source["label"]),
                         use_container_width=True,
                     ):
+                        visit = {
+                            "document_visit_id": uuid4().hex,
+                            "document": "source",
+                            "origin": "ai_evidence_card",
+                            "clicked_at_monotonic": time.perf_counter(),
+                        }
                         st.session_state["_study2_active_source"] = source
                         st.session_state["_study2_document"] = "source"
-                        st.session_state["_study2_document_opened_at"] = (
-                            time.perf_counter()
-                        )
+                        st.session_state["_study2_document_opened_at"] = visit[
+                            "clicked_at_monotonic"
+                        ]
+                        st.session_state["_study2_document_visit"] = visit
                         _log(
                             "citation_clicked",
                             reference=reference,
                             component="source_passage",
                             payload={
+                                "document_visit_id": visit["document_visit_id"],
                                 "citation_id": source["label"],
                                 "document": _source_chip_label(source),
+                                "origin": visit["origin"],
                                 "source_label": source["label"],
                                 "source_index": index,
                             },
                         )
+                        _sync_github()
                         st.rerun()
         for challenge in output.get("challenge_history", []):
             st.divider()
@@ -561,16 +641,30 @@ def _forcing(session: Study2Session, reference: str) -> None:
         key=f"forcing_role_{reference}",
         use_container_width=True,
     ):
+        visit = {
+            "document_visit_id": uuid4().hex,
+            "document": "role",
+            "origin": "cognitive_forcing_prompt",
+            "clicked_at_monotonic": time.perf_counter(),
+        }
         st.session_state["_study2_document"] = "role"
         st.session_state["_study2_document_focus"] = "4.1"
-        st.session_state["_study2_document_opened_at"] = time.perf_counter()
+        st.session_state["_study2_active_source"] = None
+        st.session_state["_study2_document_opened_at"] = visit["clicked_at_monotonic"]
+        st.session_state["_study2_document_visit"] = visit
         _log(
             "document_opened",
             reference=reference,
             phase="forcing",
             component="role",
-            payload={"document": "role", "focus_section": "4.1"},
+            payload={
+                "document_visit_id": visit["document_visit_id"],
+                "document": "role",
+                "origin": visit["origin"],
+                "focus_section": "4.1",
+            },
         )
+        _sync_github()
         st.rerun()
     with st.form(f"forcing_{reference}"):
         mandatory_requirement = st.text_area(
@@ -701,7 +795,7 @@ def _complete(session: Study2Session) -> None:
     if return_url:
         st.link_button("Return to survey", return_url, type="primary")
     else:
-        st.info("You may now return to the survey tab.")
+        st.info("Please return to your survey tab and continue.")
 
 
 def run(locked_condition_id: str) -> None:

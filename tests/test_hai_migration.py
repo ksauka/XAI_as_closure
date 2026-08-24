@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -139,6 +140,141 @@ class MigratedInfrastructureTests(unittest.TestCase):
         self.assertTrue(
             any("storage is not configured" in error.value for error in app.error)
         )
+
+    def test_each_document_visit_is_paired_and_timed_in_both_studies(self) -> None:
+        app_root = Path(__file__).resolve().parents[1] / "apps"
+        with tempfile.TemporaryDirectory() as directory:
+            app = AppTest.from_file(str(app_root / "study1_validation.py"))
+            app.query_params = {"PROLIFIC_PID": "study1-document-visit"}
+            app.secrets = {
+                "GITHUB_REPO": "owner/private-study-data",
+                "GITHUB_TOKEN": "test-token",
+                "STUDY1_DATA_ROOT": directory,
+            }
+            with (
+                patch(
+                    "xai_as_closure.study1_app.test_github_connection",
+                    return_value=(True, "connected"),
+                ),
+                patch(
+                    "xai_as_closure.study1_app.save_to_github",
+                    return_value=(True, None),
+                ) as save,
+            ):
+                app.run(timeout=20)
+                next(
+                    button
+                    for button in app.button
+                    if button.label == "Open job description"
+                ).click()
+                app.run(timeout=20)
+                next(
+                    button
+                    for button in app.button
+                    if button.label == "Back to candidate"
+                ).click()
+                app.run(timeout=20)
+            event_path = next((Path(directory) / "events").glob("*.jsonl"))
+            events = [
+                json.loads(line)
+                for line in event_path.read_text(encoding="utf-8").splitlines()
+            ]
+            document_events = [
+                event
+                for event in events
+                if event["event_type"] in {"document_opened", "document_closed"}
+            ]
+            self._assert_paired_document_visit(document_events, "role")
+            self.assertGreaterEqual(save.call_count, 2)
+
+        with tempfile.TemporaryDirectory() as directory:
+            app = AppTest.from_file(str(app_root / "study2_01_lowP_lowA_noF.py"))
+            app.query_params = {
+                "PROLIFIC_PID": "study2-document-visit",
+                "cond": "P0_A0_F0",
+            }
+            app.secrets = {
+                "GITHUB_REPO": "owner/private-study-data",
+                "GITHUB_TOKEN": "test-token",
+                "STUDY2_DATA_ROOT": directory,
+            }
+            with (
+                patch(
+                    "xai_as_closure.study2_app.test_github_connection",
+                    return_value=(True, "connected"),
+                ),
+                patch(
+                    "xai_as_closure.logger.save_to_github",
+                    return_value=(True, None),
+                ) as save,
+            ):
+                app.run(timeout=20)
+                for label in (
+                    "Continue to role description",
+                    "Continue to recruitment policy",
+                    "Begin candidate screening",
+                ):
+                    next(
+                        button for button in app.button if button.label == label
+                    ).click()
+                    app.run(timeout=20)
+                next(
+                    button
+                    for button in app.button
+                    if button.label == "Open recruitment policy"
+                ).click()
+                app.run(timeout=20)
+                self.assertTrue(
+                    next(
+                        button
+                        for button in app.button
+                        if button.label == "Open job description"
+                    ).disabled
+                )
+                next(
+                    button
+                    for button in app.button
+                    if button.label == "Back to candidate"
+                ).click()
+                app.run(timeout=20)
+            event_path = next(Path(directory).glob("*.jsonl"))
+            events = [
+                json.loads(line)
+                for line in event_path.read_text(encoding="utf-8").splitlines()
+            ]
+            document_events = [
+                event
+                for event in events
+                if event["event_type"] in {"document_opened", "document_closed"}
+            ]
+            self._assert_paired_document_visit(document_events, "policy")
+            self.assertGreaterEqual(save.call_count, 2)
+
+    def _assert_paired_document_visit(
+        self, events: list[dict[str, object]], expected_document: str
+    ) -> None:
+        self.assertEqual(
+            [event["event_type"] for event in events],
+            [
+                "document_opened",
+                "document_closed",
+            ],
+        )
+        opened, closed = events
+        opened_payload = opened["payload"]
+        closed_payload = closed["payload"]
+        self.assertIsInstance(opened_payload, dict)
+        self.assertIsInstance(closed_payload, dict)
+        self.assertEqual(opened_payload["document"], expected_document)
+        self.assertEqual(
+            opened_payload["document_visit_id"],
+            closed_payload["document_visit_id"],
+        )
+        self.assertEqual(closed_payload["return_target"], "candidate")
+        self.assertGreaterEqual(closed_payload["click_to_return_seconds"], 0)
+        self.assertGreaterEqual(closed_payload["dwell_seconds"], 0)
+        self.assertTrue(opened["trial_reference"])
+        self.assertEqual(opened["trial_reference"], closed["trial_reference"])
 
     def test_github_archive_uses_the_hai_logger_and_event_payload(self) -> None:
         cases = CaseRepository()

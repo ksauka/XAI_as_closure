@@ -289,8 +289,8 @@ class TokenAndStorageTests(unittest.TestCase):
             self.assertEqual(second["event_id"], f"{session_id}:000002")
             restored = store.load(session_id)
             self.assertEqual(restored["event_sequence"], 2)
-            self.assertEqual(second["schema_version"], "study1-event-v2")
-            self.assertEqual(second["application_version"], "study1-app-v2")
+            self.assertEqual(second["schema_version"], "study1-event-v3")
+            self.assertEqual(second["application_version"], "study1-app-v3")
             self.assertEqual(
                 (Path(directory) / "sessions").stat().st_mode & 0o777,
                 0o700,

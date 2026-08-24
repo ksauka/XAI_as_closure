@@ -115,7 +115,7 @@ Led delivery of AI and machine-learning projects from business case to operation
 Coordinated cross-functional technology programmes, managing stakeholders, delivery milestones, and reporting in a fast-moving environment.  
 
 **Certifications**  
-PMI Certified Professional in Managing AI (PMI-CPMAI), current and valid. This is an AI project management certification.  
+PMI Certified Professional in Managing AI (PMI-CPMAI), current and valid.
 
 **Skills and Knowledge**  
 AI and machine-learning project delivery; generative AI familiarity; stakeholder management across business and technical teams; awareness of Responsible AI and the EU AI Act.  

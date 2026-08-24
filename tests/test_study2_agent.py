@@ -301,8 +301,8 @@ class Study2InfrastructureTests(unittest.TestCase):
                 component="launch",
                 payload={"condition_id": condition.condition_id},
             )
-            self.assertEqual(event["schema_version"], "study2-event-v6")
-            self.assertEqual(event["application_version"], "study2-app-v6")
+            self.assertEqual(event["schema_version"], "study2-event-v7")
+            self.assertEqual(event["application_version"], "study2-app-v7")
             self.assertEqual(event["condition_id"], condition.condition_id)
             self.assertEqual(event["participant_id"], "prolific-test")
             self.assertEqual(logger.read_events(), [event])
