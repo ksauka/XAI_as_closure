@@ -288,32 +288,21 @@ def _document_view(session: Study2Session) -> bool:
             else ("Recruitment policy", POLICY_PATH)
         )
         st.subheader(title)
-        if view == "role" and st.session_state.get("_study2_document_focus") == "4.1":
-            st.caption(
-                "Complete job description · current focus: Section 4.1 Mandatory Certification"
-            )
+        focus = str(st.session_state.get("_study2_document_focus") or "")
+        if focus:
+            prefix = "JD" if view == "role" else "POL"
+            st.caption(f"Complete document · current focus: {prefix} §{focus}")
         st.markdown(path.read_text(encoding="utf-8"))
-    elif view == "source":
-        source = st.session_state.get("_study2_active_source", {})
-        st.subheader(str(source.get("label", "Evidence passage")))
-        st.caption("Highlighted passage used in the AI assessment")
-        st.info(f"**{source.get('heading', '')}**\n\n{source.get('text', '')}")
-        st.markdown("#### Complete source document")
-        label = str(source.get("label", ""))
-        if label.startswith("Job description"):
-            st.markdown(ROLE_PATH.read_text(encoding="utf-8"))
-        elif label.startswith("Recruitment policy"):
-            st.markdown(POLICY_PATH.read_text(encoding="utf-8"))
-        elif label.startswith("Candidate "):
-            case = session.cases.participant_case(
-                session.current_reference() or str(source.get("reference", ""))
-            )
-            for section in case.sections:
-                if section.heading == source.get("heading"):
-                    st.warning(f"**{section.heading}**\n\n{section.text}")
-                else:
-                    st.markdown(f"**{section.heading}**")
-                    st.write(section.text)
+    elif view == "cv":
+        reference = session.current_reference()
+        if reference is None:
+            raise Study2WorkflowError("There is no active candidate document.")
+        st.subheader(f"Candidate {reference} Curriculum vitae")
+        _render_cv_document(
+            session,
+            reference,
+            str(st.session_state.get("_study2_document_focus") or ""),
+        )
     back_label = (
         "Back to candidate"
         if session.state.get("introduction_step") == "complete"
@@ -347,7 +336,8 @@ def _document_view(session: Study2Session) -> bool:
                 "document_visit_id": visit.get("document_visit_id"),
                 "document": view,
                 "origin": visit.get("origin"),
-                "source_label": active_source.get("label"),
+                "citation_id": active_source.get("citation"),
+                "citation": active_source.get("citation"),
                 "return_target": (
                     "candidate"
                     if session.state.get("introduction_step") == "complete"
@@ -501,31 +491,98 @@ def _introduction(session: Study2Session) -> None:
 
 
 def _source_chip_label(source: dict[str, Any]) -> str:
-    """Return the compact citation labels used by the original HAI interface."""
-    label = str(source.get("label", ""))
-    section = re.search(r"Section (\d+\.\d+)", label)
-    if label.startswith("Job description"):
-        return f"[Role §{section.group(1)}]" if section else "[Role]"
-    if label.startswith("Recruitment policy"):
-        return f"[Policy §{section.group(1)}]" if section else "[Policy]"
-    heading = str(source.get("heading", "CV evidence"))
-    return f"[CV · {heading}]"
+    """Return a neutral participant-facing document locator."""
+    citation = str(source.get("citation", "Document"))
+    return f"[{citation}]"
+
+
+def _render_cv_document(
+    session: Study2Session, reference: str, focus: str = ""
+) -> None:
+    """Render a complete, neutrally numbered CV with an optional focus locator."""
+    case = session.cases.participant_case(reference)
+    in_experience = False
+    for section in case.sections:
+        role = re.fullmatch(r"cv_role_(\d+)", section.id)
+        if role:
+            if not in_experience:
+                st.markdown("#### §3 Experience")
+                in_experience = True
+            paragraph = role.group(1)
+            st.markdown(f"##### ¶{paragraph} {section.heading}")
+            if focus == f"3.{paragraph}":
+                st.caption(f"Current focus: CV §3 ¶{paragraph}")
+        else:
+            in_experience = False
+            section_number = {
+                "cv_summary": "1",
+                "cv_education": "2",
+                "cv_certifications": "4",
+                "cv_skills": "5",
+                "cv_hobbies": "6",
+            }[section.id]
+            st.markdown(f"#### §{section_number} {section.heading}")
+            if focus == section_number:
+                st.caption(f"Current focus: CV §{section_number}")
+        st.write(section.text)
 
 
 def _render_candidate(session: Study2Session, reference: str) -> None:
-    case = session.cases.participant_case(reference)
-    st.subheader(f"Candidate {case.reference} Curriculum vitae")
-    in_experience = False
-    for section in case.sections:
-        if section.id.startswith("cv_role_"):
-            if not in_experience:
-                st.markdown("#### Experience")
-                in_experience = True
-            st.markdown(f"##### {section.heading}")
-        else:
-            in_experience = False
-            st.markdown(f"#### {section.heading}")
-        st.write(section.text)
+    st.subheader(f"Candidate {reference} Curriculum vitae")
+    _render_cv_document(session, reference)
+
+
+def _render_message_citations(
+    reference: str,
+    sources: list[dict[str, Any]],
+    *,
+    block_index: int,
+) -> None:
+    if not sources:
+        return
+    columns = st.columns(min(len(sources), 3))
+    for citation_index, source in enumerate(sources):
+        with columns[citation_index % len(columns)]:
+            citation = _source_chip_label(source)
+            if st.button(
+                citation,
+                key=(
+                    f"source_{reference}_{block_index}_{citation_index}_"
+                    f"{source.get('document', '')}_{source.get('focus', '')}"
+                ),
+                help=f"Open {citation} in the complete source document",
+                use_container_width=True,
+            ):
+                visit = {
+                    "document_visit_id": uuid4().hex,
+                    "document": str(source.get("document", "")),
+                    "origin": "ai_message_citation",
+                    "clicked_at_monotonic": time.perf_counter(),
+                }
+                st.session_state["_study2_active_source"] = source
+                st.session_state["_study2_document"] = visit["document"]
+                st.session_state["_study2_document_focus"] = source.get("focus")
+                st.session_state["_study2_document_opened_at"] = visit[
+                    "clicked_at_monotonic"
+                ]
+                st.session_state["_study2_document_visit"] = visit
+                _log(
+                    "citation_clicked",
+                    reference=reference,
+                    component="message_citation",
+                    payload={
+                        "document_visit_id": visit["document_visit_id"],
+                        "citation_id": source.get("citation"),
+                        "citation": citation,
+                        "document": visit["document"],
+                        "focus": source.get("focus"),
+                        "origin": visit["origin"],
+                        "message_block_index": block_index,
+                        "citation_index": citation_index,
+                    },
+                )
+                _sync_github()
+                st.rerun()
 
 
 def _render_agent_output(session: Study2Session, reference: str) -> None:
@@ -534,46 +591,17 @@ def _render_agent_output(session: Study2Session, reference: str) -> None:
         return
     with st.chat_message("assistant"):
         st.caption(str(output["speaker_label"]))
-        st.markdown(str(output["text"]))
-        sources = output.get("visible_sources", [])
-        if sources:
-            st.markdown("**Inspect evidence used**")
-            columns = st.columns(min(len(sources), 3))
-            for index, source in enumerate(sources):
-                with columns[index % len(columns)]:
-                    if st.button(
-                        _source_chip_label(source),
-                        key=f"source_{reference}_{index}",
-                        help=str(source["label"]),
-                        use_container_width=True,
-                    ):
-                        visit = {
-                            "document_visit_id": uuid4().hex,
-                            "document": "source",
-                            "origin": "ai_evidence_card",
-                            "clicked_at_monotonic": time.perf_counter(),
-                        }
-                        st.session_state["_study2_active_source"] = source
-                        st.session_state["_study2_document"] = "source"
-                        st.session_state["_study2_document_opened_at"] = visit[
-                            "clicked_at_monotonic"
-                        ]
-                        st.session_state["_study2_document_visit"] = visit
-                        _log(
-                            "citation_clicked",
-                            reference=reference,
-                            component="source_passage",
-                            payload={
-                                "document_visit_id": visit["document_visit_id"],
-                                "citation_id": source["label"],
-                                "document": _source_chip_label(source),
-                                "origin": visit["origin"],
-                                "source_label": source["label"],
-                                "source_index": index,
-                            },
-                        )
-                        _sync_github()
-                        st.rerun()
+        blocks = output.get("message_blocks", [])
+        if blocks:
+            for block_index, block in enumerate(blocks):
+                st.markdown(str(block["text"]))
+                _render_message_citations(
+                    reference,
+                    list(block.get("citations", [])),
+                    block_index=block_index,
+                )
+        else:
+            st.markdown(str(output["text"]))
         for challenge in output.get("challenge_history", []):
             st.divider()
             st.markdown(f"**{challenge['prompt_label']}**")
@@ -696,36 +724,42 @@ def _aided(session: Study2Session, reference: str) -> None:
         if session.condition.anthropomorphic
         else LOW_ANTHROPOMORPHISM
     )
-    with st.expander(preset.examination_intro):
-        kind = st.selectbox(
-            "Select an area to examine",
-            options=list(CHALLENGE_LABELS),
-            format_func=lambda value: CHALLENGE_LABELS[value],
-            index=None,
-            key=f"challenge_kind_{reference}",
-        )
-        if st.button(
-            preset.examination_button,
-            key=f"challenge_submit_{reference}",
-            use_container_width=True,
-        ):
-            if kind is None:
-                st.info("Select an area before continuing.")
-            else:
-                agent: Study2DecisionAgent = st.session_state["_study2_agent"]
-                try:
-                    response = session.examine_agent_assessment(agent, kind)
-                except (KeyError, RuntimeError, Study2WorkflowError, ValueError) as exc:
-                    st.error(str(exc))
+    if session.condition.explanation:
+        with st.expander(preset.examination_intro):
+            kind = st.selectbox(
+                "Select an area to examine",
+                options=list(CHALLENGE_LABELS),
+                format_func=lambda value: CHALLENGE_LABELS[value],
+                index=None,
+                key=f"challenge_kind_{reference}",
+            )
+            if st.button(
+                preset.examination_button,
+                key=f"challenge_submit_{reference}",
+                use_container_width=True,
+            ):
+                if kind is None:
+                    st.info("Select an area before continuing.")
                 else:
-                    _log(
-                        "agent_evidence_examined",
-                        reference=reference,
-                        phase="aided",
-                        component="agent_challenge",
-                        payload=response,
-                    )
-                    st.rerun()
+                    agent: Study2DecisionAgent = st.session_state["_study2_agent"]
+                    try:
+                        response = session.examine_agent_assessment(agent, kind)
+                    except (
+                        KeyError,
+                        RuntimeError,
+                        Study2WorkflowError,
+                        ValueError,
+                    ) as exc:
+                        st.error(str(exc))
+                    else:
+                        _log(
+                            "agent_evidence_examined",
+                            reference=reference,
+                            phase="aided",
+                            component="agent_challenge",
+                            payload=response,
+                        )
+                        st.rerun()
     with st.form(f"aided_{reference}"):
         decision = st.radio(
             "Final screening decision",

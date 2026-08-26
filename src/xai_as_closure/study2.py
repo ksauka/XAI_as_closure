@@ -389,6 +389,47 @@ class Study2Session:
             )
         if phase in {"aided", "recall"} and "agent_output" not in current_trial:
             raise Study2WorkflowError("The current trial is missing its AI assessment.")
+        trials_with_output = [
+            trial for trial in trials.values() if "agent_output" in trial
+        ]
+        for trial in trials_with_output:
+            output = trial["agent_output"]
+            if not isinstance(output, dict):
+                raise Study2WorkflowError("Stored AI assessment is invalid.")
+            if output.get("explanation_present") is not self.condition.explanation:
+                raise Study2WorkflowError(
+                    "Stored AI assessment does not match the explanation condition."
+                )
+            rationale = output.get("rationale")
+            visible_sources = output.get("visible_sources")
+            message_blocks = output.get("message_blocks")
+            if not isinstance(message_blocks, list) or not message_blocks:
+                raise Study2WorkflowError(
+                    "Stored AI assessment is missing its conversational message."
+                )
+            block_citations = [
+                citation
+                for block in message_blocks
+                if isinstance(block, dict)
+                for citation in block.get("citations", [])
+            ]
+            if self.condition.explanation:
+                if (
+                    not str(rationale or "").strip()
+                    or not visible_sources
+                    or not block_citations
+                ):
+                    raise Study2WorkflowError(
+                        "Explanation-present assessment is missing its evidence."
+                    )
+            elif rationale is not None or visible_sources or block_citations:
+                raise Study2WorkflowError(
+                    "Explanation-absent assessment exposes explanatory evidence."
+                )
+            if not self.condition.explanation and output.get("challenge_history"):
+                raise Study2WorkflowError(
+                    "Explanation-absent assessment contains evidence examination."
+                )
         if phase == "recall" and "aided" not in current_trial:
             raise Study2WorkflowError(
                 "The current trial is missing its aided decision."

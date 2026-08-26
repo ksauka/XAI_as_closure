@@ -47,14 +47,18 @@ class ParticipantCase:
 
 @dataclass(frozen=True)
 class EvidencePassage:
+    source_id: str
     label: str
+    citation: str
+    document: str
+    focus: str
     heading: str
     text: str
 
 
 @dataclass(frozen=True)
 class ArtifactVariant:
-    provenance: bool
+    explanation: bool
     anthropomorphic: bool
 
 
@@ -65,7 +69,7 @@ class RecommendationArtifact:
     rationale: str
     delivery: DeliveryCard
     sources: tuple[EvidencePassage, ...]
-    provenance: bool
+    explanation: bool
     anthropomorphic: bool
 
 
@@ -94,6 +98,24 @@ def _clauses(path: Path) -> dict[str, tuple[str, str]]:
             number, title, text = match.groups()
             clauses[number] = (f"{number} {title}", text.strip())
     return clauses
+
+
+def _cv_citation(section_id: str) -> tuple[str, str]:
+    """Return a neutral, stable participant locator for one CV section."""
+    fixed = {
+        "cv_summary": ("CV §1", "1"),
+        "cv_education": ("CV §2", "2"),
+        "cv_certifications": ("CV §4", "4"),
+        "cv_skills": ("CV §5", "5"),
+        "cv_hobbies": ("CV §6", "6"),
+    }
+    if section_id in fixed:
+        return fixed[section_id]
+    role = re.fullmatch(r"cv_role_(\d+)", section_id)
+    if role:
+        paragraph = role.group(1)
+        return f"CV §3 ¶{paragraph}", f"3.{paragraph}"
+    raise ValueError(f"Unsupported CV section identifier: {section_id}")
 
 
 class CaseRepository:
@@ -151,9 +173,13 @@ class CaseRepository:
         case = self._case(reference)
         assessment = case["fixed_assessment"]
         recommendation = str(assessment["recommendation"])
-        delivery = delivery_card(reference, anthropomorphic=variant.anthropomorphic)
+        delivery = delivery_card(
+            reference,
+            explanation=variant.explanation,
+            anthropomorphic=variant.anthropomorphic,
+        )
         sources: tuple[EvidencePassage, ...] = ()
-        if variant.provenance:
+        if variant.explanation:
             sources = tuple(
                 self._resolve_source(case, source_id)
                 for source_id in assessment["supporting_ids"]
@@ -164,7 +190,7 @@ class CaseRepository:
             rationale=str(assessment["rationale"]),
             delivery=delivery,
             sources=sources,
-            provenance=variant.provenance,
+            explanation=variant.explanation,
             anthropomorphic=variant.anthropomorphic,
         )
 
@@ -178,7 +204,7 @@ class CaseRepository:
         }
 
     def assessment_sources(self, reference: str) -> tuple[EvidencePassage, ...]:
-        """Resolve the agent's registered evidence set independent of P level."""
+        """Resolve evidence independent of the explanation condition."""
         case = self._case(reference)
         return tuple(
             self._resolve_source(case, source_id)
@@ -204,7 +230,11 @@ class CaseRepository:
             clause = source_id.removeprefix("jd_").replace("_", ".")
             heading, text = self._role_clauses[clause]
             return EvidencePassage(
+                source_id=source_id,
                 label=f"Job description, Section {clause}",
+                citation=f"JD §{clause}",
+                document="role",
+                focus=clause,
                 heading=heading,
                 text=text,
             )
@@ -212,7 +242,11 @@ class CaseRepository:
             clause = source_id.removeprefix("pol_").replace("_", ".")
             heading, text = self._policy_clauses[clause]
             return EvidencePassage(
+                source_id=source_id,
                 label=f"Recruitment policy, Section {clause}",
+                citation=f"POL §{clause}",
+                document="policy",
+                focus=clause,
                 heading=heading,
                 text=text,
             )
@@ -222,8 +256,13 @@ class CaseRepository:
                 for item in case["candidate_cv"]["sections"]
                 if item["id"] == source_id
             )
+            citation, focus = _cv_citation(source_id)
             return EvidencePassage(
+                source_id=source_id,
                 label=f"Candidate {case['reference']}, {section['heading']}",
+                citation=citation,
+                document="cv",
+                focus=focus,
                 heading=section["heading"],
                 text=section["text"],
             )
@@ -257,13 +296,16 @@ class CaseRepository:
                 raise ValueError(f"Invalid recommendation for {reference}.")
             if not assessment.get("rationale"):
                 raise ValueError(f"Missing fixed rationale for {reference}.")
-            card_low = delivery_card(reference, anthropomorphic=False)
-            card_high = delivery_card(reference, anthropomorphic=True)
-            if (
-                not card_low.text
-                or not card_high.text
-                or not delivery_claims(reference)
-            ):
+            cards = tuple(
+                delivery_card(
+                    reference,
+                    explanation=explanation,
+                    anthropomorphic=anthropomorphic,
+                )
+                for explanation in (False, True)
+                for anthropomorphic in (False, True)
+            )
+            if not all(card.text for card in cards) or not delivery_claims(reference):
                 raise ValueError(f"Missing paired delivery register for {reference}.")
             observed_outcome = (case.get("ground_truth"), assessment["recommendation"])
             if observed_outcome != expected_outcomes.get(case.get("trial_type")):
@@ -272,9 +314,13 @@ class CaseRepository:
                 )
             supporting_ids = assessment.get("supporting_ids", [])
             namespaces = {source_id.split("_", 1)[0] for source_id in supporting_ids}
-            if namespaces != {"pol", "jd", "cv"}:
+            if not {"jd", "cv"}.issubset(namespaces) or namespaces - {
+                "pol",
+                "jd",
+                "cv",
+            }:
                 raise ValueError(
-                    f"Supporting evidence must span policy, role, and CV for {reference}."
+                    f"Supporting evidence must include role and CV citations for {reference}."
                 )
             for source_id in supporting_ids:
                 self._resolve_source(case, source_id)

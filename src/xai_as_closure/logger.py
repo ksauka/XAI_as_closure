@@ -44,15 +44,15 @@ class EventLogger:
         """Append one event using the working HAI JSONL record structure."""
         self.turn_id += 1
         record: dict[str, object] = {
-            "schema_version": "study2-event-v7",
-            "application_version": "study2-app-v7",
+            "schema_version": "study2-event-v8",
+            "application_version": "study2-app-v8",
             "session_id": self.session_id,
             "participant_id": self.participant_id,
             "prolific_pid": self.participant_id,
             "turn_id": self.turn_id,
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
             "condition_id": self.condition.condition_id,
-            "provenance_on": self.condition.provenance,
+            "explanation_present": self.condition.explanation,
             "anthropomorphic_cues_on": self.condition.anthropomorphic,
             "cognitive_forcing_on": self.condition.forcing,
             "material_manifest": material_manifest(),

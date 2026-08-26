@@ -26,15 +26,15 @@ class Study2AgentTests(unittest.TestCase):
         self.assertEqual(
             {
                 (
-                    condition.provenance,
+                    condition.explanation,
                     condition.anthropomorphic,
                     condition.forcing,
                 )
                 for condition in CONDITIONS.values()
             },
             {
-                (provenance, anthropomorphic, forcing)
-                for provenance in (False, True)
+                (explanation, anthropomorphic, forcing)
+                for explanation in (False, True)
                 for anthropomorphic in (False, True)
                 for forcing in (False, True)
             },
@@ -85,7 +85,11 @@ class Study2AgentTests(unittest.TestCase):
             self.assertEqual(len({output.rationale for output in outputs.values()}), 1)
             for condition_id, output in outputs.items():
                 condition = CONDITIONS[condition_id]
-                self.assertEqual(bool(output.visible_sources), condition.provenance)
+                self.assertEqual(bool(output.visible_sources), condition.explanation)
+                self.assertEqual(
+                    output.participant_payload()["rationale"] is not None,
+                    condition.explanation,
+                )
                 self.assertEqual(
                     output.delivery_preset.preset_id,
                     "HighA" if condition.anthropomorphic else "LowA",
@@ -257,6 +261,35 @@ class Study2WorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(Study2WorkflowError, "unsupported Study 2 schema"):
             Study2Session.restore(deepcopy(session.state), self.cases)
 
+    def test_restore_rejects_pre_explanation_presence_delivery(self) -> None:
+        session = self.session("P1_A0_F1")
+        session.state["delivery_spec_version"] = "anthrokit-hiring-study2-v2"
+        with self.assertRaisesRegex(
+            Study2WorkflowError,
+            "unsupported delivery specification",
+        ):
+            Study2Session.restore(deepcopy(session.state), self.cases)
+
+    def test_restore_enforces_explanation_absence(self) -> None:
+        session = self.session("P0_A0_F0")
+        session.submit_unaided(self.decision())
+        session.request_agent_assessment(
+            Study2DecisionAgent(condition=session.condition, cases=self.cases)
+        )
+        session.current_trial()["agent_output"]["rationale"] = "Leaked rationale"
+        with self.assertRaisesRegex(Study2WorkflowError, "explanatory evidence"):
+            Study2Session.restore(deepcopy(session.state), self.cases)
+
+    def test_restore_enforces_explanation_presence(self) -> None:
+        session = self.session("P1_A0_F0")
+        session.submit_unaided(self.decision())
+        session.request_agent_assessment(
+            Study2DecisionAgent(condition=session.condition, cases=self.cases)
+        )
+        session.current_trial()["agent_output"]["visible_sources"] = []
+        with self.assertRaisesRegex(Study2WorkflowError, "missing its evidence"):
+            Study2Session.restore(deepcopy(session.state), self.cases)
+
     def test_restore_rejects_a_forcing_trial_that_skips_reencoding(self) -> None:
         session = self.session("P1_A0_F1")
         session.submit_unaided(self.decision())
@@ -301,8 +334,9 @@ class Study2InfrastructureTests(unittest.TestCase):
                 component="launch",
                 payload={"condition_id": condition.condition_id},
             )
-            self.assertEqual(event["schema_version"], "study2-event-v7")
-            self.assertEqual(event["application_version"], "study2-app-v7")
+            self.assertEqual(event["schema_version"], "study2-event-v8")
+            self.assertEqual(event["application_version"], "study2-app-v8")
+            self.assertTrue(event["explanation_present"])
             self.assertEqual(event["condition_id"], condition.condition_id)
             self.assertEqual(event["participant_id"], "prolific-test")
             self.assertEqual(logger.read_events(), [event])

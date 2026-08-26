@@ -32,13 +32,17 @@ The programme uses one Study 1 application and eight Study 2 applications:
   between-subjects condition and delivers six randomized unaided-then-aided
   candidate trials. A Qualtrics `cond` parameter must match that app's condition.
   Its bounded agent executes a plan, retrieves the configured evidence, evaluates
-  the case, and renders the frozen recommendation under the assigned provenance
-  and anthropomorphic-delivery levels. The complete LowA/HighA cards are deterministic,
+  the case, and renders the frozen recommendation under the assigned explanation
+  and delivery conditions. Explanation-absent cells show only the verdict;
+  explanation-present cells show the full rationale and inspectable evidence.
+  The complete LowA/HighA cards are deterministic,
   preserve the validated AnthroKit-Hiring token contrast, and never call an LLM
   to rewrite participant-facing stimuli.
-  The participant can then use the same bounded evidence-examination controls
-  in every condition before locking the aided decision; responses remain frozen
-  and cannot alter the registered recommendation.
+  In explanation-present conditions, the participant can use bounded
+  evidence-examination controls before locking the aided decision; responses
+  remain frozen and cannot alter the registered recommendation. In
+  explanation-absent conditions, verification requires independent use of the
+  complete source documents.
   Cognitive forcing, when assigned, occurs after the unaided decision and gates
   the still-hidden recommendation until the participant re-enters the mandatory
   certification requirement from the complete job description. A neutral

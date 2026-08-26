@@ -11,9 +11,18 @@ from .study2_delivery import (
 )
 
 
-def card_main_recommendation(reference: str, *, high_a: bool) -> str:
-    """Return the complete frozen recommendation card for one profile."""
-    return delivery_card(reference, anthropomorphic=high_a).text
+def card_main_recommendation(
+    reference: str,
+    *,
+    explanation: bool,
+    high_a: bool,
+) -> str:
+    """Return the frozen card for one explanation × delivery condition."""
+    return delivery_card(
+        reference,
+        explanation=explanation,
+        anthropomorphic=high_a,
+    ).text
 
 
 def card_challenge(reference: str, kind: ChallengeKind, *, high_a: bool) -> str:

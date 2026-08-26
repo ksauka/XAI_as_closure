@@ -44,7 +44,7 @@ class MigratedAgentTests(unittest.TestCase):
         self.assertEqual(len(output.claims), 3)
 
     def test_bounded_examination_is_interactive_and_cannot_change_verdict(self) -> None:
-        for condition_id in ("P0_A0_F0", "P0_A1_F0", "P1_A0_F0", "P1_A1_F0"):
+        for condition_id in ("P1_A0_F0", "P1_A1_F0"):
             agent = AgenticHiringDecisionAgent(condition=condition_id, cases=self.cases)
             output = agent.assess("C-05")
             response = agent.examine("C-05", "policy")
@@ -52,13 +52,20 @@ class MigratedAgentTests(unittest.TestCase):
                 output.recommendation, "Advance candidate to human interview"
             )
             self.assertIn("mandatory certification", response.response_text)
-            self.assertEqual(
-                bool(response.visible_sources), condition_id.startswith("P1_")
-            )
+            self.assertTrue(response.visible_sources)
             if "_A1_" in condition_id:
                 self.assertIn(" I ", f" {response.response_text} ")
             else:
                 self.assertNotIn(" I ", f" {response.response_text} ")
+
+    def test_explanation_absent_condition_has_no_evidence_examination(self) -> None:
+        for condition_id in ("P0_A0_F0", "P0_A1_F0"):
+            agent = AgenticHiringDecisionAgent(condition=condition_id, cases=self.cases)
+            output = agent.assess("C-05")
+            self.assertFalse(output.explanation_present)
+            self.assertEqual(output.visible_sources, ())
+            with self.assertRaisesRegex(ValueError, "explanation is absent"):
+                agent.examine("C-05", "policy")
 
     def test_session_retains_challenge_history(self) -> None:
         condition = get_study2_condition("P1_A1_F0")
@@ -275,6 +282,86 @@ class MigratedInfrastructureTests(unittest.TestCase):
         self.assertGreaterEqual(closed_payload["dwell_seconds"], 0)
         self.assertTrue(opened["trial_reference"])
         self.assertEqual(opened["trial_reference"], closed["trial_reference"])
+
+    def test_explanation_citations_open_the_complete_focused_document(self) -> None:
+        app_path = (
+            Path(__file__).resolve().parents[1] / "apps" / "study2_05_highP_lowA_noF.py"
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            app = AppTest.from_file(str(app_path))
+            app.query_params = {
+                "PROLIFIC_PID": "study2-citation-document",
+                "cond": "P1_A0_F0",
+            }
+            app.secrets = {
+                "GITHUB_REPO": "owner/private-study-data",
+                "GITHUB_TOKEN": "test-token",
+                "STUDY2_DATA_ROOT": directory,
+            }
+            with (
+                patch(
+                    "xai_as_closure.study2_app.test_github_connection",
+                    return_value=(True, "connected"),
+                ),
+                patch(
+                    "xai_as_closure.logger.save_to_github",
+                    return_value=(True, None),
+                ),
+            ):
+                app.run(timeout=20)
+                for label in (
+                    "Continue to role description",
+                    "Continue to recruitment policy",
+                    "Begin candidate screening",
+                ):
+                    next(
+                        button for button in app.button if button.label == label
+                    ).click()
+                    app.run(timeout=20)
+
+                app.radio[0].set_value("Reject candidate")
+                next(
+                    button
+                    for button in app.button
+                    if button.label == "Lock initial decision"
+                ).click()
+                app.run(timeout=20)
+                next(
+                    button
+                    for button in app.button
+                    if button.label == "Generate system assessment"
+                ).click()
+                app.run(timeout=20)
+
+                citation_labels = [
+                    button.label
+                    for button in app.button
+                    if button.label.startswith("[")
+                ]
+                self.assertTrue(citation_labels)
+                self.assertTrue(any("CV §" in label for label in citation_labels))
+                self.assertFalse(
+                    any(
+                        "Certifications" in label or "Roles" in label
+                        for label in citation_labels
+                    )
+                )
+
+                next(
+                    button for button in app.button if button.label.startswith("[CV §")
+                ).click()
+                app.run(timeout=20)
+                visible_text = "\n".join(
+                    [element.value for element in app.markdown]
+                    + [element.value for element in app.caption]
+                    + [element.value for element in app.subheader]
+                )
+                self.assertIn("Current focus:", visible_text)
+                for section in ("§1", "§4", "§5"):
+                    self.assertIn(section, visible_text)
+                self.assertTrue(
+                    any(button.label == "Back to candidate" for button in app.button)
+                )
 
     def test_github_archive_uses_the_hai_logger_and_event_payload(self) -> None:
         cases = CaseRepository()

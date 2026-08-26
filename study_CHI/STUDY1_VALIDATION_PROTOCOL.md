@@ -9,7 +9,7 @@ whether they rely on the intended decisive evidence, and whether any profile
 contains ambiguity, missing information, unrealistic details, or unintended cues.
 
 Study 1 is not an explainability, anthropomorphism, trust, or appropriate-reliance
-experiment. It contains no AI recommendation, rationale, provenance display,
+experiment. It contains no AI recommendation, rationale, explanation display,
 agentic interaction, cognitive-forcing intervention, or experimental condition.
 Those elements belong to Study 2.
 

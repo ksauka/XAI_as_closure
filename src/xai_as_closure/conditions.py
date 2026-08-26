@@ -1,4 +1,4 @@
-"""P×A×F conditions migrated from the HAI condition registry."""
+"""Explanation × anthropomorphism × forcing Study 2 conditions."""
 
 from __future__ import annotations
 
@@ -7,10 +7,14 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class Study2Condition:
-    """One fixed provenance × anthropomorphism × forcing assignment."""
+    """One fixed explanation × anthropomorphism × forcing assignment.
+
+    The deployed ``P0``/``P1`` identifiers are retained as stable Qualtrics and
+    Streamlit routing keys. Semantically they mean explanation absent/present.
+    """
 
     condition_id: str
-    provenance: bool
+    explanation: bool
     anthropomorphic: bool
     forcing: bool
 

@@ -24,6 +24,7 @@ from .schemas import (
     CandidateEvaluation,
     ChallengeKind,
     ChallengeResponse,
+    RenderedMessageBlock,
 )
 from .study2_delivery import DELIVERY_SPEC_VERSION, DeliveryPreset, delivery_card
 
@@ -31,14 +32,25 @@ AgentPlan = AssessmentPlan
 AgentEvaluation = CandidateEvaluation
 
 
+def _participant_citation(source: EvidencePassage) -> dict[str, str]:
+    """Project an evidence passage to a neutral participant-facing locator."""
+    return {
+        "citation": source.citation,
+        "document": source.document,
+        "focus": source.focus,
+    }
+
+
 @dataclass(frozen=True)
 class AgentOutput:
     reference: str
     condition_id: str
+    explanation_present: bool
     recommendation: str
     rationale: str
     claims: tuple[str, ...]
     text: str
+    blocks: tuple[RenderedMessageBlock, ...]
     speaker_label: str
     delivery_preset: DeliveryPreset
     visible_sources: tuple[EvidencePassage, ...]
@@ -49,11 +61,23 @@ class AgentOutput:
         return {
             "reference": self.reference,
             "condition_id": self.condition_id,
+            "explanation_present": self.explanation_present,
             "recommendation": self.recommendation,
-            "rationale": self.rationale,
+            "rationale": self.rationale if self.explanation_present else None,
             "text": self.text,
+            "message_blocks": [
+                {
+                    "text": block.text,
+                    "citations": [
+                        _participant_citation(source) for source in block.citations
+                    ],
+                }
+                for block in self.blocks
+            ],
             "speaker_label": self.speaker_label,
-            "visible_sources": [asdict(source) for source in self.visible_sources],
+            "visible_sources": [
+                _participant_citation(source) for source in self.visible_sources
+            ],
             "challenge_history": [],
         }
 
@@ -136,6 +160,10 @@ class AgenticHiringDecisionAgent:
         kind: ChallengeKind,
     ) -> ChallengeResponse:
         """Examine a bounded evidence question without changing the verdict."""
+        if not self.condition.explanation:
+            raise ValueError(
+                "Evidence examination is unavailable when explanation is absent."
+            )
         if kind not in {"support", "caution", "policy", "missing"}:
             raise ValueError("Unsupported evidence-examination request.")
         if state.retrieved is None or state.recommendation is None:
@@ -163,15 +191,18 @@ class AgenticHiringDecisionAgent:
             raise RuntimeError("The agent pipeline did not produce a complete output.")
         preset = delivery_card(
             reference,
+            explanation=self.condition.explanation,
             anthropomorphic=self.condition.anthropomorphic,
         ).preset
         output = AgentOutput(
             reference=reference,
             condition_id=self.condition.condition_id,
+            explanation_present=self.condition.explanation,
             recommendation=state.recommendation.recommendation,
             rationale=state.recommendation.rationale,
             claims=state.recommendation.claims,
             text=state.rendered.text,
+            blocks=state.rendered.blocks,
             speaker_label=state.rendered.speaker_label,
             delivery_preset=preset,
             visible_sources=state.rendered.visible_sources,

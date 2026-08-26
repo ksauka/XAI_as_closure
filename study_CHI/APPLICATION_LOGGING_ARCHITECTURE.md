@@ -69,7 +69,7 @@ keeping their sessions and randomized orders isolated.
 7. Qualtrics records the post-task perception measures, demographics, and
    debrief.
 
-The assigned provenance, anthropomorphic-delivery, and cognitive-forcing levels
+The assigned explanation-presence, anthropomorphic-delivery, and cognitive-forcing levels
 remain fixed across all six trials.
 
 The shared agent implementation lives in `src/xai_as_closure/` and reads only
@@ -79,10 +79,10 @@ evaluation, rendering, and audit trace without introducing condition-dependent
 content drift.
 
 Anthropomorphic delivery is also frozen. The audit payload records
-`anthrokit-hiring-study2-v2` and its assigned LowA or HighA token preset, while
+`anthrokit-hiring-study2-v4` and its assigned LowA or HighA token preset, while
 participant state contains the complete paired response card, condition-visible
 sources, and any bounded evidence-examination history.
-Study 2 uses `study2-state-v6`, `study2-event-v7`, and `study2-app-v7` so pilot
+Study 2 uses `study2-state-v6`, `study2-event-v8`, and `study2-app-v8` so pilot
 sessions created before the frozen delivery specification cannot be mixed with
 the active instrument.
 
@@ -93,7 +93,7 @@ is requested or revealed. It shifts the participant into an active processing
 state by requiring re-encoding of the role requirement before exposure to AI
 advice.
 
-The forcing-present task uses the same structure in all provenance and delivery
+The forcing-present task uses the same structure in all explanation and delivery
 conditions. The participant opens the complete job description, initially
 focused on Section 4.1, and types or pastes the mandatory certification
 requirement. Submission unlocks the request for the AI recommendation. Because
@@ -151,7 +151,8 @@ Study 2 records, where applicable:
 - agent plan, retrieved-evidence labels, and evaluation completion;
 - AI recommendation and rendering displayed;
 - bounded evidence-examination selection and agent response;
-- provenance source labels and passage links displayed;
+- explanation presence, message-block identifiers, neutral citation locators,
+  and focused complete-document links displayed;
 - every reference-document and evidence-card opening, paired return,
   click-to-return time, and visible-document dwell time until the participant
   returns to the candidate;

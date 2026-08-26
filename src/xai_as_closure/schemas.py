@@ -50,11 +50,20 @@ class RecommendationState:
 
 
 @dataclass(frozen=True)
+class RenderedMessageBlock:
+    """One participant-facing conversational claim with attached citations."""
+
+    text: str
+    citations: tuple[EvidencePassage, ...]
+
+
+@dataclass(frozen=True)
 class RenderedResponse:
-    """Condition-controlled participant-facing recommendation card."""
+    """Condition-controlled participant-facing recommendation message."""
 
     speaker_label: str
     text: str
+    blocks: tuple[RenderedMessageBlock, ...]
     visible_sources: tuple[EvidencePassage, ...]
 
 
@@ -89,6 +98,7 @@ __all__ = [
     "ChallengeKind",
     "ChallengeResponse",
     "RecommendationState",
+    "RenderedMessageBlock",
     "RenderedResponse",
     "RetrievedCaseEvidence",
 ]

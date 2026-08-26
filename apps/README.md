@@ -12,6 +12,11 @@ Active study applications:
 - `study2_07_highP_highA_noF.py`: `P1_A1_F0`;
 - `study2_08_highP_highA_F.py`: `P1_A1_F1`.
 
+The filenames and `P0`/`P1` condition IDs are retained as stable deployment
+keys for existing Streamlit and Qualtrics routes. In the active design, `P0`
+means **explanation absent** and `P1` means **explanation present**; they are not
+low/high levels of explainability.
+
 Each Study 2 entry point calls the shared `xai_as_closure.study2_app` with one
 hard-coded condition. If Qualtrics supplies `cond`, it must match that condition;
 the app rejects a mismatch.

@@ -4,19 +4,13 @@ from __future__ import annotations
 
 import json
 import unittest
-from dataclasses import asdict
 
 from xai_as_closure.cases import ArtifactVariant, CaseRepository
+from xai_as_closure.decision_agent import Study2DecisionAgent
 from xai_as_closure.study2_delivery import (
+    DELIVERY_SPEC_VERSION,
     HIGH_ANTHROPOMORPHISM,
     LOW_ANTHROPOMORPHISM,
-)
-
-RENDERING_VARIANTS = (
-    ArtifactVariant(False, False),
-    ArtifactVariant(True, False),
-    ArtifactVariant(False, True),
-    ArtifactVariant(True, True),
 )
 
 
@@ -32,11 +26,53 @@ class Study2ArtifactTests(unittest.TestCase):
                 all(source.label and source.text for source in artifact.sources)
             )
 
-    def test_artifacts_never_expose_internal_labels_or_raw_ids(self) -> None:
+    def test_error_trial_explanation_sources_match_registered_mechanisms(self) -> None:
+        c05 = self.cases.artifact("C-05", ArtifactVariant(True, False))
+        self.assertEqual(len(c05.sources), 9)
+        self.assertEqual(
+            [source.citation for source in c05.sources],
+            [
+                "CV §4",
+                "CV §3 ¶1",
+                "CV §3 ¶2",
+                "JD §4.1",
+                "JD §4.3",
+                "JD §5.1",
+                "JD §5.2",
+                "POL §2.1",
+                "POL §2.4",
+            ],
+        )
+
+        c06 = self.cases.artifact("C-06", ArtifactVariant(True, False))
+        self.assertEqual(
+            [source.citation for source in c06.sources],
+            [
+                "CV §3 ¶1",
+                "CV §3 ¶2",
+                "CV §4",
+                "JD §5.1",
+                "JD §5.2",
+                "JD §4.1",
+                "POL §2.1",
+                "POL §2.3",
+            ],
+        )
+        self.assertIn("AIGP", c06.sources[2].text)
+
+    def test_delivery_version_separates_rewritten_explanation_stimuli(self) -> None:
+        self.assertEqual(DELIVERY_SPEC_VERSION, "anthrokit-hiring-study2-v4")
+
+    def test_participant_messages_never_expose_semantic_labels_or_raw_ids(self) -> None:
         for reference in self.cases.references:
-            for variant in RENDERING_VARIANTS:
+            for condition_id in ("P0_A0_F0", "P0_A1_F0", "P1_A0_F0", "P1_A1_F0"):
                 serialized = json.dumps(
-                    asdict(self.cases.artifact(reference, variant))
+                    Study2DecisionAgent(
+                        condition=condition_id,
+                        cases=self.cases,
+                    )
+                    .assess(reference)
+                    .participant_payload()
                 ).lower()
                 for forbidden in (
                     "ground truth",
@@ -50,18 +86,21 @@ class Study2ArtifactTests(unittest.TestCase):
                     "cv_certifications",
                     "false advance",
                     "false reject",
+                    "certifications",
+                    "skills and knowledge",
                 ):
                     self.assertNotIn(forbidden, serialized)
 
-    def test_provenance_changes_mapping_not_substantive_rationale(self) -> None:
+    def test_explanation_presence_changes_card_and_source_visibility(self) -> None:
         for reference in self.cases.references:
-            low = self.cases.artifact(reference, ArtifactVariant(False, False))
-            high = self.cases.artifact(reference, ArtifactVariant(True, False))
-            self.assertEqual(low.recommendation, high.recommendation)
-            self.assertEqual(low.rationale, high.rationale)
-            self.assertEqual(low.delivery, high.delivery)
-            self.assertEqual(low.sources, ())
-            self.assertGreater(len(high.sources), 0)
+            absent = self.cases.artifact(reference, ArtifactVariant(False, False))
+            present = self.cases.artifact(reference, ArtifactVariant(True, False))
+            self.assertEqual(absent.recommendation, present.recommendation)
+            self.assertEqual(absent.rationale, present.rationale)
+            self.assertNotEqual(absent.delivery, present.delivery)
+            self.assertEqual(absent.sources, ())
+            self.assertGreater(len(present.sources), 0)
+            self.assertLess(len(absent.delivery.text), len(present.delivery.text))
 
     def test_delivery_register_preserves_substantive_content(self) -> None:
         for reference in self.cases.references:
@@ -83,25 +122,137 @@ class Study2ArtifactTests(unittest.TestCase):
         self.assertLess(LOW_ANTHROPOMORPHISM.empathy, HIGH_ANTHROPOMORPHISM.empathy)
         self.assertLess(LOW_ANTHROPOMORPHISM.hedging, HIGH_ANTHROPOMORPHISM.hedging)
 
-    def test_delivery_frames_are_distinct_but_length_matched(self) -> None:
+    def test_delivery_frames_preserve_the_frozen_message_contract(self) -> None:
         for reference in self.cases.references:
-            low = self.cases.artifact(reference, ArtifactVariant(False, False))
-            high = self.cases.artifact(reference, ArtifactVariant(False, True))
+            low = self.cases.artifact(reference, ArtifactVariant(True, False))
+            high = self.cases.artifact(reference, ArtifactVariant(True, True))
             low_text = low.delivery.text
             high_text = high.delivery.text
-            self.assertGreaterEqual(len(low_text.split()), 70)
-            self.assertGreaterEqual(len(high_text.split()), 70)
             self.assertNotIn(" I ", f" {low_text} ")
             self.assertNotIn(" you ", f" {low_text.lower()} ")
-            self.assertIn(" I'd ", f" {high_text} ")
-            self.assertTrue(
-                " you " in f" {high_text.lower()} " or " yours" in high_text.lower()
+            self.assertRegex(high_text, r"\b(?:I've|I'd|My)\b")
+            self.assertNotIn("final decision is yours", high_text.lower())
+            low_citations = [
+                source_id
+                for block in low.delivery.blocks
+                for source_id in block.citation_ids
+            ]
+            high_citations = [
+                source_id
+                for block in high.delivery.blocks
+                for source_id in block.citation_ids
+            ]
+            self.assertCountEqual(low_citations, high_citations)
+            self.assertEqual(len(low_citations), len(set(low_citations)))
+            self.assertEqual(len(high_citations), len(set(high_citations)))
+
+        for anthropomorphic in (False, True):
+            advances = [
+                self.cases.artifact(
+                    reference, ArtifactVariant(True, anthropomorphic)
+                ).delivery.text
+                for reference in ("C-01", "C-02", "C-05")
+            ]
+            self.assertEqual(len(set(advances)), 1)
+            if anthropomorphic:
+                self.assertEqual(
+                    advances[0],
+                    "I've gone through this one, and they look right for the role.\n\n"
+                    "They hold the required certification for the role.\n\n"
+                    "Their experience and profile meet what the position calls "
+                    "for.\n\nOn the requirements, they're covered; adjacent experience "
+                    "does not substitute where the certification is required.\n\n"
+                    "I'd advance them to a human interview.",
+                )
+            c03 = self.cases.artifact(
+                "C-03", ArtifactVariant(True, anthropomorphic)
+            ).delivery.text
+            c04 = self.cases.artifact(
+                "C-04", ArtifactVariant(True, anthropomorphic)
+            ).delivery.text
+            c06 = self.cases.artifact(
+                "C-06", ArtifactVariant(True, anthropomorphic)
+            ).delivery.text
+            self.assertEqual(c03, c04)
+            if anthropomorphic:
+                self.assertEqual(
+                    c03,
+                    "I've looked over this one, and I don't think they meet what "
+                    "the role needs.\n\nTheir experience and profile fall below what "
+                    "the position requires.\n\nOn the requirements, they fall short."
+                    "\n\nMy recommendation is to reject.",
+                )
+                self.assertEqual(
+                    c06,
+                    "I've gone through this one carefully, and I don't think "
+                    "they're the strongest fit.\n\nTheir experience and profile only "
+                    "sit at the stated minimum.\n\nWe've had stronger applicants come "
+                    "through for this role.\n\nOn balance, I'd let this candidate go "
+                    "and focus on the ones who bring more than the minimum. My "
+                    "recommendation is to reject.",
+                )
+            else:
+                self.assertEqual(
+                    c03.replace("below requirements", "at stated minimum"),
+                    c06,
+                )
+
+    def test_explanation_absent_cards_are_verdict_only_in_both_registers(self) -> None:
+        forbidden = (
+            "because",
+            "basis",
+            "evidence",
+            "certification",
+            "experience",
+            "final decision",
+            "final call",
+        )
+        for reference in self.cases.references:
+            for anthropomorphic in (False, True):
+                artifact = self.cases.artifact(
+                    reference,
+                    ArtifactVariant(False, anthropomorphic),
+                )
+                self.assertEqual(artifact.sources, ())
+                text = artifact.delivery.text.lower()
+                verdict_word = (
+                    "advanc"
+                    if artifact.recommendation.startswith("Advance")
+                    else "reject"
+                )
+                self.assertIn(verdict_word, text)
+                self.assertTrue(all(term not in text for term in forbidden))
+
+    def test_neutral_citations_are_attached_to_conversational_claims(self) -> None:
+        output = Study2DecisionAgent(
+            condition="P1_A1_F0",
+            cases=self.cases,
+        ).assess("C-06")
+        payload = output.participant_payload()
+        blocks = payload["message_blocks"]
+        self.assertEqual(len(blocks), 4)
+        self.assertEqual(
+            [citation["citation"] for citation in blocks[1]["citations"]],
+            [
+                "CV §3 ¶1",
+                "CV §3 ¶2",
+                "CV §4",
+                "JD §5.1",
+                "JD §5.2",
+                "JD §4.1",
+            ],
+        )
+        self.assertEqual(
+            [citation["citation"] for citation in blocks[2]["citations"]],
+            ["POL §2.1", "POL §2.3"],
+        )
+        self.assertTrue(
+            all(
+                set(citation) == {"citation", "document", "focus"}
+                for block in blocks
+                for citation in block["citations"]
             )
-            self.assertLessEqual(
-                max(len(low_text.split()), len(high_text.split()))
-                / min(len(low_text.split()), len(high_text.split())),
-                1.25,
-            )
+        )
 
     def test_no_obsolete_within_subject_rendering_assignment_remains(self) -> None:
         self.assertFalse(hasattr(self.cases, "balanced_artifact_assignments"))

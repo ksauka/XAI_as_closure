@@ -80,7 +80,6 @@ presets:
     # Characteristic surface forms:
     #   "Recommendation: Advance to interview."
     #   "Caution: end-to-end recruitment ownership not demonstrated."
-    #   "Final decision authority rests with the recruiter."
 
   HighA:
     self_reference: "I"
@@ -92,16 +91,16 @@ presets:
     # Characteristic surface forms:
     #   "I'd recommend moving this candidate forward."
     #   "The thing that gives me the most pause is..."
-    #   "My view: move them forward. The final call is yours."
+    #   "My view is to move them forward."
 
 policy:
   no_human_experience_claims: true
   no_sensitive_attribute_inference: true
   preserve_factual_content: true
-  decision_authority_to_human: true
+  recommendation_authority_reminder: false
   guardrails:
     - "Never claim feelings, emotions, or lived experiences"
     - "Never imply embodiment or physical presence"
     - "Never infer candidate protected characteristics"
     - "Preserve all factual evidence content exactly"
-    - "Always return final decision authority to the recruiter"
+    - "Do not append an authority reminder to recommendation messages"

@@ -56,6 +56,7 @@ class CaseRepositoryTests(unittest.TestCase):
                 "recommendation",
                 "rationale",
                 "provenance",
+                "explanation",
             ):
                 self.assertNotIn(forbidden, serialized)
 

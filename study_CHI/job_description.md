@@ -23,10 +23,10 @@
 **4.3 Non-Substitutability.** Experience, advisory work, or training in AI governance does not substitute for the certification in Section 4.1.
 
 ## Section 5. General Requirements
-**5.1 Assessment Experience.** Experience conducting or supporting formal AI risk or conformity assessment under a recognised framework such as the EU AI Act or ISO/IEC 42001.
-**5.2 Advisory Experience.** Experience advising on AI governance, Responsible AI, or AI risk and compliance.
-**5.3 Technical Understanding.** Understanding of AI and machine-learning systems, including generative AI and enterprise architecture.
-**5.4 Consulting and Stakeholder Management.** Consulting and stakeholder-management experience across business, compliance, and technical functions.
+**5.1 Assessment Experience.** At least three years of experience conducting or supporting formal AI risk or conformity assessment under a recognised framework such as the EU AI Act or ISO/IEC 42001.
+**5.2 Advisory Experience.** At least two years of experience advising on AI governance, Responsible AI, or AI risk and compliance.
+**5.3 Technical Understanding.** Working understanding of AI and machine-learning systems, including generative AI and enterprise architecture.
+**5.4 Consulting and Stakeholder Management.** At least two years of consulting and stakeholder-management experience across business, compliance, and technical functions.
 
 ## Section 6. Team and Reporting Structure
 **6.1 Reporting Line.** The AI Governance Lead reports to the Head of Model Risk and Governance within the second-line Risk function, with a dotted line into the Chief Compliance Office for regulatory-facing deliverables.

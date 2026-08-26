@@ -2,16 +2,16 @@
 
 ## Core Question
 
-When an agentic assistant explains a recommendation through provenance, do
-people use the cited evidence to verify the recommendation, or does the presence
-of provenance help close the decision before the evidence is evaluated?
+When an agentic assistant explains a recommendation with inspectable evidence,
+do people use that evidence to verify the recommendation, or can its
+anthropomorphic delivery close the decision before the evidence is evaluated?
 
 ## Contribution
 
-The project studies provenance as both an epistemic affordance and a possible
-social credential. It tests whether provenance-based explanation supports
-appropriate reliance, whether anthropomorphic delivery changes how provenance
-is used, and whether a decision-time cognitive-forcing intervention restores
+The project studies explanation as both an epistemic affordance and a possible
+social credential. It tests whether explanation presence supports appropriate
+reliance, whether anthropomorphic delivery changes how explanation is used, and
+whether a decision-time cognitive-forcing intervention restores
 evidence engagement before the final decision.
 
 ## Two-Study Design
@@ -28,7 +28,7 @@ For every candidate, each expert records Advance candidate to human
 interview or Reject candidate,
 certification classification, confidence, decisive evidence, ambiguity or
 missing information, and realism or unintended cues. Study 1 contains no AI
-recommendation, rationale, provenance, anthropomorphism, cognitive forcing, or
+recommendation, rationale, explanation, anthropomorphism, cognitive forcing, or
 experimental condition; it ends after the sixth candidate judgment.
 
 Profiles that fail the prespecified agreement or intended-reason criteria are
@@ -39,8 +39,8 @@ revised and revalidated. Validated files are versioned and frozen before Study 2
 Study 2 uses a mixed design. Participants are assigned to one fixed 2 x 2 x 2
 between-subjects condition:
 
-- provenance traceability: low or high;
-- anthropomorphic delivery: low or high; and
+- explanation: absent or present;
+- delivery: procedural or anthropomorphic; and
 - cognitive forcing: absent or present.
 
 Every participant completes the same six profiles in randomized order:
@@ -57,33 +57,38 @@ in both directions and identifies assistant-induced reversals.
 The Study 2 assistant is a bounded agentic workflow. For each candidate it
 constructs the fixed screening plan, retrieves the configured passages from the
 current policy, job description, and candidate file, evaluates those materials,
-and delivers the frozen recommendation and rationale. This makes the execution
-stateful and inspectable without allowing uncontrolled generation to change the
-experimental stimuli. After recommendation reveal, the assistant supports the
-same bounded evidence-examination choices in every cell: strongest support,
-strongest caution, mandatory-rule application, and missing or uncertain
-information. These stateful responses cannot change the fixed verdict. In
+and produces the frozen recommendation. This makes the execution stateful
+without allowing uncontrolled generation to change the experimental stimuli.
+Explanation-absent cells show only the verdict. Explanation-present cells show
+the full fixed rationale and inspectable citations and support bounded
+evidence-examination choices: strongest support, strongest caution,
+mandatory-rule application, and missing or uncertain information. These
+stateful responses cannot change the fixed verdict. In
 forcing-present conditions, the participant must
 re-enter the mandatory certification requirement from the complete job
 description before the recommendation can be requested or revealed.
 
 ## Manipulation Invariants
 
-- The recommendation and substantive rationale are fixed for each profile.
-- Provenance changes traceability only: high provenance adds source labels and
-  inspectable passage links; low provenance omits that source mapping.
-- Anthropomorphic delivery uses the frozen `anthrokit-hiring-study2-v2`
-  register. Each profile has a complete LowA/HighA assessment-card pair. Low
+- The recommendation is fixed for each profile in every condition. The fixed
+  rationale is shown only when explanation is present.
+- Explanation present adds the complete rationale, neutral claim-linked
+  citations that open the focused complete document, and bounded evidence
+  examination. Explanation absent shows a
+  verdict-only card; all complete documents remain independently available.
+- Anthropomorphic delivery uses the frozen `anthrokit-hiring-study2-v4`
+  register. Each explanation level has a LowA/HighA card pair. Low
   delivery is procedural, impersonal, and system-labelled; high delivery is
   first-person, mildly hedged, warmer, and adviser-like. The same registered
-  verdict and semantic claims appear in each pair, and persona names, emoji,
-  humor, emotional claims, and live LLM rewriting are excluded. The paired
-  complete responses are length-controlled.
+  verdict, registered assessment basis, and citation set are fixed in each
+  pair, while the participant-facing wording is frozen separately for each
+  register. Persona names, emoji, humor, emotional claims, and live LLM
+  rewriting are excluded.
 - Cognitive forcing occurs after the unaided decision and before the AI
   recommendation is requested or visible.
 - In forcing-present conditions, participants type or paste the mandatory
   certification requirement from the complete job description. The task is
-  identical across provenance and anthropomorphic-delivery conditions and does
+  identical across explanation and delivery conditions and does
   not operate on the recommendation or citation apparatus.
 - The role, policy, full candidate file, and decision options remain available
   in every condition.

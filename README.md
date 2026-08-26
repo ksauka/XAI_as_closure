@@ -1,6 +1,6 @@
 # XAI as Closure
 
-Research software for studying how provenance, anthropomorphic delivery, and
+Research software for studying how explanation presence, anthropomorphic delivery, and
 cognitive forcing affect verification and reliance on AI-assisted candidate
 screening.
 
@@ -9,7 +9,7 @@ The repository contains two linked applications:
 - **Study 1 — expert validation:** one shared application in which domain
   experts evaluate six candidate profiles without AI assistance.
 - **Study 2 — AI-assisted screening:** eight condition-locked applications in
-  a provenance × anthropomorphism × cognitive-forcing design. Each participant
+  an explanation × anthropomorphism × cognitive-forcing design. Each participant
   evaluates the same six profiles in randomized order.
 
 All profiles, recommendations, and participant-facing response cards are fixed

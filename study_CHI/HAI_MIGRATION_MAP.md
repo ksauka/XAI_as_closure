@@ -3,7 +3,7 @@
 The former `src/agentic_hiring` implementation is the baseline for the active
 Study 2 system. It was not discarded and rebuilt as a minimal wrapper. Its
 working responsibilities were migrated into `src/xai_as_closure` and adapted to
-the six validated profiles and the current provenance × anthropomorphism ×
+the six validated profiles and the current explanation × anthropomorphism ×
 cognitive-forcing design.
 
 ## Active migrated modules
@@ -13,9 +13,9 @@ cognitive-forcing design.
 | Agent orchestration and state | `decision_agent.py`, `schemas.py` | Retains evidence-store → plan → retrieve → evaluate → recommend → render → examine lifecycle; uses six candidate-scoped states and fixed error trials. |
 | Evidence parsing and retrieval | `cases.py`, `evidence_store.py`, `retriever.py` | Reads the current recruitment policy, job description, and embedded CV sections; registered evidence sets replace the historical single-CV store. |
 | Evaluation and recommendation policy | `evaluator.py`, `recommender.py` | Preserves the six pre-registered AI verdicts, including the intended false advance and false reject; interaction cannot mutate a verdict. |
-| AnthroKit configuration and response cards | `anthrokit_hiring.yaml`, `anthrokit_prompts.py`, `study2_delivery.py` | Retains the five operative LowA/HighA dimensions and guardrails. Twelve complete main cards and bounded candidate-specific follow-up cards replace the historical single-candidate scripts. |
-| Rendering and citation presentation | `renderer.py`, `study2_app.py`, `theme.py` | Retains the instructions → role → policy introduction, conversational rendering, chat presentation, compact citation chips, full-document navigation with the cited passage highlighted, dwell logging, condition-sensitive controls, and the HAI visual system. Provenance now changes only source surfacing. |
-| Interaction | `decision_agent.py`, `study2.py`, `study2_app.py` | Retains post-recommendation evidence examination for support, caution, policy application, and missing information in every cell. Old HIC assignment is not a factor and cannot change the recommendation. |
+| AnthroKit configuration and response cards | `anthrokit_hiring.yaml`, `anthrokit_prompts.py`, `study2_delivery.py` | Retains the five operative LowA/HighA dimensions and guardrails. Frozen advance/reject templates and bounded candidate-specific follow-up cards replace the historical single-candidate scripts. |
+| Rendering and citation presentation | `renderer.py`, `study2_app.py`, `theme.py` | Retains the instructions → role → policy introduction, conversational rendering, chat presentation, full-document navigation, dwell logging, condition-sensitive controls, and the HAI visual system. Explanation-present cells attach neutral CV/JD/POL locators directly to their claims and open the complete document at that focus; explanation-absent cells show the verdict only. |
+| Interaction | `decision_agent.py`, `study2.py`, `study2_app.py` | Retains post-recommendation evidence examination for support, caution, policy application, and missing information when explanation is present. It is omitted with the rationale in explanation-absent cells. Old HIC assignment is not a factor and cannot change the recommendation. |
 | Logging and GitHub persistence | `logger.py`, `github_saver.py`, `github_loader.py` | Retains the HAI `EventLogger`, local per-session JSONL stream, Prolific linkage fields, and private-GitHub session backup. Writes use owner-only permissions and the backup runs after each completed trial. No parallel Study 2 storage abstraction is used. |
 | Session extraction | `session_flatten.py` | Retains JSON/JSONL loading and CSV writing; now emits participant-, six-trial-, and event-level rows for appropriate-reliance analysis. |
 | Qualtrics cleaning and merge | `qualtrics_clean.py`, `qualtrics_merge.py` | Retained for linkage validation, deduplication, and joining app exports to survey measures. |
@@ -36,7 +36,8 @@ These exclusions are design-preserving, not omissions:
 - The historical `streamlit_app.py` encoded one candidate and the obsolete
   E×A×HIC screen order. Its proven theme, chat, citation, document-navigation,
   persistence, and interaction patterns were integrated into `study2_app.py`,
-  whose six-trial P×A×F state machine is necessarily different.
+  whose six-trial explanation × anthropomorphism × forcing state machine is
+  necessarily different. Stable `P0`/`P1` route IDs are retained for deployment.
 - Historical arbitrary CV upload and `documents.py` ingestion are excluded
   because Study 2 must show exactly the six expert-validated CVs. Accepting an
   uploaded seventh profile would violate the case-set contract.
@@ -58,10 +59,11 @@ These exclusions are design-preserving, not omissions:
 
 - Eight condition-locked applications; six trials per participant.
 - Recommendation and registered semantic claims fixed per profile.
-- Provenance changes source visibility only.
+- Explanation is absent or present: absent shows the verdict only; present shows
+  the full frozen rationale, citations, and bounded evidence examination.
 - Anthropomorphism changes the complete delivery register and interaction
   language, not the substantive claims or evidence set.
 - Cognitive forcing occurs after the unaided decision and before recommendation
   reveal, using the complete job description focused initially on Section 4.1.
-- Bounded post-recommendation interaction is available in every condition and
-  cannot change the verdict.
+- Bounded post-recommendation interaction is available when explanation is
+  present and cannot change the verdict.

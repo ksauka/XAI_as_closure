@@ -1,4 +1,4 @@
-"""Study 2 condition 5: high provenance, low anthropomorphism, no forcing."""
+"""Study 2 condition 5: explanation present, procedural delivery, no forcing."""
 
 import sys
 from pathlib import Path

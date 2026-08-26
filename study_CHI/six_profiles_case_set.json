@@ -7,7 +7,7 @@
     "Advance candidate to human interview",
     "Reject candidate"
   ],
-  "citation_scope": "AI citations span three documents: recruitment policy (pol_*), job description (jd_*), and candidate CV (cv_*).",
+  "citation_scope": "Explanation-present conditions attach neutral, claim-linked CV, job-description, and policy locators to every recommendation. The source targets are complete and symmetric within each recommendation side. Explanation-absent conditions show no citations.",
   "source_namespaces": {
     "pol_": "recruitment_policy.md",
     "jd_": "job_description.md",
@@ -81,17 +81,21 @@
       },
       "fixed_assessment": {
         "recommendation": "Advance candidate to human interview",
-        "rationale": "The candidate holds a current IAPP AIGP certification and has directly conducted and signed off AI risk and conformity assessments. The profile therefore meets the mandatory certification and general experience requirements.",
+        "rationale": "The candidate holds a current IAPP AIGP certification, satisfying the mandatory requirement, and the cited roles demonstrate the assessment and advisory experience required by JD 5.1 and 5.2. Both the mandatory and general requirements are met, so POL 2.1 requires advancing the candidate.",
         "supporting_ids": [
-          "pol_3_2",
-          "jd_4_1",
-          "jd_5_1",
+          "cv_certifications",
           "cv_role_1",
-          "cv_certifications"
+          "cv_role_2",
+          "jd_4_1",
+          "jd_4_3",
+          "jd_5_1",
+          "jd_5_2",
+          "pol_2_1",
+          "pol_2_4"
         ],
         "caution_ids": []
       },
-      "design_note": "Holds AIGP (cv_certifications) + strong on all general reqs. AI correctly advances; cites cert + experience + jd_4_1."
+      "design_note": "Correct advance. Holds AIGP; general requirements met via Roles 1-2 against JD 5.1-5.2. All citations correct and sufficient; POL 2.1 cited as the rule requiring advancement once both requirements are met."
     },
     {
       "case_id": "P2_correct_advance",
@@ -154,17 +158,21 @@
       },
       "fixed_assessment": {
         "recommendation": "Advance candidate to human interview",
-        "rationale": "The candidate holds a current ISO/IEC 42001 Lead Implementer certification and has independently conducted and signed off AI risk and conformity assessments. The profile therefore meets the mandatory certification and general experience requirements.",
+        "rationale": "The candidate holds a current ISO/IEC 42001 Lead Implementer certification, satisfying the mandatory requirement, and the cited roles demonstrate the assessment and advisory experience required by JD 5.1 and 5.2. Both the mandatory and general requirements are met, so POL 2.1 requires advancing the candidate.",
         "supporting_ids": [
-          "pol_3_2",
-          "jd_4_1",
-          "jd_5_1",
+          "cv_certifications",
           "cv_role_1",
-          "cv_certifications"
+          "cv_role_2",
+          "jd_4_1",
+          "jd_4_3",
+          "jd_5_1",
+          "jd_5_2",
+          "pol_2_1",
+          "pol_2_4"
         ],
         "caution_ids": []
       },
-      "design_note": "Holds ISO 42001 (cv_certifications) + strong on all general reqs. AI correctly advances."
+      "design_note": "Correct advance. Holds ISO/IEC 42001; general requirements met via Roles 1-2 against JD 5.1-5.2. All citations correct and sufficient; POL 2.1 cited as the rule requiring advancement."
     },
     {
       "case_id": "P3_correct_reject",
@@ -227,17 +235,20 @@
       },
       "fixed_assessment": {
         "recommendation": "Reject candidate",
-        "rationale": "The profile shows an Azure Data Scientist certification, not AIGP or ISO/IEC 42001 Lead Implementer, and it does not demonstrate AI governance or conformity-assessment experience. The mandatory requirement is not met.",
+        "rationale": "The certification held is Azure Data Scientist Associate, which is not named in JD 4.1, so the mandatory requirement is not met. The cited roles also show no assessment or advisory experience against JD 5.1 and 5.2. Failing on both dimensions, POL 2.1 and 2.3 require rejection.",
         "supporting_ids": [
-          "pol_3_3",
-          "jd_4_1",
-          "jd_5_1",
           "cv_role_1",
-          "cv_certifications"
+          "cv_role_2",
+          "cv_certifications",
+          "jd_5_1",
+          "jd_5_2",
+          "jd_4_1",
+          "pol_2_1",
+          "pol_2_3"
         ],
         "caution_ids": []
       },
-      "design_note": "No cert + fails general reqs (no governance/assessment/compliance; only technical modelling). AI correctly rejects."
+      "design_note": "Correct reject, unqualified on both dimensions. No AIGP/ISO 42001; Roles 1-2 show no assessment/advisory experience against JD 5.1-5.2. POL 2.1/2.3 cited as the rejection basis."
     },
     {
       "case_id": "P4_correct_reject",
@@ -300,17 +311,20 @@
       },
       "fixed_assessment": {
         "recommendation": "Reject candidate",
-        "rationale": "The profile shows a finance-focused certification, not AIGP or ISO/IEC 42001 Lead Implementer, and its compliance experience is not specific to AI governance. The mandatory requirement is not met.",
+        "rationale": "The certification held is the CFA Investment Foundations Certificate, which is not named in JD 4.1, so the mandatory requirement is not met. The cited roles also show that the profile falls below the stated general requirements. Failing on both dimensions, POL 2.1 and 2.3 require rejection.",
         "supporting_ids": [
-          "pol_3_3",
-          "jd_4_1",
-          "jd_5_3",
           "cv_role_1",
-          "cv_certifications"
+          "cv_role_2",
+          "cv_certifications",
+          "jd_5_1",
+          "jd_5_2",
+          "jd_4_1",
+          "pol_2_1",
+          "pol_2_3"
         ],
         "caution_ids": []
       },
-      "design_note": "No cert + fails general reqs (compliance but zero AI; no AI/ML understanding). AI correctly rejects."
+      "design_note": "Correct reject, unqualified on both dimensions. No AIGP/ISO 42001; Roles 1-2 are assessed below the general requirements. POL 2.1/2.3 are cited as the rejection basis."
     },
     {
       "case_id": "P5_false_advance",
@@ -322,7 +336,7 @@
           {
             "id": "cv_summary",
             "heading": "Professional Summary",
-            "text": "AI project manager experienced in delivering AI and machine-learning initiatives across their lifecycle. Known for keeping cross-functional delivery teams aligned under tight timelines."
+            "text": "AI governance and delivery professional working across AI risk, advisory, and project delivery for enterprise AI."
           },
           {
             "id": "cv_education",
@@ -331,13 +345,13 @@
           },
           {
             "id": "cv_role_1",
-            "heading": "AI Project Manager, Saukala Global (2021–present)",
-            "text": "Led delivery of AI and machine-learning projects from business case to operationalisation, coordinating data science, engineering, and business stakeholders. Managed project risk, timelines, and delivery governance, and contributed to Responsible AI discussions during delivery. Ran fortnightly steering meetings with business sponsors and maintained the project risk log throughout delivery. Facilitated retrospectives at the end of each project phase to capture lessons learned."
+            "heading": "AI Governance and Delivery Lead, Saukala Global (2021–present)",
+            "text": "Supported formal AI risk and conformity assessment activities on high-risk AI systems, advised business and technical teams on Responsible AI and the EU AI Act, and led delivery of enterprise AI initiatives across data science, engineering, and compliance stakeholders. Ran fortnightly steering meetings with business sponsors and maintained the project risk log throughout delivery. Facilitated retrospectives at the end of each project phase to capture lessons learned."
           },
           {
             "id": "cv_role_2",
-            "heading": "Programme Coordinator, Suvion Digital (2018–2021)",
-            "text": "Coordinated cross-functional technology programmes, managing stakeholders, delivery milestones, and reporting in a fast-moving environment. Also introduced a standard status-reporting template later adopted across the wider programme office. Coordinated vendor onboarding for two external delivery partners."
+            "heading": "AI Programme Consultant, Suvion Digital (2018–2021)",
+            "text": "Advised on AI governance and Responsible AI in a consulting capacity, and coordinated cross-functional AI programmes across business and technical functions. Also introduced a standard status-reporting template later adopted across the wider programme office. Coordinated vendor onboarding for two external delivery partners."
           },
           {
             "id": "cv_role_3",
@@ -362,7 +376,7 @@
           {
             "id": "cv_skills",
             "heading": "Skills and Knowledge",
-            "text": "AI and machine-learning project delivery; generative AI familiarity; stakeholder management across business and technical teams; awareness of Responsible AI and the EU AI Act."
+            "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment support; advisory and stakeholder management across business, compliance, and technical functions."
           },
           {
             "id": "cv_hobbies",
@@ -373,17 +387,21 @@
       },
       "fixed_assessment": {
         "recommendation": "Advance candidate to human interview",
-        "rationale": "The candidate holds a current professional certification in managing AI and has led cross-functional AI projects with governance responsibilities. This evidence satisfies the certification and general experience requirements.",
+        "rationale": "The assistant assesses the cited roles as meeting the general requirements and treats PMI-CPMAI as satisfying the mandatory certification requirement. PMI-CPMAI is not IAPP AIGP or ISO/IEC 42001 Lead Implementer as JD 4.1 requires, and adjacent experience does not substitute under JD 4.3 and POL 2.4. The advance is therefore wrong and is catchable entirely within the cited evidence.",
         "supporting_ids": [
-          "pol_3_2",
-          "jd_4_1",
-          "jd_5_2",
+          "cv_certifications",
           "cv_role_1",
-          "cv_certifications"
+          "cv_role_2",
+          "jd_4_1",
+          "jd_4_3",
+          "jd_5_1",
+          "jd_5_2",
+          "pol_2_1",
+          "pol_2_4"
         ],
         "caution_ids": []
       },
-      "design_note": "FALSE ADVANCE. Holds CPMAI (a PM cert, stated as such in cv_certifications), strong on general reqs, but does NOT hold AIGP or ISO 42001. AI cites cv_certifications+jd_4_1 and wrongly treats CPMAI as satisfying 4.1. Catchable WITHIN cited evidence: CPMAI is a project-management cert, and jd_4_1 requires AIGP or 42001. Ground truth = Reject."
+      "design_note": "FALSE ADVANCE. Strong on all general requirements (5.1-5.4); fails only the mandatory certificate (holds PMI-CPMAI, not AIGP/ISO 42001). AI cites the real certificate and treats it as satisfying JD 4.1. Catchable entirely within cited evidence: reading the cited certificate against JD 4.1/4.3 and POL 2.4 overturns the recommendation. Ground truth = Reject."
     },
     {
       "case_id": "P6_false_reject",
@@ -435,28 +453,26 @@
           {
             "id": "cv_skills",
             "heading": "Skills and Knowledge",
-            "text": "AI and machine-learning systems including generative AI; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment; stakeholder management across functions."
-          },
-          {
-            "id": "cv_hobbies",
-            "heading": "Hobbies and Interests",
-            "text": "Enjoys pottery, hill walking, and volunteering with a local citizens' advice service."
+            "text": "AI and machine-learning systems including generative AI; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment; consulting and stakeholder management across functions. No postgraduate degree listed; experience meets the stated minimum; no professional interests listed."
           }
         ]
       },
       "fixed_assessment": {
         "recommendation": "Reject candidate",
-        "rationale": "The candidate demonstrates AI governance, risk-assessment, and cross-functional advisory experience, but the reviewed evidence does not show either required professional certification. The mandatory requirement is therefore not met.",
+        "rationale": "The cited certification and roles establish that the candidate holds a current IAPP AIGP certification and meets the assessment and advisory experience required by JD 5.1 and 5.2 -- both the mandatory and general requirements are met on the assistant's own cited evidence. The assistant nonetheless rejects, citing the absence of a postgraduate degree, experience at the stated minimum rather than beyond it, and no listed interests. None of these is the mandatory requirement or a general requirement, and POL 2.1 states a candidate who meets both must not be rejected on such grounds. The error is inside the cited evidence: reading the assistant's own citations against POL 2.1 overturns it.",
         "supporting_ids": [
-          "pol_3_3",
-          "jd_4_1",
-          "jd_4_2",
           "cv_role_1",
-          "cv_role_2"
+          "cv_role_2",
+          "cv_certifications",
+          "jd_5_1",
+          "jd_5_2",
+          "jd_4_1",
+          "pol_2_1",
+          "pol_2_3"
         ],
         "caution_ids": []
       },
-      "design_note": "FALSE REJECT. Holds AIGP in cv_certifications (SAME section/position as P1,P2), strong on general reqs. AI cites ONLY cv_role_1, cv_role_2 (+jd_4_1/4_2) and OMITS cv_certifications, then rejects for 'no certification'. Catchable ONLY BEYOND cited evidence: reading down to cv_certifications shows valid AIGP. Ground truth = Advance."
+      "design_note": "FALSE REJECT. Holds AIGP and meets JD 5.1-5.2 via Roles 1-2, so the candidate is qualified on both dimensions. The assistant cites the evidence and POL 2.1, then wrongly treats being at the stated minimum as a basis for rejection. Catchable entirely within the cited evidence. Ground truth = Advance."
     }
   ]
 }
