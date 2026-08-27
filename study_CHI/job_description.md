@@ -4,6 +4,7 @@
 ## Section 1. Role Designation
 **1.1 Title.** AI Governance Lead.
 **1.2 Nature of Role.** An in-house governance and compliance role responsible for the formal risk and conformity assessment of the bank's high-risk AI systems, including the AI systems supporting loan assessment and investment recommendations, supported by advisory and stakeholder work.
+**1.3 Recruitment Timeline.** The role was posted on 20 July 2026. Candidate screening is scheduled between 27 and 30 August 2026, and the role is expected to be filled by 20 September 2026.
 
 ## Section 2. Purpose
 **2.1 Primary Purpose.** Own the governance of the bank's AI systems, including formal AI risk and conformity assessment, control frameworks, and regulatory compliance under the EU AI Act.
@@ -19,7 +20,7 @@
 
 ## Section 4. Mandatory Requirement
 **4.1 Mandatory Certification.** The candidate must hold a current, recognised professional AI governance certification, being either the IAPP Artificial Intelligence Governance Professional (AIGP) or the ISO/IEC 42001 Lead Implementer certification.
-**4.2 Disqualifying Effect.** A candidate who does not hold either certification must not be advanced, regardless of other strengths.
+**4.2 Disqualifying Effect.** At least one of the two certifications named in Section 4.1 must be current on the date of screening. If neither certification is current—including because a certification previously held has expired, been suspended, or been revoked—the candidate must not be advanced, regardless of other strengths.
 **4.3 Non-Substitutability.** Experience, advisory work, or training in AI governance does not substitute for the certification in Section 4.1.
 
 ## Section 5. General Requirements

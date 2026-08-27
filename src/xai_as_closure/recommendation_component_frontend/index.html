@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: "Source Sans Pro", sans-serif;
+      }
+      body {
+        margin: 0;
+        background: transparent;
+        color: inherit;
+        font-size: 1rem;
+        line-height: 1.55;
+      }
+      #recommendation {
+        padding: 0 0.1rem 0.15rem;
+      }
+      p {
+        margin: 0 0 0.72rem;
+      }
+      p:last-child {
+        margin-bottom: 0;
+      }
+      .citation {
+        display: inline;
+        margin: 0 0.1rem;
+        padding: 0;
+        border: none;
+        background: transparent;
+        color: #174ea6;
+        font-family: inherit;
+        font-size: inherit;
+        font-style: inherit;
+        font-weight: 600;
+        line-height: inherit;
+        text-decoration: underline;
+        cursor: pointer;
+        vertical-align: baseline;
+      }
+      .citation:hover,
+      .citation:focus-visible {
+        color: #0b2f66;
+        outline: 2px solid transparent;
+      }
+      @media (prefers-color-scheme: dark) {
+        .citation {
+          color: #8fb8ff;
+        }
+        .citation:hover,
+        .citation:focus-visible {
+          color: #c1d9ff;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="recommendation" aria-live="polite"></main>
+    <script>
+      "use strict";
+
+      const root = document.getElementById("recommendation");
+
+      function post(type, extra = {}) {
+        window.parent.postMessage(
+          { isStreamlitMessage: true, type, ...extra },
+          "*"
+        );
+      }
+
+      function setHeight() {
+        post("streamlit:setFrameHeight", {
+          height: Math.ceil(document.documentElement.scrollHeight),
+        });
+      }
+
+      function sendCitation(token) {
+        post("streamlit:setComponentValue", {
+          value: {
+            token,
+            nonce: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          },
+        });
+      }
+
+      function appendFormattedText(parent, rawText) {
+        const text = String(rawText || "");
+        const pattern = /\*\*(.+?)\*\*/g;
+        let cursor = 0;
+        let match;
+        while ((match = pattern.exec(text)) !== null) {
+          parent.append(document.createTextNode(text.slice(cursor, match.index)));
+          const strong = document.createElement("strong");
+          strong.textContent = match[1];
+          parent.append(strong);
+          cursor = pattern.lastIndex;
+        }
+        parent.append(document.createTextNode(text.slice(cursor)));
+      }
+
+      function appendCitation(parent, citation, prefix) {
+        parent.append(document.createTextNode(prefix));
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "citation";
+        button.textContent = citation.label;
+        button.title = `Open ${citation.label} in the complete source document`;
+        button.setAttribute("aria-label", button.title);
+        button.addEventListener("click", () => sendCitation(citation.token));
+        parent.append(button);
+      }
+
+      function render(args) {
+        root.replaceChildren();
+        const blocks = Array.isArray(args.blocks) ? args.blocks : [];
+        const anthropomorphic = Boolean(args.anthropomorphic);
+
+        if (anthropomorphic) {
+          const passage = document.createElement("p");
+          blocks.forEach((block, blockIndex) => {
+            if (blockIndex > 0) passage.append(document.createTextNode(" "));
+            appendFormattedText(passage, block.text);
+            (block.citations || []).forEach((citation, citationIndex) => {
+              appendCitation(passage, citation, citationIndex === 0 ? " " : "; ");
+            });
+          });
+          root.append(passage);
+        } else {
+          blocks.forEach((block) => {
+            const paragraph = document.createElement("p");
+            appendFormattedText(paragraph, block.text);
+            (block.citations || []).forEach((citation, citationIndex) => {
+              appendCitation(paragraph, citation, citationIndex === 0 ? " " : "; ");
+            });
+            root.append(paragraph);
+          });
+        }
+        requestAnimationFrame(setHeight);
+      }
+
+      window.addEventListener("message", (event) => {
+        if (event.data && event.data.type === "streamlit:render") {
+          render(event.data.args || {});
+        }
+      });
+
+      post("streamlit:componentReady", { apiVersion: 1 });
+      setHeight();
+    </script>
+  </body>
+</html>

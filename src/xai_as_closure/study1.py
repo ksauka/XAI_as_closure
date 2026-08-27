@@ -65,7 +65,8 @@ class Study1Session:
         order = cases.randomized_order(seed)
         return cls(
             state={
-                "schema_version": "study1-state-v2",
+                "schema_version": "study1-state-v3",
+                "case_set_id": cases.case_set_id,
                 "session_id": session_id,
                 "linkage_hash": linkage_hash,
                 "created_at_utc": _now(),
@@ -140,8 +141,10 @@ class Study1Session:
         return reference
 
     def _validate_state(self) -> None:
-        if self.state.get("schema_version") != "study1-state-v2":
+        if self.state.get("schema_version") != "study1-state-v3":
             raise WorkflowError("Stored session uses an unsupported Study 1 schema.")
+        if self.state.get("case_set_id") != self.cases.case_set_id:
+            raise WorkflowError("Stored session uses a different Study 1 case set.")
         references = set(self.cases.references)
         order = self.state.get("profile_order", [])
         if len(order) != len(references) or set(order) != references:

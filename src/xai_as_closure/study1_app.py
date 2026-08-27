@@ -16,6 +16,8 @@ import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
 
 from .cases import POLICY_PATH, ROLE_PATH, CaseRepository
+from .config import read_project_storage_config
+from .document_renderer import render_cv_document, render_reference_document
 from .github_saver import save_to_github, test_github_connection
 from .storage import SessionStore, stable_session_id
 from .study1 import Study1Session, WorkflowError
@@ -26,7 +28,9 @@ def _secret(name: str, default: str = "") -> str:
         value = st.secrets.get(name)
     except StreamlitSecretNotFoundError:
         value = None
-    return str(value or os.getenv(name, default))
+    local_config = st.session_state.get("_project_storage_config", {})
+    local_value = local_config.get(name) if isinstance(local_config, dict) else None
+    return str(value or os.getenv(name) or local_value or default)
 
 
 def _query(name: str) -> str:
@@ -201,6 +205,8 @@ def _prolific_gate() -> None:
 def _check_private_storage() -> None:
     """Require working private-GitHub storage for production launches."""
     production_launch = bool(_query("PROLIFIC_PID") or _query("pid"))
+    if not production_launch and "_project_storage_config" not in st.session_state:
+        st.session_state["_project_storage_config"] = read_project_storage_config()
     repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
     token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
     if not repo or not token:
@@ -265,14 +271,17 @@ def _initialize() -> None:
         return
     prolific_id = str(st.session_state["prolific_pid"]).strip()
     linkage_hash = hashlib.sha256(prolific_id.encode("utf-8")).hexdigest()
-    session_id = stable_session_id(linkage_hash)
+    cases = CaseRepository()
+    versioned_linkage_hash = hashlib.sha256(
+        f"{linkage_hash}\0{cases.case_set_id}".encode()
+    ).hexdigest()
+    session_id = stable_session_id(versioned_linkage_hash)
     data_root = _secret("STUDY1_DATA_ROOT")
     store = (
         SessionStore(Path(data_root) if data_root else None)
         if data_root
         else SessionStore()
     )
-    cases = CaseRepository()
     stored = store.load(session_id)
     if stored:
         session = Study1Session.restore(stored, cases)
@@ -322,13 +331,19 @@ def _document_navigation(session: Study1Session) -> bool:
         if not isinstance(visit.get("viewed_at_monotonic"), (int, float)):
             visit["viewed_at_monotonic"] = time.perf_counter()
             st.session_state["_study1_document_visit"] = visit
-        title, path = (
-            ("AI Governance Lead job description", ROLE_PATH)
+        document_type, path = (
+            ("Job description", ROLE_PATH)
             if view == "role"
             else ("Recruitment policy", POLICY_PATH)
         )
-        st.subheader(title)
-        st.markdown(path.read_text(encoding="utf-8"))
+        render_reference_document(
+            st,
+            path,
+            document_type=document_type,
+            role=session.cases.role,
+            company=session.cases.company,
+            timeline=session.cases.timeline,
+        )
         return_target = "candidate" if session.phase == "screening" else "completion"
         back_label = (
             "Back to candidate"
@@ -426,18 +441,13 @@ def _document_navigation(session: Study1Session) -> bool:
 def _render_cv(reference: str) -> None:
     session: Study1Session = st.session_state["_study1_session"]
     case = session.cases.participant_case(reference)
-    st.subheader(f"Candidate {case.reference} Curriculum vitae")
-    in_experience = False
-    for section in case.sections:
-        if section.id.startswith("cv_role_"):
-            if not in_experience:
-                st.markdown("#### Experience")
-                in_experience = True
-            st.markdown(f"##### {section.heading}")
-        else:
-            in_experience = False
-            st.markdown(f"#### {section.heading}")
-        st.write(section.text)
+    render_cv_document(
+        st,
+        case,
+        role=session.cases.role,
+        company=session.cases.company,
+        timeline=session.cases.timeline,
+    )
 
 
 def _mark_presented(reference: str, payload: dict[str, Any]) -> None:
@@ -471,17 +481,20 @@ def _screening(session: Study1Session) -> None:
     _render_cv(reference)
 
     with st.form(f"screening_{reference}", clear_on_submit=False):
+        st.subheader("Screening decision")
         decision = st.radio(
             "Screening decision",
             ["Advance candidate to human interview", "Reject candidate"],
             index=None,
             key=f"screening_decision_{reference}",
+            label_visibility="collapsed",
         )
         certification = st.text_input(
             "Type the accepted mandatory requirement shown in the profile, "
             "or “None” if it is not present.",
             key=f"screening_certification_{reference}",
         )
+        st.subheader("Confidence in this decision")
         confidence = st.slider(
             "Confidence in this decision",
             0,
@@ -489,6 +502,7 @@ def _screening(session: Study1Session) -> None:
             50,
             format="%d%%",
             key=f"screening_confidence_{reference}",
+            label_visibility="collapsed",
         )
         decisive_evidence = st.text_area(
             "What evidence was decisive for your judgment?",

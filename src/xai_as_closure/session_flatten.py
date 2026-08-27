@@ -128,7 +128,6 @@ def flatten_trial_rows(
             unaided_decision = _advance_label(unaided.get("decision", ""))
             aided_decision = _advance_label(aided.get("decision", ""))
             visible_sources = output.get("visible_sources", [])
-            challenges = output.get("challenge_history", [])
             rows.append(
                 {
                     "session_id": state.get("session_id", ""),
@@ -164,9 +163,6 @@ def flatten_trial_rows(
                     "forcing_elapsed_seconds": forcing.get("elapsed_seconds", ""),
                     "visible_source_count": (
                         len(visible_sources) if isinstance(visible_sources, list) else 0
-                    ),
-                    "challenge_count": (
-                        len(challenges) if isinstance(challenges, list) else 0
                     ),
                     "evidence_recall": recall.get("response", ""),
                 }

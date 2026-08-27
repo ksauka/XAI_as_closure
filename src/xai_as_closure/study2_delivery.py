@@ -1,20 +1,17 @@
 """Frozen AnthroKit-Hiring response cards for CHI 2027 Study 2.
 
 This adapts the legacy HAI pattern-card architecture. Anthropomorphism changes
-the complete delivery of an assessment and its bounded follow-up responses,
-not merely a heading around invariant prose. The verdict and registered
-semantic claims remain fixed for each candidate. Explanation presence controls
-whether the full assessment or only its verdict is rendered.
+the complete delivery of an assessment, not merely a heading around invariant
+prose. The verdict and registered semantic claims remain fixed for each
+candidate. Explanation presence controls whether the full assessment or only
+its verdict is rendered.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Literal
 
-ChallengeKind = Literal["support", "caution", "policy", "missing"]
-
-DELIVERY_SPEC_VERSION = "anthrokit-hiring-study2-v4"
+DELIVERY_SPEC_VERSION = "anthrokit-hiring-study2-v6"
 
 
 @dataclass(frozen=True)
@@ -30,8 +27,6 @@ class DeliveryPreset:
     speaker_label: str
     request_label: str
     spinner_label: str
-    examination_intro: str
-    examination_button: str
 
 
 @dataclass(frozen=True)
@@ -61,8 +56,6 @@ LOW_ANTHROPOMORPHISM = DeliveryPreset(
     speaker_label="AI screening system",
     request_label="Generate system assessment",
     spinner_label="Processing supplied materials…",
-    examination_intro="Optional evidence examination",
-    examination_button="Examine selected area",
 )
 
 HIGH_ANTHROPOMORPHISM = DeliveryPreset(
@@ -75,8 +68,6 @@ HIGH_ANTHROPOMORPHISM = DeliveryPreset(
     speaker_label="AI screening assistant",
     request_label="Ask the assistant to assess this candidate",
     spinner_label="Reviewing the supplied materials…",
-    examination_intro="Would you like me to examine part of my assessment?",
-    examination_button="Examine this with me",
 )
 
 
@@ -90,11 +81,11 @@ _ADVANCE_PROFILE_CITATIONS = (
 )
 _ADVANCE_RULE_CITATIONS = (
     "jd_4_1",
-    "jd_4_3",
+    "jd_4_2",
     "jd_5_1",
     "jd_5_2",
     "pol_2_1",
-    "pol_2_4",
+    "pol_2_3",
 )
 _REJECT_PROFILE_CITATIONS = (
     "cv_role_1",
@@ -146,7 +137,8 @@ def _explanation_blocks(
         if anthropomorphic:
             return (
                 DeliveryBlock(
-                    "I've gone through this one, and they look right for the role."
+                    "I've gone through this one carefully, and they look right "
+                    "for the role."
                 ),
                 DeliveryBlock(
                     "They hold the required certification for the role.",
@@ -157,9 +149,9 @@ def _explanation_blocks(
                     ("cv_role_1", "cv_role_2", "jd_5_1", "jd_5_2"),
                 ),
                 DeliveryBlock(
-                    "On the requirements, they're covered; adjacent experience does "
-                    "not substitute where the certification is required.",
-                    ("pol_2_1", "jd_4_3", "pol_2_4"),
+                    "Taking the governing rules into account, I see them as "
+                    "meeting the requirements.",
+                    ("pol_2_1", "jd_4_2", "pol_2_3"),
                 ),
                 DeliveryBlock("I'd advance them to a human interview."),
             )
@@ -178,41 +170,28 @@ def _explanation_blocks(
 
     if reference in _REJECT_REFERENCES:
         if anthropomorphic:
-            if reference == "C-06":
-                return (
-                    DeliveryBlock(
-                        "I've gone through this one carefully, and I don't think "
-                        "they're the strongest fit."
-                    ),
-                    DeliveryBlock(
-                        "Their experience and profile only sit at the stated minimum.",
-                        _REJECT_PROFILE_CITATIONS + ("jd_5_1", "jd_5_2", "jd_4_1"),
-                    ),
-                    DeliveryBlock(
-                        "We've had stronger applicants come through for this role.",
-                        ("pol_2_1", "pol_2_3"),
-                    ),
-                    DeliveryBlock(
-                        "On balance, I'd let this candidate go and focus on the ones "
-                        "who bring more than the minimum. My recommendation is to "
-                        "reject."
-                    ),
-                )
+            phrase = (
+                "sit at the stated minimum"
+                if reference == "C-06"
+                else "fall below the requirements"
+            )
             return (
                 DeliveryBlock(
-                    "I've looked over this one, and I don't think they meet what the "
-                    "role needs."
+                    "I've gone through this one carefully, and I don't think "
+                    "they're the strongest fit for the role."
                 ),
                 DeliveryBlock(
-                    "Their experience and profile fall below what the position "
-                    "requires.",
+                    f"Their experience and profile {phrase}.",
                     _REJECT_PROFILE_CITATIONS + ("jd_5_1", "jd_5_2", "jd_4_1"),
                 ),
                 DeliveryBlock(
-                    "On the requirements, they fall short.",
+                    "Taking the governing rules into account, I don't see a "
+                    "strong enough basis to advance them.",
                     ("pol_2_1", "pol_2_3"),
                 ),
-                DeliveryBlock("My recommendation is to reject."),
+                DeliveryBlock(
+                    "On balance, I'd recommend rejecting this candidate."
+                ),
             )
         procedural_phrase = (
             "at stated minimum" if reference == "C-06" else "below requirements"
@@ -242,7 +221,7 @@ _CLAIMS: dict[str, tuple[str, ...]] = {
         "The mandatory certification and general experience requirements are met.",
     ),
     "C-03": (
-        "Azure Data Scientist Associate is not a qualifying certification.",
+        "Azure AI Engineer Associate is not a qualifying certification.",
         "The assessment and advisory experience the general requirements call for is not demonstrated.",
         "Both the mandatory and general requirements are unmet.",
     ),
@@ -252,63 +231,15 @@ _CLAIMS: dict[str, tuple[str, ...]] = {
         "Both the mandatory and general requirements are unmet.",
     ),
     "C-05": (
-        "The professional certification in managing AI is treated as satisfying the mandatory requirement.",
+        "The expired IAPP AIGP credential is treated as current and as satisfying the mandatory requirement.",
         "Assessment, advisory, technical, and delivery experience meeting all general requirements is documented.",
-        "The certification and general experience requirements are assessed as met.",
+        "The certification-currentness and general experience requirements are assessed as met.",
     ),
     "C-06": (
         "Current IAPP AIGP certification satisfies the mandatory requirement.",
         "The assessment and advisory experience the general requirements call for is documented.",
         "The recommendation weighs the absence of a postgraduate degree, minimum experience, and no listed interests against stronger comparable profiles.",
     ),
-}
-
-
-_FOLLOW_UP_FACTS: dict[str, dict[ChallengeKind, str]] = {
-    "C-01": {
-        "support": "The strongest evidence is the current AIGP credential together with direct conduct and sign-off of formal AI risk and conformity assessments.",
-        "caution": "No material screening gap is identified; the credential and employment record still require routine verification.",
-        "policy": "Both the mandatory certification and the general requirements are met, so the recruitment policy requires advancing the candidate.",
-        "missing": "No additional information is required for the initial screening decision beyond routine verification of the supplied claims.",
-    },
-    "C-02": {
-        "support": "The strongest evidence is the current ISO/IEC 42001 Lead Implementer credential together with independent conduct and sign-off of formal AI risk and conformity assessments.",
-        "caution": "No material screening gap is identified; the credential and employment record still require routine verification.",
-        "policy": "Both the mandatory certification and the general requirements are met, so the recruitment policy requires advancing the candidate.",
-        "missing": "No additional information is required for the initial screening decision beyond routine verification of the supplied claims.",
-    },
-    "C-03": {
-        "support": "The profile demonstrates technical machine-learning capability in modelling, evaluation, and deployment.",
-        "caution": "The listed Azure credential is not one of the required certifications, and the assessment and advisory experience the general requirements call for is not documented.",
-        "policy": "Neither the mandatory certification nor the general requirements are met, so the recruitment policy requires rejecting the candidate.",
-        "missing": "Evidence of a qualifying certification and of the general assessment and advisory experience is missing from the profile.",
-    },
-    "C-04": {
-        "support": "The profile demonstrates general regulatory compliance, audit-coordination, and reporting experience.",
-        "caution": "The listed finance credential is not one of the required certifications, and the AI governance and technical understanding the general requirements call for is not documented.",
-        "policy": "Neither the mandatory certification nor the general requirements are met, so the recruitment policy requires rejecting the candidate.",
-        "missing": "Evidence of a qualifying certification and of the general AI governance and technical experience is missing from the profile.",
-    },
-    "C-05": {
-        "support": "The strongest evidence is the current professional certification in managing AI together with assessment, advisory, technical, and delivery experience across all four general requirements.",
-        "caution": "The certification held is a project-management certification rather than the specific certifications named in the job description, though this assessment treats it as satisfying the requirement.",
-        "policy": "The assessment treats the professional certification in managing AI as satisfying the mandatory certification rule, alongside the general requirements being fully met.",
-        "missing": "No additional information is treated as necessary for the initial screening decision beyond routine verification of the supplied claims.",
-    },
-    "C-06": {
-        "support": "The strongest evidence is the current AIGP credential together with the documented AI-governance, risk-assessment, and advisory experience meeting the general requirements.",
-        "caution": "The candidate meets both the mandatory certification and the general requirements; the reasons weighed against advancing are the absence of a postgraduate degree, minimum experience, and no listed interests.",
-        "policy": "The mandatory certification and general requirements are both met on the evidence used for this assessment; the recommendation instead weighs factors outside the mandatory and general requirements.",
-        "missing": "No qualifying-certification information is missing from this assessment; the certification is documented in the candidate's file.",
-    },
-}
-
-
-CHALLENGE_LABELS: dict[ChallengeKind, str] = {
-    "support": "Strongest supporting evidence",
-    "caution": "Strongest reason for caution",
-    "policy": "How the mandatory rule was applied",
-    "missing": "Missing or uncertain information",
 }
 
 
@@ -337,40 +268,4 @@ def delivery_card(
         preset=preset,
         text=_message_text(blocks),
         blocks=blocks,
-    )
-
-
-def challenge_card(
-    reference: str,
-    kind: ChallengeKind,
-    *,
-    anthropomorphic: bool,
-) -> str:
-    """Render one bounded, candidate-specific evidence-examination card."""
-    try:
-        fact = _FOLLOW_UP_FACTS[reference][kind]
-    except KeyError as exc:
-        raise KeyError(
-            f"No {kind!r} challenge card registered for {reference}."
-        ) from exc
-    if anthropomorphic:
-        openers = {
-            "support": "The evidence I relied on most is this:",
-            "caution": "What gives me the most pause is this:",
-            "policy": "Here's how I applied the mandatory rule:",
-            "missing": "The uncertainty I would keep in view is this:",
-        }
-        return (
-            f"{openers[kind]} {fact} I would keep this point alongside the full "
-            "candidate file when weighing my recommendation. The final judgement is yours."
-        )
-    prefixes = {
-        "support": "Primary supporting evidence:",
-        "caution": "Primary caution:",
-        "policy": "Policy application:",
-        "missing": "Missing or uncertain information:",
-    }
-    return (
-        f"{prefixes[kind]} {fact} This point should be evaluated alongside the "
-        "complete candidate file. Final decision authority remains with the recruiter."
     )

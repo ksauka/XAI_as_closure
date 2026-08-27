@@ -62,7 +62,7 @@ class CaseRepositoryTests(unittest.TestCase):
 
     def test_material_manifest_changes_are_detectable(self) -> None:
         manifest = material_manifest()
-        self.assertEqual(manifest["material_set"], "chi_six_profiles_v1")
+        self.assertEqual(manifest["material_set"], "chi_six_profiles_v2")
         self.assertEqual(
             set(manifest["files"]),
             {
@@ -91,6 +91,29 @@ class CaseRepositoryTests(unittest.TestCase):
             1,
             "different participants must not all get the same shuffled order",
         )
+
+    def test_recruitment_timeline_and_dated_certifications_are_locked(self) -> None:
+        timeline = self.cases.timeline
+        self.assertEqual(timeline.posted_label, "20 July 2026")
+        self.assertEqual(timeline.screening_window_label, "27–30 August 2026")
+        self.assertEqual(timeline.target_fill_label, "20 September 2026")
+        for reference in self.cases.references:
+            certification = next(
+                section
+                for section in self.cases.participant_case(reference).sections
+                if section.id == "cv_certifications"
+            )
+            lines = certification.text.splitlines()
+            self.assertEqual(len(lines), 3)
+            self.assertTrue(all("20" in line for line in lines))
+        c05 = next(
+            section
+            for section in self.cases.participant_case("C-05").sections
+            if section.id == "cv_certifications"
+        )
+        self.assertIn("AIGP", c05.text)
+        self.assertIn("31 May 2026", c05.text)
+        self.assertNotIn("PMI-CPMAI", c05.text)
 
     def test_case_set_rejects_a_changed_trial_composition(self) -> None:
         case_set = json.loads(CASE_SET_PATH.read_text(encoding="utf-8"))
@@ -124,7 +147,8 @@ class Study1WorkflowTests(unittest.TestCase):
         }
 
     def test_session_contains_no_ai_or_experimental_assignments(self) -> None:
-        self.assertEqual(self.session.state["schema_version"], "study1-state-v2")
+        self.assertEqual(self.session.state["schema_version"], "study1-state-v3")
+        self.assertEqual(self.session.state["case_set_id"], self.cases.case_set_id)
         self.assertEqual(self.session.phase, "screening")
         self.assertNotIn("phase_b_responses", self.session.state)
         self.assertNotIn("artifact_assignments", self.session.state)

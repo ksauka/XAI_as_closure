@@ -17,6 +17,3 @@ class EvidenceRetriever:
             reference=self.store.reference,
             passages=tuple(self.store.sections),
         )
-
-    def retrieve_for_challenge(self, challenge: str) -> tuple:
-        return tuple(self.store.search(challenge, top_k=5))

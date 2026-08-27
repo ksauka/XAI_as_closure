@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Literal
+from dataclasses import dataclass
 
 from .cases import EvidencePassage
-
-ChallengeKind = Literal["support", "caution", "policy", "missing"]
 
 
 @dataclass(frozen=True)
@@ -67,19 +64,9 @@ class RenderedResponse:
     visible_sources: tuple[EvidencePassage, ...]
 
 
-@dataclass(frozen=True)
-class ChallengeResponse:
-    """Bounded response to a participant-selected evidence question."""
-
-    kind: ChallengeKind
-    prompt_label: str
-    response_text: str
-    visible_sources: tuple[EvidencePassage, ...]
-
-
 @dataclass
 class AgentState:
-    """Per-candidate state retained by the interactive decision agent."""
+    """Per-candidate state retained by the decision agent."""
 
     reference: str
     condition_id: str
@@ -88,15 +75,12 @@ class AgentState:
     evaluation: CandidateEvaluation | None = None
     recommendation: RecommendationState | None = None
     rendered: RenderedResponse | None = None
-    challenge_history: list[ChallengeResponse] = field(default_factory=list)
 
 
 __all__ = [
     "AgentState",
     "AssessmentPlan",
     "CandidateEvaluation",
-    "ChallengeKind",
-    "ChallengeResponse",
     "RecommendationState",
     "RenderedMessageBlock",
     "RenderedResponse",

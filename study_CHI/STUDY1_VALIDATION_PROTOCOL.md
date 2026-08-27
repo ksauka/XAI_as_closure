@@ -53,7 +53,7 @@ recruitment-platform identifiers, or raw Qualtrics Response IDs.
 Every expert receives the same versioned materials:
 
 - AI Governance Lead job description;
-- recruitment policy and non-substitutable certification rule; and
+- recruitment policy and certification identity-and-currency rules; and
 - six participant-facing candidate profiles identified only as C-01 through
   C-06.
 
@@ -70,9 +70,9 @@ participant-specific randomized order.
 For every candidate, the expert records exactly:
 
 1. Advance candidate to human interview or Reject candidate.
-2. Certification classification, typed as free text naming the accepted
-   mandatory requirement the expert located in the profile, or "None" if it
-   is not present. This is a recall measure, not a recognition measure: the
+2. Certification classification, typed as free text naming the current accepted
+   mandatory requirement the expert located in the profile, or "None" if no
+   listed certification is current and accepted. This is a recall measure, not a recognition measure: the
    expert is not shown the certification names as selectable options, and the
    prompt does not name "certification" directly.
 3. Confidence in the judgment, from 0 to 100.
@@ -104,8 +104,11 @@ Before launch, the preregistration must define:
 
 Fleiss' kappa and profile-level agreement are reported for Advance or Reject.
 Certification classification, now a free-text field, is coded against the
-correct certification for each profile (correct, incorrect, or missing) before
-agreement is summarized separately from the Advance or Reject judgment.
+correct certification identity and currency for each profile (current accepted,
+expired accepted, non-qualifying, or missing) before agreement is summarized
+separately from the Advance or Reject judgment. C-05 passes validation only if
+experts recognise that its AIGP term ended before the screening window and
+therefore reject it for the intended reason.
 Open-ended decisive evidence is coded for whether the mandatory criterion drove
 the judgment.
 Ambiguity and cue responses are reviewed to identify profile features that could

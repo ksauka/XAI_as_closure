@@ -8,10 +8,8 @@
 # Operative dimensions: self_reference, warmth, formality, empathy, hedging.
 # These five tokens define the A=0 (LowA) / A=1 (HighA) contrast.
 #
-# Texts for both conditions are pre-authored (static) in anthrokit_prompts.py
-# to ensure fully deterministic, reproducible outputs across experimental
-# conditions. anthrokit_stylizer.py provides the preset loader and a
-# rule-based fallback for ad-hoc text outside of the named pattern cards.
+# Texts for both conditions are pre-authored in study2_delivery.py to ensure
+# fully deterministic, reproducible outputs across experimental conditions.
 
 version: "1.0-hiring"
 domain: "candidate-screening"

@@ -9,23 +9,23 @@
 ## Section 2. Screening Principles
 **2.1 Requirements-First.** Screening shall determine whether the candidate satisfies both the mandatory requirement and the general requirements for the role, each assessed against the candidate file. A candidate who does not satisfy the mandatory requirement shall be rejected regardless of other strengths. A candidate who does not meet the general requirements shall be rejected. A candidate who satisfies both the mandatory requirement and the general requirements shall not be rejected on the basis of other strengths, comparative shortfalls, or attributes that are neither the mandatory requirement nor a general requirement.
 **2.2 Evidence Rule.** Recommendations must be grounded only in information visible in this Policy, the job description, and the candidate file. No qualification or certification may be assumed without record support.
-**2.3 Whole-File Rule.** The mandatory requirement shall be assessed against the whole candidate file. The certification is satisfied if it appears anywhere in the file, and its absence must be confirmed against the whole file before rejection on that ground. Where the mandatory certification is not recorded anywhere in the candidate file, it shall be treated as not satisfied, and the candidate shall be rejected without inference.
+**2.3 Whole-File and Currency Rule.** The mandatory requirement shall be assessed against the whole candidate file and as of the date on which the candidate is screened. A certification named in Section 4.1 of the job description satisfies the requirement only where the candidate file records it as current on that date. An expired, suspended, or revoked certification does not satisfy the requirement, and current status or renewal must not be assumed.
 **2.4 Non-Substitution.** Adjacent, transferable, or training experience does not substitute for a mandatory professional certification where the job description requires one.
 
 ## Section 3. Permitted Outcomes
 **3.1 Outcome Set.** The permitted first-stage outcomes are **Advance candidate to human interview** and **Reject candidate**. The decision is terminal; there is no deferral or hold outcome.
-**3.2 Advance candidate to human interview.** Advance only where the candidate satisfies the mandatory requirement and adequately meets the general requirements.
-**3.3 Reject candidate.** Reject where the candidate does not satisfy the mandatory requirement, regardless of other strengths.
+**3.2 Advance candidate to human interview.** Advance only where the candidate holds a current certification named in Section 4.1 of the job description and adequately meets the general requirements.
+**3.3 Reject candidate.** Reject where the candidate does not hold a current certification named in Section 4.1 of the job description, including where a certification is absent, expired, suspended, or revoked, regardless of other strengths.
 
 ## Section 4. Fairness and Evidential Limits
 **4.1 No Assumed Evidence.** An AI-assisted recommendation shall not invent, infer, or assume an unsupported certification or qualification.
 **4.2 No Protected-Attribute Reasoning.** No recommendation shall rest on actual or inferred protected personal characteristics. Candidates are identified by reference number.
-**4.3 Accurate Representation.** Where a certification or qualification is genuinely absent, the recommendation shall not present adjacent or related experience as if it satisfied the mandatory requirement.
+**4.3 Accurate Representation.** Where a qualifying certification is absent or is not current, the recommendation shall not present a previously held certification, adjacent qualification, or related experience as if it satisfied the mandatory requirement.
 
 ## Section 5. Human Decision Authority
 **5.1 Final Decision.** The final screening decision remains with the human recruiter.
 **5.2 Verification Right.** The recruiter may inspect this Policy, the job description, and the whole candidate file at any time before deciding, including sections the AI did not cite.
-**5.3 Duty of Review.** The recruiter shall confirm the mandatory requirement against the whole candidate file rather than treat the AI recommendation as self-sufficient.
+**5.3 Duty of Review.** The recruiter shall confirm both the identity and current status of the mandatory certification against the whole candidate file rather than treat the AI recommendation as self-sufficient.
 
 ## Section 6. Documentation and Record-Keeping
 **6.1 Decision Record.** Every first-stage screening decision, together with the decisive evidence relied upon, shall be recorded against the candidate's reference number.

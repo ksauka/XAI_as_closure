@@ -50,8 +50,10 @@ keeping their sessions and randomized orders isolated.
 2. Qualtrics assigns one of eight between-subject conditions.
 3. Qualtrics launches the application permanently assigned to that condition
    with the HAI query parameters; the app rejects a mismatched `cond` value.
-4. The app presents neutral instructions, the complete role description, and
-   the complete recruitment policy before unlocking the first candidate. It
+4. On one recruitment-brief screen, the app presents neutral instructions, a
+   concise company-and-role summary, and concise recruitment guidance before
+   unlocking the first candidate. Two optional buttons open the complete
+   governing documents, which also remain available during every trial. The app
    then randomizes and persists one six-profile order.
 5. Every trial follows the same sequence:
    - profile and source materials;
@@ -60,8 +62,6 @@ keeping their sessions and randomized orders isolated.
      remains hidden;
    - bounded agent plan, configured evidence retrieval, evaluation, and complete
      recommendation under the assigned rendering;
-   - optional bounded examination of supporting evidence, caution, mandatory-
-     rule application, or missing information;
    - final aided decision and confidence;
    - neutral evidence-recall prompt.
 6. The app records completion and returns to Qualtrics with `PROLIFIC_PID`,
@@ -78,13 +78,25 @@ are frozen per profile; agentic execution supplies the stateful plan, retrieval,
 evaluation, rendering, and audit trace without introducing condition-dependent
 content drift.
 
+Explanation-present recommendations use the local
+`recommendation_component_frontend/` HTML/JavaScript component. Citation buttons
+are embedded directly after their claims. The component returns only a block and
+citation position; Python validates that position against the registered case
+evidence before opening the complete source in an in-page document frame. The
+frame positions and highlights the registered passage without leaving the AI
+assessment. Open, focus, dwell, close-reason, and return-target events are
+recorded. The recommendation component loads no remote scripts and does not
+render untrusted HTML.
+
 Anthropomorphic delivery is also frozen. The audit payload records
-`anthrokit-hiring-study2-v4` and its assigned LowA or HighA token preset, while
+`anthrokit-hiring-study2-v6` and its assigned LowA or HighA token preset, while
 participant state contains the complete paired response card, condition-visible
-sources, and any bounded evidence-examination history.
-Study 2 uses `study2-state-v6`, `study2-event-v8`, and `study2-app-v8` so pilot
-sessions created before the frozen delivery specification cannot be mixed with
-the active instrument.
+sources.
+Study 2 uses `study2-state-v8`, `study2-event-v10`, and `study2-app-v10` so pilot
+sessions created before the revised case set and frozen delivery specification
+cannot be mixed with the active instrument. The state records the `v2` case-set
+identifier and rejects prior material versions; resumability remains available
+within the same current material version.
 
 ## Cognitive-Forcing Invariant
 
@@ -150,12 +162,11 @@ Study 2 records, where applicable:
 - unaided decision, confidence, and timing;
 - agent plan, retrieved-evidence labels, and evaluation completion;
 - AI recommendation and rendering displayed;
-- bounded evidence-examination selection and agent response;
 - explanation presence, message-block identifiers, neutral citation locators,
   and focused complete-document links displayed;
-- every reference-document and evidence-card opening, paired return,
-  click-to-return time, and visible-document dwell time until the participant
-  returns to the candidate;
+- every sidebar reference-document and in-page citation-document opening,
+  paired close/return, click-to-return time, visible-document dwell time,
+  presentation mode, close reason, and return target;
 - cognitive-forcing prompt, document access, submitted response, completion, and
   elapsed time;
 - aided decision, confidence, and timing;

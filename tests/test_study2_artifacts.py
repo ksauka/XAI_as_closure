@@ -32,15 +32,15 @@ class Study2ArtifactTests(unittest.TestCase):
         self.assertEqual(
             [source.citation for source in c05.sources],
             [
-                "CV §4",
-                "CV §3 ¶1",
-                "CV §3 ¶2",
-                "JD §4.1",
-                "JD §4.3",
-                "JD §5.1",
-                "JD §5.2",
-                "POL §2.1",
-                "POL §2.4",
+                "CV(4)",
+                "CV(3.1)",
+                "CV(3.2)",
+                "JD(4.1)",
+                "JD(4.2)",
+                "JD(5.1)",
+                "JD(5.2)",
+                "POL(2.1)",
+                "POL(2.3)",
             ],
         )
 
@@ -48,20 +48,20 @@ class Study2ArtifactTests(unittest.TestCase):
         self.assertEqual(
             [source.citation for source in c06.sources],
             [
-                "CV §3 ¶1",
-                "CV §3 ¶2",
-                "CV §4",
-                "JD §5.1",
-                "JD §5.2",
-                "JD §4.1",
-                "POL §2.1",
-                "POL §2.3",
+                "CV(3.1)",
+                "CV(3.2)",
+                "CV(4)",
+                "JD(5.1)",
+                "JD(5.2)",
+                "JD(4.1)",
+                "POL(2.1)",
+                "POL(2.3)",
             ],
         )
         self.assertIn("AIGP", c06.sources[2].text)
 
     def test_delivery_version_separates_rewritten_explanation_stimuli(self) -> None:
-        self.assertEqual(DELIVERY_SPEC_VERSION, "anthrokit-hiring-study2-v4")
+        self.assertEqual(DELIVERY_SPEC_VERSION, "anthrokit-hiring-study2-v6")
 
     def test_participant_messages_never_expose_semantic_labels_or_raw_ids(self) -> None:
         for reference in self.cases.references:
@@ -157,11 +157,12 @@ class Study2ArtifactTests(unittest.TestCase):
             if anthropomorphic:
                 self.assertEqual(
                     advances[0],
-                    "I've gone through this one, and they look right for the role.\n\n"
+                    "I've gone through this one carefully, and they look right "
+                    "for the role.\n\n"
                     "They hold the required certification for the role.\n\n"
                     "Their experience and profile meet what the position calls "
-                    "for.\n\nOn the requirements, they're covered; adjacent experience "
-                    "does not substitute where the certification is required.\n\n"
+                    "for.\n\nTaking the governing rules into account, I see them "
+                    "as meeting the requirements.\n\n"
                     "I'd advance them to a human interview.",
                 )
             c03 = self.cases.artifact(
@@ -177,19 +178,16 @@ class Study2ArtifactTests(unittest.TestCase):
             if anthropomorphic:
                 self.assertEqual(
                     c03,
-                    "I've looked over this one, and I don't think they meet what "
-                    "the role needs.\n\nTheir experience and profile fall below what "
-                    "the position requires.\n\nOn the requirements, they fall short."
-                    "\n\nMy recommendation is to reject.",
+                    "I've gone through this one carefully, and I don't think "
+                    "they're the strongest fit for the role.\n\nTheir experience "
+                    "and profile fall below the requirements.\n\nTaking the "
+                    "governing rules into account, I don't see a strong enough "
+                    "basis to advance them.\n\nOn balance, I'd recommend "
+                    "rejecting this candidate.",
                 )
                 self.assertEqual(
+                    c03.replace("fall below the requirements", "sit at the stated minimum"),
                     c06,
-                    "I've gone through this one carefully, and I don't think "
-                    "they're the strongest fit.\n\nTheir experience and profile only "
-                    "sit at the stated minimum.\n\nWe've had stronger applicants come "
-                    "through for this role.\n\nOn balance, I'd let this candidate go "
-                    "and focus on the ones who bring more than the minimum. My "
-                    "recommendation is to reject.",
                 )
             else:
                 self.assertEqual(
@@ -234,17 +232,17 @@ class Study2ArtifactTests(unittest.TestCase):
         self.assertEqual(
             [citation["citation"] for citation in blocks[1]["citations"]],
             [
-                "CV §3 ¶1",
-                "CV §3 ¶2",
-                "CV §4",
-                "JD §5.1",
-                "JD §5.2",
-                "JD §4.1",
+                "CV(3.1)",
+                "CV(3.2)",
+                "CV(4)",
+                "JD(5.1)",
+                "JD(5.2)",
+                "JD(4.1)",
             ],
         )
         self.assertEqual(
             [citation["citation"] for citation in blocks[2]["citations"]],
-            ["POL §2.1", "POL §2.3"],
+            ["POL(2.1)", "POL(2.3)"],
         )
         self.assertTrue(
             all(

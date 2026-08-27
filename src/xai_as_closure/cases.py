@@ -7,6 +7,7 @@ import json
 import re
 from collections import Counter
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Any
 
@@ -43,6 +44,34 @@ class CvSection:
 class ParticipantCase:
     reference: str
     sections: tuple[CvSection, ...]
+
+
+@dataclass(frozen=True)
+class RecruitmentTimeline:
+    posted_date: date
+    screening_window_start: date
+    screening_window_end: date
+    target_fill_date: date
+
+    @staticmethod
+    def _display(value: date) -> str:
+        return f"{value.day} {value.strftime('%B %Y')}"
+
+    @property
+    def posted_label(self) -> str:
+        return self._display(self.posted_date)
+
+    @property
+    def screening_window_label(self) -> str:
+        start = self.screening_window_start
+        end = self.screening_window_end
+        if (start.year, start.month) == (end.year, end.month):
+            return f"{start.day}–{end.day} {end.strftime('%B %Y')}"
+        return f"{self._display(start)}–{self._display(end)}"
+
+    @property
+    def target_fill_label(self) -> str:
+        return self._display(self.target_fill_date)
 
 
 @dataclass(frozen=True)
@@ -83,7 +112,7 @@ def material_manifest() -> dict[str, Any]:
         digest.update(path.name.encode("ascii"))
         digest.update(content)
     return {
-        "material_set": "chi_six_profiles_v1",
+        "material_set": "chi_six_profiles_v2",
         "manifest_sha256": digest.hexdigest(),
         "files": files,
     }
@@ -103,18 +132,18 @@ def _clauses(path: Path) -> dict[str, tuple[str, str]]:
 def _cv_citation(section_id: str) -> tuple[str, str]:
     """Return a neutral, stable participant locator for one CV section."""
     fixed = {
-        "cv_summary": ("CV §1", "1"),
-        "cv_education": ("CV §2", "2"),
-        "cv_certifications": ("CV §4", "4"),
-        "cv_skills": ("CV §5", "5"),
-        "cv_hobbies": ("CV §6", "6"),
+        "cv_summary": ("CV(1)", "1"),
+        "cv_education": ("CV(2)", "2"),
+        "cv_certifications": ("CV(4)", "4"),
+        "cv_skills": ("CV(5)", "5"),
+        "cv_hobbies": ("CV(6)", "6"),
     }
     if section_id in fixed:
         return fixed[section_id]
     role = re.fullmatch(r"cv_role_(\d+)", section_id)
     if role:
         paragraph = role.group(1)
-        return f"CV §3 ¶{paragraph}", f"3.{paragraph}"
+        return f"CV(3.{paragraph})", f"3.{paragraph}"
     raise ValueError(f"Unsupported CV section identifier: {section_id}")
 
 
@@ -144,6 +173,18 @@ class CaseRepository:
     @property
     def company(self) -> str:
         return str(self._data["company"])
+
+    @property
+    def timeline(self) -> RecruitmentTimeline:
+        raw = self._data["recruitment_timeline"]
+        return RecruitmentTimeline(
+            posted_date=date.fromisoformat(str(raw["posted_date"])),
+            screening_window_start=date.fromisoformat(
+                str(raw["screening_window_start"])
+            ),
+            screening_window_end=date.fromisoformat(str(raw["screening_window_end"])),
+            target_fill_date=date.fromisoformat(str(raw["target_fill_date"])),
+        )
 
     def randomized_order(self, seed: str) -> tuple[str, ...]:
         return tuple(
@@ -232,7 +273,7 @@ class CaseRepository:
             return EvidencePassage(
                 source_id=source_id,
                 label=f"Job description, Section {clause}",
-                citation=f"JD §{clause}",
+                citation=f"JD({clause})",
                 document="role",
                 focus=clause,
                 heading=heading,
@@ -244,7 +285,7 @@ class CaseRepository:
             return EvidencePassage(
                 source_id=source_id,
                 label=f"Recruitment policy, Section {clause}",
-                citation=f"POL §{clause}",
+                citation=f"POL({clause})",
                 document="policy",
                 focus=clause,
                 heading=heading,
@@ -269,6 +310,17 @@ class CaseRepository:
         raise ValueError(f"Unsupported source identifier: {source_id}")
 
     def _validate(self) -> None:
+        try:
+            timeline = self.timeline
+        except (KeyError, TypeError, ValueError) as exc:
+            raise ValueError("The recruitment timeline is invalid.") from exc
+        if not (
+            timeline.posted_date
+            < timeline.screening_window_start
+            <= timeline.screening_window_end
+            < timeline.target_fill_date
+        ):
+            raise ValueError("The recruitment timeline is not chronological.")
         if len(self._cases) != 6:
             raise ValueError(
                 "The CHI case set requires exactly six candidate profiles."
@@ -288,6 +340,29 @@ class CaseRepository:
             "false_reject": ("Advance", "Reject candidate"),
         }
         for reference, case in self._cases.items():
+            certification_section = next(
+                (
+                    section
+                    for section in case["candidate_cv"]["sections"]
+                    if section["id"] == "cv_certifications"
+                ),
+                None,
+            )
+            if certification_section is None:
+                raise ValueError(f"Missing certifications for {reference}.")
+            certification_lines = [
+                line.strip()
+                for line in certification_section["text"].splitlines()
+                if line.strip()
+            ]
+            if len(certification_lines) != 3:
+                raise ValueError(
+                    f"{reference} must list exactly three dated certifications."
+                )
+            if any(not re.search(r"\b20\d{2}\b", line) for line in certification_lines):
+                raise ValueError(
+                    f"Every certification listed for {reference} must include a date."
+                )
             assessment = case["fixed_assessment"]
             if assessment["recommendation"] not in {
                 "Advance candidate to human interview",

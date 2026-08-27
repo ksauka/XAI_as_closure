@@ -2,17 +2,14 @@
 
 from __future__ import annotations
 
-from .anthrokit_prompts import card_challenge
 from .conditions import Study2Condition
 from .schemas import (
-    ChallengeKind,
-    ChallengeResponse,
     RecommendationState,
     RenderedMessageBlock,
     RenderedResponse,
     RetrievedCaseEvidence,
 )
-from .study2_delivery import CHALLENGE_LABELS, delivery_card
+from .study2_delivery import delivery_card
 
 
 class RecommendationRenderer:
@@ -48,26 +45,4 @@ class RecommendationRenderer:
             text=card.text,
             blocks=blocks,
             visible_sources=retrieved.passages if condition.explanation else (),
-        )
-
-    def render_challenge_response(
-        self,
-        reference: str,
-        kind: ChallengeKind,
-        retrieved: RetrievedCaseEvidence,
-        condition: Study2Condition,
-    ) -> ChallengeResponse:
-        if not condition.explanation:
-            raise ValueError(
-                "Evidence examination is unavailable when explanation is absent."
-            )
-        return ChallengeResponse(
-            kind=kind,
-            prompt_label=CHALLENGE_LABELS[kind],
-            response_text=card_challenge(
-                reference,
-                kind,
-                high_a=condition.anthropomorphic,
-            ),
-            visible_sources=retrieved.passages,
         )

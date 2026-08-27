@@ -1,8 +1,7 @@
 """Top-level agentic hiring decision agent for CHI 2027 Study 2.
 
 This is the migrated HAI orchestrator. It retains the original lifecycle:
-EvidenceStore → Planner → Retriever → Evaluator → Recommender → Renderer,
-followed by bounded post-recommendation evidence examination.
+EvidenceStore → Planner → Retriever → Evaluator → Recommender → Renderer.
 """
 
 from __future__ import annotations
@@ -22,8 +21,6 @@ from .schemas import (
     AgentState,
     AssessmentPlan,
     CandidateEvaluation,
-    ChallengeKind,
-    ChallengeResponse,
     RenderedMessageBlock,
 )
 from .study2_delivery import DELIVERY_SPEC_VERSION, DeliveryPreset, delivery_card
@@ -78,7 +75,6 @@ class AgentOutput:
             "visible_sources": [
                 _participant_citation(source) for source in self.visible_sources
             ],
-            "challenge_history": [],
         }
 
     def audit_payload(self) -> dict[str, Any]:
@@ -154,31 +150,6 @@ class AgenticHiringDecisionAgent:
         state.rendered = rendered
         return state
 
-    def handle_stage2_challenge(
-        self,
-        state: AgentState,
-        kind: ChallengeKind,
-    ) -> ChallengeResponse:
-        """Examine a bounded evidence question without changing the verdict."""
-        if not self.condition.explanation:
-            raise ValueError(
-                "Evidence examination is unavailable when explanation is absent."
-            )
-        if kind not in {"support", "caution", "policy", "missing"}:
-            raise ValueError("Unsupported evidence-examination request.")
-        if state.retrieved is None or state.recommendation is None:
-            self.generate_recommendation(state)
-        if state.retrieved is None:
-            raise RuntimeError("Evidence retrieval did not complete.")
-        response = self._renderer.render_challenge_response(
-            state.reference,
-            kind,
-            state.retrieved,
-            self.condition,
-        )
-        state.challenge_history.append(response)
-        return response
-
     def assess(self, reference: str) -> AgentOutput:
         state = self.start_assessment(reference)
         self.generate_recommendation(state)
@@ -211,13 +182,6 @@ class AgenticHiringDecisionAgent:
         )
         self.assessment_history.append(output)
         return output
-
-    def examine(self, reference: str, kind: ChallengeKind) -> ChallengeResponse:
-        state = self._states.get(reference)
-        if state is None:
-            state = self.start_assessment(reference)
-            self.generate_recommendation(state)
-        return self.handle_stage2_challenge(state, kind)
 
     @staticmethod
     def create_plan(reference: str) -> AssessmentPlan:

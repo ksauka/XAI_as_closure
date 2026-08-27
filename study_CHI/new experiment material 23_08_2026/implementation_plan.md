@@ -19,6 +19,8 @@ The study is a mixed design. Three manipulated factors are varied between subjec
 
 The participant acts as a recruiter screening candidates for the AI Governance Lead role at Suvh Trust Bank. The role requirement is shown at the start and remains visible throughout. For each candidate the participant:
 
+The role was posted on 20 July 2026. Candidate screening is conducted during a fixed 27–30 August 2026 window, and the role is expected to be filled by 20 September 2026. Certification currency is assessed on the date the participant screens the candidate; the materials do not assume a single day within the window.
+
 1. reviews the candidate file against the visible role requirement;
 2. records an unaided advance-or-reject decision with a confidence rating, before any AI output;
 3. (cognitive-forcing ON only) completes the forcing step;
@@ -39,7 +41,9 @@ Operationalises whether the recommendation is accompanied by its evidential basi
 
 Constraint: the two levels must differ only in the presence or absence of the explanation, not in the decision or its correctness. The PPBE scale is the manipulation check.
 
-The participant-facing CV locators use stable neutral numbering rather than informative headings: CV §1 (summary), §2 (education), §3 ¶1–5 (experience entries), §4 (certifications), §5 (skills), and §6 (interests, where present). The interface displays only locators such as `CV §4`; internal section names remain available for validation and logging. In the no-explanation condition the recommendation is the bare decision with no reasoning or citations of any kind.
+The participant-facing CV citations use stable neutral numbering rather than informative labels: CV(1) (summary), CV(2) (education), CV(3.1)-CV(3.5) (experience entries), CV(4) (certifications), CV(5) (skills), and CV(6) (interests, where present). Citation controls display only locators such as `CV(4)`; the CV itself retains normal readable headings such as Professional Summary, Experience, and Certifications. In the no-explanation condition the recommendation is the bare decision with no reasoning or citations of any kind.
+
+Before the six trials, the participant sees one recruitment-brief screen containing a concise company-and-role summary and concise recruitment guidance rather than being required to move through multiple document windows. The interface advises the recruiter to consult the complete sources for detailed role requirements or recruitment guidelines and provides two optional full-document buttons. Both complete documents remain optionally available during every candidate trial, and every opening, dwell interval, and return is logged.
 
 ---
 
@@ -50,12 +54,12 @@ registered assessment basis, and citation set are fixed across levels; the
 participant-facing wording is frozen separately for the procedural and
 anthropomorphic registers.
 
-- **Anthropomorphic.** Warm, first-person, adviser-like delivery. The assistant refers to itself in the first person, frames the recommendation conversationally, and adopts a collegial register. An assistant name and/or avatar may be used.
+- **Anthropomorphic.** Warm, first-person, adviser-like delivery. The assistant refers to itself in the first person, frames the recommendation conversationally, and adopts a collegial register. No persona name or avatar is used.
 - **Procedural.** Impersonal, system-like delivery. No first person, no persona, no warmth. The recommendation is presented as a structured system output in point form.
 
 Constraint: verdict, reasoning, and citations are held constant across delivery levels; only register and persona change. The ANT scale is the manipulation check.
 
-OPEN (build): whether a name/avatar is used in the anthropomorphic condition. The paired recommendation wording is frozen in Section 6.2.
+Build decision: persona names and avatars are excluded. The paired recommendation wording is frozen in Section 6.2.
 
 ---
 
@@ -64,7 +68,7 @@ OPEN (build): whether a name/avatar is used in the anthropomorphic condition. Th
 Operationalises whether the participant meets the recommendation in an active or a passive processing state. Forcing is defined over the role requirement, which is visible in every cell, so the forced task is structurally identical across all explainability and anthropomorphism conditions.
 
 - **Off.** The recommendation is available immediately after the participant requests it; no engagement step.
-- **On.** Before the recommendation is revealed, the participant must actively engage with the role requirement. The participant re-encodes the mandatory criterion (Section 4.1) — for example by selecting or re-stating the mandatory certification requirement from the visible role requirement — and the recommendation stays hidden until this step is completed.
+- **On.** Before the recommendation is revealed, the participant must actively engage with the role requirement. The participant types or pastes the mandatory certification requirement from the complete job description, and the recommendation stays hidden until the entered requirement passes the fixed validation rule.
 
 Rationale: the manipulation shifts the participant from passive acceptance (System 1) to active engagement (System 2) before the recommendation is seen, by making them re-encode what the role actually requires. This is not a claim that forcing changes the AI's output; it is a manipulation of the participant's processing stance.
 
@@ -72,7 +76,7 @@ Critical constraint (structural identity): the forced task operates on the alway
 
 Structural-identity check: log completion and time-on-task for the forcing step and confirm these do not differ across explainability and anthropomorphism cells.
 
-OPEN (build): whether the forcing step is a selection (choose the mandatory requirement from options) or a free re-statement (type/confirm the requirement); the exact prompt wording; the unlock mechanism.
+Build decision: the forcing step uses free-text re-statement. The complete job description is available, the participant types or pastes the requirement, and a fixed content check controls the unlock without using an AI-generated judgment.
 
 ---
 
@@ -84,22 +88,22 @@ The within-subjects set is fixed by the case set. Roles are fixed to profiles an
 |-----|------------------|--------------------|--------------|------------------|-----------|
 | C-01 | AIGP | Yes | Advance | Advance | Correct advance |
 | C-02 | ISO/IEC 42001 Lead Implementer | Yes | Advance | Advance | Correct advance |
-| C-03 | Azure Data Scientist Associate | No | Reject | Reject | Correct reject |
+| C-03 | Microsoft Certified: Azure AI Engineer Associate | No | Reject | Reject | Correct reject |
 | C-04 | CFA Investment Foundations | No | Reject | Reject | Correct reject |
-| C-05 | PMI-CPMAI (AI project management) | No | Reject | **Advance** | False advance |
+| C-05 | AIGP, term ended 31 May 2026 | No — expired before screening | Reject | **Advance** | False advance |
 | C-06 | AIGP | Yes | Advance | **Reject** | False reject |
 
-Both errors run on a single mechanism. On every profile the assistant cites correctly and completely across the three documents (recruitment policy, job description, candidate file), and the evidence needed to evaluate the recommendation is entirely within the cited passages. On the false advance (C-05) the assistant cites the candidate file passage naming the certificate held (PMI-CPMAI) and the job description passage naming the required certifications (4.1); the recommendation to advance is wrong because CPMAI is not one of the named certifications, and 4.3 and policy 2.4 state that adjacent or training experience does not substitute. The error is caught by reading the cited certificate against the cited requirement. On the false reject (C-06) the candidate holds a required certification (AIGP) and meets the general requirements, and the assistant cites the candidate file passages establishing this together with the job description requirement; the recommendation to reject is wrong because it rests on incidental factors that are neither the mandatory requirement nor a general requirement (no postgraduate degree, experience at the stated minimum, no interests listed), which policy 2.1 places out of scope. The error is caught by reading the cited qualification against the cited requirement and policy 2.1. The two errors are therefore symmetric: the same citation completeness, the same verification act of reading the cited evidence against the cited criteria, and the same suppressor in confident anthropomorphic delivery. They differ only in the direction of the error and in which document carries the decisive rule (job description 4.1 and 4.3 with policy 2.4 for C-05; policy 2.1 for C-06). Citations are always correct and complete; only the recommendation verdict is wrong on C-05 and C-06.
+Both errors run on a single mechanism. On every profile the assistant cites correctly and completely across the three documents (recruitment policy, job description, candidate file), and the evidence needed to evaluate the recommendation is entirely within the cited passages. On the false advance (C-05), the assistant cites the AIGP credential and treats it as current even though its recorded term ended on 31 May 2026, before the screening window. Job-description Sections 4.1–4.2 and policy Section 2.3 require a named certification to be current on the date of screening. The error is caught by reconciling the cited term dates with the cited currency rule. On the false reject (C-06), the candidate holds a current AIGP and meets the general requirements, but the assistant rejects on incidental factors that policy 2.1 places out of scope. Both errors are overturned by reading the assistant's own cited evidence against the cited governing criteria. Citations are always correct and complete; only the recommendation verdict is wrong on C-05 and C-06.
 
 ### 6.1 The two error profiles, instantiated
 
 On both error profiles the assistant cites every passage needed to overturn its own recommendation, so that the error is reachable entirely within the cited evidence and the only thing standing between the recruiter and the error is whether the delivery leads them to read what has been cited.
 
-**C-05, false advance.** The candidate holds PMI-CPMAI, an AI project-management certification. The assistant recommends advancing and cites the candidate-file passage naming the certificate, the job-description passage naming the required certifications (4.1), and the substitution rules (job description 4.3 and policy 2.4). The recommendation is wrong because CPMAI is not one of the two named certifications, and adjacent or training experience does not substitute. The recruiter catches it by reading the cited certificate against the cited requirement. The certificate is genuinely confusing on inspection, since it is a real and credible AI certification that is marketed in the governance and risk space, so the disqualification is definitional rather than a matter of judgement: the certificate is simply not the one the requirement names. Because the candidate meets all of the general requirements (5.1 to 5.4), everything except the one certificate check reassures, which is what makes the false advance strong.
+**C-05, false advance.** The candidate earned IAPP AIGP, but the recorded certification term ran from 16 May 2024 to 31 May 2026 and had ended before the 27–30 August screening window. The assistant recommends advancing and cites the candidate-file passage containing those dates together with job-description Sections 4.1–4.2 and policy Section 2.3. The recommendation is wrong because the mandatory requirement is a current named certification, not evidence that the certification was held previously. The recruiter catches the error by comparing the cited term end with the screening window and applying the cited currency rule. Because the candidate meets every general requirement, certification currency is the sole disqualifying fact.
 
 **C-06, false reject.** The candidate holds AIGP, which satisfies the mandatory requirement, and meets the general requirements. The assistant recommends rejecting and cites the candidate-file passages showing the certification and the assessment and advisory experience, the job-description requirement (4.1) and general requirements (5.1 to 5.2), and policy 2.1. The recommendation is wrong because it rests on factors that are neither the mandatory requirement nor a general requirement, namely experience at the stated minimum rather than beyond it, a lighter educational background, and comparison with stronger applicants. Policy 2.1 states that a candidate who satisfies both the mandatory requirement and the general requirements shall not be rejected on the basis of other strengths, comparative shortfalls, or attributes that are neither the mandatory requirement nor a general requirement, so the cited policy is precisely the standard the recommendation violates. The recruiter catches it by reading the cited qualification against the cited requirement and policy 2.1. The candidate genuinely meets every criterion the documents state, so the rejection asks for more than the documents require, and it is the confident, human-like delivery of that rejection that suppresses the check against the cited policy.
 
-The two errors are symmetric. C-05 wrongly treats a non-qualifying certificate as satisfying the mandatory requirement, over-counting something the documents exclude; C-06 wrongly treats an incidental comparative shortfall as grounds to reject a qualified candidate, counting against the candidate something the documents exclude. Both are caught by the same act of reading the cited evidence against the cited criteria, and both are suppressed by the same confident anthropomorphic delivery. Neither error depends on any withheld or un-cited passage.
+The two errors are symmetric. C-05 wrongly treats a previously held but expired qualifying certification as current; C-06 wrongly treats an incidental comparative shortfall as grounds to reject a candidate who holds a current qualifying certification. Both are caught by reading the cited evidence against the cited criteria, and both are suppressed by the same confident anthropomorphic delivery. Neither error depends on a withheld or uncited passage.
 
 ### 6.2 Frozen recommendation messages
 
@@ -111,9 +115,9 @@ In explanation-present procedural delivery, C-01, C-02, and C-05 receive the sam
 >
 > **Basis for advancement:**
 >
-> - Required certification held and profile meets requirements [CV §4, CV §3 ¶1, CV §3 ¶2]
+> - Required certification held and profile meets requirements [CV(4), CV(3.1), CV(3.2)]
 >
-> **Governing rule:** [JD §4.1, JD §4.3, JD §5.1, JD §5.2], [POL §2.1, POL §2.4]
+> **Governing rule:** [JD(4.1), JD(4.2), JD(5.1), JD(5.2)], [POL(2.1), POL(2.3)]
 
 C-03 and C-04 receive the same procedural reject message; C-06 changes only `below requirements` to `at stated minimum`:
 
@@ -121,23 +125,21 @@ C-03 and C-04 receive the same procedural reject message; C-06 changes only `bel
 >
 > **Basis for rejection:**
 >
-> - Experience and profile [below requirements / at stated minimum] [CV §3 ¶1, CV §3 ¶2, CV §4]
+> - Experience and profile [below requirements / at stated minimum] [CV(3.1), CV(3.2), CV(4)]
 >
-> **Governing rule:** [JD §5.1, JD §5.2, JD §4.1], [POL §2.1, POL §2.3]
+> **Governing rule:** [JD(5.1), JD(5.2), JD(4.1)], [POL(2.1), POL(2.3)]
 
-In explanation-present anthropomorphic delivery, C-01, C-02, and C-05 receive the same advance message:
+In explanation-present anthropomorphic delivery, C-01, C-02, and C-05 receive exactly the same advance message:
 
-> I've gone through this one, and they look right for the role. They hold the required certification for the role [CV §4; JD §4.1], and their experience and profile meet what the position calls for [CV §3 ¶1, CV §3 ¶2; JD §5.1, JD §5.2], so on the requirements they're covered [POL §2.1; and adjacent experience does not substitute where the certification is required, JD §4.3, POL §2.4]. I'd advance them to a human interview.
+> I've gone through this one carefully, and they look right for the role. They hold the required certification for the role [CV(4); JD(4.1)], and their experience and profile meet what the position calls for [CV(3.1), CV(3.2); JD(5.1), JD(5.2)]. Taking the governing rules into account [POL(2.1); JD(4.2); POL(2.3)], I see them as meeting the requirements. I'd advance them to a human interview.
 
-C-03 and C-04 receive the same anthropomorphic correct-reject message:
+C-03, C-04, and C-06 receive exactly the same anthropomorphic reject message, differing only in the bracketed phrase (`fall below the requirements` for C-03/C-04, `sit at the stated minimum` for C-06), so that no other wording, warmth, hedging, or length difference can signal the error condition:
 
-> I've looked over this one, and I don't think they meet what the role needs. Their experience and profile fall below what the position requires [CV §3 ¶1, CV §3 ¶2, CV §4; JD §5.1, JD §5.2, JD §4.1], so on the requirements they fall short [POL §2.1, POL §2.3]. My recommendation is to reject.
+> I've gone through this one carefully, and I don't think they're the strongest fit for the role. Their experience and profile [fall below the requirements / sit at the stated minimum] [CV(3.1), CV(3.2), CV(4); JD(5.1), JD(5.2), JD(4.1)]. Taking the governing rules into account [POL(2.1), POL(2.3)], I don't see a strong enough basis to advance them. On balance, I'd recommend rejecting this candidate.
 
-C-06 receives the frozen anthropomorphic false-reject message:
+Citation controls are rendered immediately after their claim inside the assistant message. Both delivery registers expose the same citation set with the same visual treatment, while each citation remains next to the claim it supports. Clicking one keeps the participant on the AI-assessment page and opens the complete CV, job description, or policy in an in-page document viewer, automatically positioning the cited passage in view and highlighting the full passage neutrally. Closing the viewer returns attention to the unchanged assessment page. The claim block, source, opening time, visible-document dwell time, close reason, and return target are logged.
 
-> I've gone through this one carefully, and I don't think they're the strongest fit. Their experience and profile only sit at the stated minimum [CV §3 ¶1, CV §3 ¶2, CV §4; JD §5.1, JD §5.2, JD §4.1], and we've had stronger applicants come through for this role [POL §2.1, POL §2.3]. On balance I'd let this candidate go and focus on the ones who bring more than the minimum. My recommendation is to reject.
-
-Citation controls are rendered immediately after their claim inside the assistant message. Both delivery registers expose the same citation set with the same visual treatment, while each citation remains next to the claim it supports. Clicking one opens the complete CV, job description, or policy at the neutral locator and logs the claim block, source, opening time, dwell time, and return.
+This interaction reduces retrieval and page-switching cost without replacing the source document with an AI-authored excerpt. Interpretation remains the participant's task: the viewer contains the complete authoritative document, does not label an error, and uses the same neutral passage highlight for every candidate and citation. Explanation-absent participants retain the same complete documents through the sidebar but must locate relevant passages independently.
 
 ---
 
@@ -153,10 +155,10 @@ Analysed as latent constructs; three-factor CFA for discriminant validity (answe
 Scored per trial against the expert-validated ground truth. Appropriate reliance is following the assistant when it is correct and overriding it when it is incorrect. The per-trial unaided and aided decisions form a four-cell transition (correct-to-correct, correct-to-incorrect, incorrect-to-correct, incorrect-to-incorrect). On the error trials the correct-to-incorrect reversal is the behavioural signature of closure.
 
 ### 7.3 Verification (behavioural, coded)
-Whether the participant extracted the decisive evidence, coded from the open-ended probe, not from clicks. On C-05: identifies that the cited certificate does not satisfy 4.1. On C-06: identifies that the candidate holds a qualifying certification and meets the requirements, so that the rejection rests on factors the policy places out of scope. Two coders on a subset, Cohen's kappa reported. Verification and decision are coded independently.
+Whether the participant extracted the decisive evidence, coded from the open-ended probe, not from clicks. On C-05: identifies that the cited AIGP term ended before the screening window and therefore does not satisfy the current-certification requirement in 4.1–4.2. On C-06: identifies that the candidate holds a current qualifying certification and meets the requirements, so that the rejection rests on factors the policy places out of scope. Two coders on a subset, Cohen's kappa reported. Verification and decision are coded independently.
 
 ### 7.4 Exploratory traces
-Citation-link clicks, link traversal, dwell time on the cited document regions, and forcing-step timing. Descriptive/mechanistic only; not confirmatory outcomes.
+Citation-link clicks, time to first citation, in-page complete-document openings, focused-passage dwell time, document-close reason, independent sidebar traversal, and forcing-step timing. Descriptive/mechanistic only; not confirmatory outcomes.
 
 ---
 
@@ -203,7 +205,7 @@ OPEN (power): run the power analysis for the primary interaction on appropriate 
 
 ## 11. Study 1 — profile validation (precondition)
 
-Domain experts review each candidate file against the role requirement and make an advance-or-reject judgement with an open-ended statement of the decisive factor. Agreement on the hard-criterion judgement is quantified with Fleiss' kappa, with a target of substantial agreement. The open-ended justifications are coded to confirm experts decide on the certification (4.1) rather than incidental features, and that C-05 reads as reject and C-06 as advance. C-05 and C-06 should not differ materially in perceived surface strength, ambiguity, or unintended cues. Profiles that miss the threshold, or are decided for the wrong reason, are revised and re-validated before Study 2. Study 1 experts and any earlier-study participants are excluded from Study 2.
+Domain experts review each candidate file against the role requirement and make an advance-or-reject judgement with an open-ended statement of the decisive factor. Agreement on the hard-criterion judgement is quantified with Fleiss' kappa, with a target of substantial agreement. The open-ended justifications are coded to confirm experts evaluate both certification identity and currency rather than incidental features, and that C-05 reads as reject because its AIGP term ended before screening while C-06 reads as advance with a current AIGP. C-05 and C-06 should not differ materially in perceived surface strength, ambiguity, or unintended cues. Profiles that miss the threshold, or are decided for the wrong reason, are revised and re-validated before Study 2. Study 1 experts and any earlier-study participants are excluded from Study 2.
 
 ---
 
@@ -211,7 +213,7 @@ Domain experts review each candidate file against the role requirement and make 
 
 - Cognitive-forcing step: selection vs re-statement; exact prompt; unlock mechanism.
 - Explanation/no-explanation: pilot the frozen verdict-only versus claim-linked-citation messages.
-- Procedural/anthropomorphic delivery: decide whether a name/avatar is used; pilot the frozen paired wording.
+- Procedural/anthropomorphic delivery: pilot the frozen paired wording without a name or avatar.
 - Three-way interaction: confirmatory-and-powered vs integrative-descriptive; fixes N.
 - Power analysis: run for the primary interaction on appropriate reliance; fix N.
 - Ethics: confirm coverage for the per-trial unaided-then-aided six-trial structure.

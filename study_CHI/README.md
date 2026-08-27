@@ -4,10 +4,10 @@ This directory contains the current study materials for the CHI 2027 paper.
 
 ## Canonical materials
 
-- `job_description.md`: locked AI Governance Lead role and mandatory certification criterion.
+- `job_description.md`: locked AI Governance Lead role, recruitment timeline, and current-certification criterion.
 - `recruitment_policy.md`: locked screening policy and two-outcome decision rule.
 - `six_candidate_profiles.md`: human-readable six-profile trial set.
-- `six_profiles_case_set.json`: structured implementation source for the six trials.
+- `six_profiles_case_set.json`: structured `v2` implementation source for the six trials.
 - `STUDY1_VALIDATION_PROTOCOL.md`: single-phase expert ground-truth validation procedure.
 - `STUDY2_CONDITIONS.md`: active 2 x 2 x 2 condition identifiers and invariants.
 - `APPLICATION_LOGGING_ARCHITECTURE.md`: Qualtrics linkage, app flow, and event schema.
@@ -38,11 +38,9 @@ The programme uses one Study 1 application and eight Study 2 applications:
   The complete LowA/HighA cards are deterministic,
   preserve the validated AnthroKit-Hiring token contrast, and never call an LLM
   to rewrite participant-facing stimuli.
-  In explanation-present conditions, the participant can use bounded
-  evidence-examination controls before locking the aided decision; responses
-  remain frozen and cannot alter the registered recommendation. In
-  explanation-absent conditions, verification requires independent use of the
-  complete source documents.
+  In explanation-present conditions, citations open the relevant complete
+  source document. In explanation-absent conditions, verification requires
+  independent use of the complete source documents.
   Cognitive forcing, when assigned, occurs after the unaided decision and gates
   the still-hidden recommendation until the participant re-enters the mandatory
   certification requirement from the complete job description. A neutral
@@ -58,5 +56,10 @@ The Markdown and JSON materials above supersede unresolved or provisional design
 language in `Methodology_CHI2027_SUPERSEDED.docx`. The DOCX is retained only as
 design history and must not be used as the implementation or manuscript source of
 truth.
+
+The duplicate material files formerly kept under
+`new experiment material 23_08_2026/` were removed to prevent drift. That
+directory retains the maintained `implementation_plan.md` and a pointer back to
+the canonical participant-facing documents in this directory.
 
 The current manuscript source is `../docs/CHI2027/CHI_draft.tex`.

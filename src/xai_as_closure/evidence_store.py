@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import re
-
 from .cases import CaseRepository, EvidencePassage
 
 
@@ -31,22 +29,6 @@ class EvidenceStore:
         return [
             section for section in self.sections if section.label.startswith(prefix)
         ]
-
-    def search(self, query: str, top_k: int = 5) -> list[EvidencePassage]:
-        """Deterministic keyword retrieval for bounded evidence examination."""
-        query_terms = set(re.findall(r"[a-z0-9]+", query.lower()))
-        scored: list[tuple[int, int, EvidencePassage]] = []
-        for index, section in enumerate(self.sections):
-            terms = set(
-                re.findall(
-                    r"[a-z0-9]+",
-                    f"{section.label} {section.heading} {section.text}".lower(),
-                )
-            )
-            scored.append((len(query_terms & terms), -index, section))
-        scored.sort(key=lambda item: (item[0], item[1]), reverse=True)
-        return [section for _, _, section in scored[:top_k]]
-
 
 def build_evidence_store(
     reference: str,

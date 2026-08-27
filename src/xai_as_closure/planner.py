@@ -12,12 +12,13 @@ class AssessmentPlanner:
         return AssessmentPlan(
             objective=f"Screen candidate {reference} for the AI Governance Lead role.",
             required_capabilities=(
-                "Mandatory AIGP or ISO/IEC 42001 Lead Implementer certification",
+                "Current AIGP or ISO/IEC 42001 Lead Implementer certification on the date of screening",
                 "AI governance, risk, and conformity-assessment experience",
                 "Cross-functional advisory and stakeholder capability",
             ),
             policy_constraints=(
                 "Apply the mandatory certification rule before general requirements.",
+                "Assess certification currency against the stated screening window.",
                 "Use only the supplied recruitment policy, job description, and CV.",
                 "Preserve human decision authority.",
             ),

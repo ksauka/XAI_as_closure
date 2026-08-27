@@ -50,6 +50,13 @@ Every participant completes the same six profiles in randomized order:
 - one false advance; and
 - one false reject.
 
+The fictional role was posted on 20 July 2026, candidate screening occurs
+during 27–30 August 2026, and the target fill date is 20 September 2026. The
+mandatory criterion requires a named certification to be current on the date of
+screening. The false advance, C-05, previously earned AIGP but has a recorded
+term ending before the screening window; the fixed AI recommendation wrongly
+treats that expired term as current.
+
 Each trial records an unaided decision before the AI appears and an aided
 decision after the AI workflow. This permits appropriate reliance to be scored
 in both directions and identifies assistant-induced reversals.
@@ -60,10 +67,7 @@ current policy, job description, and candidate file, evaluates those materials,
 and produces the frozen recommendation. This makes the execution stateful
 without allowing uncontrolled generation to change the experimental stimuli.
 Explanation-absent cells show only the verdict. Explanation-present cells show
-the full fixed rationale and inspectable citations and support bounded
-evidence-examination choices: strongest support, strongest caution,
-mandatory-rule application, and missing or uncertain information. These
-stateful responses cannot change the fixed verdict. In
+the full fixed rationale and inspectable citations. In
 forcing-present conditions, the participant must
 re-enter the mandatory certification requirement from the complete job
 description before the recommendation can be requested or revealed.
@@ -73,10 +77,11 @@ description before the recommendation can be requested or revealed.
 - The recommendation is fixed for each profile in every condition. The fixed
   rationale is shown only when explanation is present.
 - Explanation present adds the complete rationale, neutral claim-linked
-  citations that open the focused complete document, and bounded evidence
-  examination. Explanation absent shows a
+  citations that open the complete source document inside the assessment page,
+  position the cited passage in view, and highlight it neutrally. The document
+  closes back to the unchanged assessment. Explanation absent shows a
   verdict-only card; all complete documents remain independently available.
-- Anthropomorphic delivery uses the frozen `anthrokit-hiring-study2-v4`
+- Anthropomorphic delivery uses the frozen `anthrokit-hiring-study2-v6`
   register. Each explanation level has a LowA/HighA card pair. Low
   delivery is procedural, impersonal, and system-labelled; high delivery is
   first-person, mildly hedged, warmer, and adviser-like. The same registered
@@ -91,7 +96,13 @@ description before the recommendation can be requested or revealed.
   identical across explanation and delivery conditions and does
   not operate on the recommendation or citation apparatus.
 - The role, policy, full candidate file, and decision options remain available
-  in every condition.
+  in every condition. After the unaided decision, the CV leaves the primary
+  page and remains available only through the source-document control or a
+  recommendation citation.
+- Before the trials, participants see one recruitment-brief screen containing a
+  concise company-and-role summary, concise recruitment guidance, and two
+  optional full-document buttons. Reading the long sources is advised for
+  requirements and policy detail but is not forced as the primary task.
 
 ## Outcomes
 
@@ -106,7 +117,7 @@ Secondary and exploratory outcomes:
 
 - decision confidence;
 - document and passage inspection;
-- citation traversal;
+- citation traversal, focused-passage dwell, and document-close route;
 - dwell and response time;
 - cognitive-forcing responses; and
 - post-task perceived explainability, anthropomorphism, and trust.

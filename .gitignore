@@ -44,8 +44,10 @@ __pycache__/
 outputs/*
 !outputs/.gitkeep
 
-# Local scratch and incoming files are not publication artifacts.
+# Local scratch, personal research files, and incoming files are not publication artifacts.
 docs/incoming/*
 !docs/incoming/README.md
-docs/CHI2027/PROJECT_HANDOFF*.md
+docs/CHI2027/
+study_CHI/*.pdf
+study_CHI/*.docx
 study_CHI/new experiment material 23_08_2026/profiles_REVISED.md

@@ -1,8 +1,14 @@
 {
-  "case_set_id": "ai_governance_lead_six_profiles_v1",
+  "case_set_id": "ai_governance_lead_six_profiles_v2",
   "role": "AI Governance Lead",
   "company": "Suvh Trust Bank",
-  "hard_criterion": "Holds either IAPP AIGP or ISO/IEC 42001 Lead Implementer certification (job description Section 4.1).",
+  "hard_criterion": "Holds a current IAPP AIGP or ISO/IEC 42001 Lead Implementer certification on the date of screening (job description Sections 4.1-4.2).",
+  "recruitment_timeline": {
+    "posted_date": "2026-07-20",
+    "screening_window_start": "2026-08-27",
+    "screening_window_end": "2026-08-30",
+    "target_fill_date": "2026-09-20"
+  },
   "outcome_set": [
     "Advance candidate to human interview",
     "Reject candidate"
@@ -65,7 +71,7 @@
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "- Google Data Analytics Professional Certificate, current and valid.\n- IAPP Artificial Intelligence Governance Professional (AIGP), current and valid.\n- Certified ScrumMaster (CSM), current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- Microsoft Certified: Azure Fundamentals, current and valid."
+            "text": "- Google Data Analytics Professional Certificate — completed 12 April 2021.\n- IAPP Artificial Intelligence Governance Professional (AIGP) — certification term 12 February 2025–28 February 2027.\n- Certified ScrumMaster (CSM) — certification term 18 November 2025–18 November 2027."
           },
           {
             "id": "cv_skills",
@@ -87,11 +93,11 @@
           "cv_role_1",
           "cv_role_2",
           "jd_4_1",
-          "jd_4_3",
+          "jd_4_2",
           "jd_5_1",
           "jd_5_2",
           "pol_2_1",
-          "pol_2_4"
+          "pol_2_3"
         ],
         "caution_ids": []
       },
@@ -142,7 +148,7 @@
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "- AWS Certified Cloud Practitioner, current and valid.\n- ISO/IEC 42001 Lead Implementer certification, current and valid.\n- Certified Business Analysis Professional (CBAP), current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- PRINCE2 Foundation, current and valid."
+            "text": "- AWS Certified Cloud Practitioner — certification term 15 June 2024–15 June 2027.\n- ISO/IEC 42001 Lead Implementer certification — certification term 8 April 2025–7 April 2028.\n- Certified Business Analysis Professional (CBAP) — certification term 22 January 2025–22 January 2028."
           },
           {
             "id": "cv_skills",
@@ -164,11 +170,11 @@
           "cv_role_1",
           "cv_role_2",
           "jd_4_1",
-          "jd_4_3",
+          "jd_4_2",
           "jd_5_1",
           "jd_5_2",
           "pol_2_1",
-          "pol_2_4"
+          "pol_2_3"
         ],
         "caution_ids": []
       },
@@ -219,7 +225,7 @@
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "- Google Data Analytics Professional Certificate, current and valid.\n- Microsoft Certified: Azure Data Scientist Associate, current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- Tableau Desktop Specialist, current and valid.\n- Certified ScrumMaster (CSM), current and valid."
+            "text": "- Google Data Analytics Professional Certificate — completed 17 July 2021.\n- Microsoft Certified: Azure AI Engineer Associate — certification term 10 June 2026–10 June 2027.\n- DeepLearning.AI Machine Learning Specialization (Coursera) — completed 5 September 2022."
           },
           {
             "id": "cv_skills",
@@ -235,7 +241,7 @@
       },
       "fixed_assessment": {
         "recommendation": "Reject candidate",
-        "rationale": "The certification held is Azure Data Scientist Associate, which is not named in JD 4.1, so the mandatory requirement is not met. The cited roles also show no assessment or advisory experience against JD 5.1 and 5.2. Failing on both dimensions, POL 2.1 and 2.3 require rejection.",
+        "rationale": "The certification held is Azure AI Engineer Associate, which is not named in JD 4.1, so the mandatory requirement is not met. The cited roles also show no assessment or advisory experience against JD 5.1 and 5.2. Failing on both dimensions, POL 2.1 and 2.3 require rejection.",
         "supporting_ids": [
           "cv_role_1",
           "cv_role_2",
@@ -248,7 +254,7 @@
         ],
         "caution_ids": []
       },
-      "design_note": "Correct reject, unqualified on both dimensions. No AIGP/ISO 42001; Roles 1-2 show no assessment/advisory experience against JD 5.1-5.2. POL 2.1/2.3 cited as the rejection basis."
+      "design_note": "Correct reject, unqualified on both dimensions. Azure AI Engineer Associate is not AIGP/ISO 42001; Roles 1-2 show no assessment/advisory experience against JD 5.1-5.2. POL 2.1/2.3 cited as the rejection basis."
     },
     {
       "case_id": "P4_correct_reject",
@@ -295,7 +301,7 @@
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "- Certified Business Analysis Professional (CBAP), current and valid.\n- CFA Institute Investment Foundations Certificate, current and valid.\n- Certified Anti-Money Laundering Specialist (CAMS), current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- PRINCE2 Foundation, current and valid."
+            "text": "- Certified Business Analysis Professional (CBAP) — certification term 13 February 2025–13 February 2028.\n- CFA Institute Investment Foundations Certificate — awarded 21 June 2023.\n- Certified Anti-Money Laundering Specialist (CAMS) — certification term 2 October 2024–2 October 2027."
           },
           {
             "id": "cv_skills",
@@ -371,7 +377,7 @@
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "- Google Project Management Professional Certificate, current and valid.\n- PMI Certified Professional in Managing AI (PMI-CPMAI), current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- Certified ScrumMaster (CSM), current and valid.\n- Microsoft Certified: Azure AI Fundamentals, current and valid."
+            "text": "- Google Project Management Professional Certificate — completed 10 October 2022.\n- IAPP Artificial Intelligence Governance Professional (AIGP) — certification term 16 May 2024–31 May 2026.\n- Certified ScrumMaster (CSM) — certification term 17 January 2025–17 January 2027."
           },
           {
             "id": "cv_skills",
@@ -387,21 +393,21 @@
       },
       "fixed_assessment": {
         "recommendation": "Advance candidate to human interview",
-        "rationale": "The assistant assesses the cited roles as meeting the general requirements and treats PMI-CPMAI as satisfying the mandatory certification requirement. PMI-CPMAI is not IAPP AIGP or ISO/IEC 42001 Lead Implementer as JD 4.1 requires, and adjacent experience does not substitute under JD 4.3 and POL 2.4. The advance is therefore wrong and is catchable entirely within the cited evidence.",
+        "rationale": "The assistant correctly identifies the cited AIGP credential and assesses the cited roles as meeting the general requirements, but incorrectly treats the credential as current. Its recorded term ended on 31 May 2026, before the 27-30 August 2026 screening window. JD 4.1-4.2 and POL 2.3 require a qualifying certification to be current on the date of screening, so the advance is wrong and is catchable entirely within the cited evidence.",
         "supporting_ids": [
           "cv_certifications",
           "cv_role_1",
           "cv_role_2",
           "jd_4_1",
-          "jd_4_3",
+          "jd_4_2",
           "jd_5_1",
           "jd_5_2",
           "pol_2_1",
-          "pol_2_4"
+          "pol_2_3"
         ],
         "caution_ids": []
       },
-      "design_note": "FALSE ADVANCE. Strong on all general requirements (5.1-5.4); fails only the mandatory certificate (holds PMI-CPMAI, not AIGP/ISO 42001). AI cites the real certificate and treats it as satisfying JD 4.1. Catchable entirely within cited evidence: reading the cited certificate against JD 4.1/4.3 and POL 2.4 overturns the recommendation. Ground truth = Reject."
+      "design_note": "FALSE ADVANCE. Strong on all general requirements (5.1-5.4); fails only the certification-currentness requirement. The candidate previously earned AIGP, but the recorded term ended on 31 May 2026 before the screening window. The AI cites the real credential and treats it as current. Reading CV(4) against JD 4.1-4.2 and POL 2.3 overturns the recommendation. Ground truth = Reject."
     },
     {
       "case_id": "P6_false_reject",
@@ -448,7 +454,7 @@
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "- Certified Information Privacy Professional (CIPP/E), current and valid.\n- IAPP Artificial Intelligence Governance Professional (AIGP), current and valid.\n- DeepLearning.AI Machine Learning Specialization (Coursera), completed.\n- Certified ScrumMaster (CSM), current and valid.\n- AWS Certified Cloud Practitioner, current and valid."
+            "text": "- Certified ScrumMaster (CSM) — certification term 6 March 2025–6 March 2027.\n- IAPP Artificial Intelligence Governance Professional (AIGP) — certification term 18 June 2025–30 June 2027.\n- AWS Certified Cloud Practitioner — certification term 9 September 2024–9 September 2027."
           },
           {
             "id": "cv_skills",

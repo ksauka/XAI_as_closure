@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import re
-from dataclasses import asdict, dataclass
+from copy import deepcopy
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any
 
@@ -43,22 +44,51 @@ def _validate_decision_response(response: dict[str, Any]) -> None:
         raise Study2WorkflowError("Confidence must be a whole number from 0 to 100.")
 
 
-def _validate_forcing_requirement(response: dict[str, Any]) -> str:
-    requirement = str(response.get("mandatory_requirement", "")).strip()
-    normalized = re.sub(r"[^a-z0-9]+", " ", requirement.lower())
+_FORCING_QUALIFYING_REFERENCES = frozenset({"C-01", "C-02", "C-06"})
+
+_FORCING_NONE_QUALIFIES_PHRASES = (
+    "none",
+    "no certification",
+    "no qualifying",
+    "not qualif",
+    "does not meet",
+    "doesn t meet",
+    "doesnt meet",
+    "not accepted",
+    "not one of",
+    "not the required",
+    "isn t accepted",
+    "isnt accepted",
+    "fails to meet",
+    "lacks the",
+)
+
+_FORCING_EXPIRED_PHRASES = (
+    "expired",
+    "not current",
+    "no longer current",
+    "out of date",
+    "lapsed",
+    "term ended",
+)
+
+
+def _forcing_answer_is_correct(reference: str, answer: str) -> bool:
+    normalized = re.sub(r"[^a-z0-9]+", " ", answer.lower())
     names_aigp = (
         "aigp" in normalized
         or "artificial intelligence governance professional" in normalized
     )
-    names_both_options = (
-        names_aigp and "42001" in normalized and "lead implementer" in normalized
+    names_iso = "42001" in normalized and "lead implementer" in normalized
+    names_qualifying_cert = names_aigp or names_iso
+    if reference in _FORCING_QUALIFYING_REFERENCES:
+        return names_qualifying_cert
+    states_none_qualifies = any(
+        phrase in normalized for phrase in _FORCING_NONE_QUALIFIES_PHRASES
     )
-    if len(requirement) < 12 or not names_both_options:
-        raise Study2WorkflowError(
-            "Recheck the complete job description and enter the full mandatory "
-            "certification requirement before continuing."
-        )
-    return requirement
+    if reference == "C-05" and names_aigp:
+        return any(phrase in normalized for phrase in _FORCING_EXPIRED_PHRASES)
+    return states_none_qualifies and not names_qualifying_cert
 
 
 @dataclass
@@ -79,8 +109,9 @@ class Study2Session:
     ) -> Study2Session:
         return cls(
             state={
-                "schema_version": "study2-state-v6",
+                "schema_version": "study2-state-v8",
                 "delivery_spec_version": DELIVERY_SPEC_VERSION,
+                "case_set_id": cases.case_set_id,
                 "session_id": session_id,
                 "participant_id": participant_id,
                 "prolific_pid": prolific_pid,
@@ -101,7 +132,8 @@ class Study2Session:
 
     @classmethod
     def restore(cls, state: dict[str, Any], cases: CaseRepository) -> Study2Session:
-        session = cls(state=state, cases=cases)
+        restored_state = deepcopy(state)
+        session = cls(state=restored_state, cases=cases)
         session._validate_state()
         return session
 
@@ -181,34 +213,25 @@ class Study2Session:
         self._transition("aided")
         return output
 
-    def examine_agent_assessment(
-        self,
-        agent: Study2DecisionAgent,
-        kind: str,
-    ) -> dict[str, Any]:
-        """Run a bounded post-recommendation evidence examination."""
-        if self.phase != "aided":
-            raise Study2WorkflowError("Evidence examination is unavailable.")
-        if agent.condition != self.condition:
-            raise Study2WorkflowError("The agent condition does not match the session.")
-        if kind not in {"support", "caution", "policy", "missing"}:
-            raise Study2WorkflowError("Select a valid evidence-examination area.")
-        reference = self._require_current_reference()
-        response = agent.examine(reference, kind)  # type: ignore[arg-type]
-        payload = asdict(response)
-        payload["submitted_at_utc"] = _now()
-        self.current_trial()["agent_output"].setdefault("challenge_history", []).append(
-            payload
-        )
-        self.state["updated_at_utc"] = _now()
-        return payload
-
     def submit_forcing(self, response: dict[str, Any]) -> str:
         if self.phase != "forcing" or not self.condition.forcing:
             raise Study2WorkflowError("Cognitive forcing is unavailable.")
-        requirement = _validate_forcing_requirement(response)
         reference = self._require_current_reference()
         forcing = self.current_trial().setdefault("forcing", {})
+        attempt_number = int(forcing.get("attempt_count", 0)) + 1
+        forcing["attempt_count"] = attempt_number
+        requirement = str(response.get("mandatory_requirement", "")).strip()
+        if not requirement:
+            raise Study2WorkflowError(
+                "Enter your answer before continuing."
+            )
+        is_correct = _forcing_answer_is_correct(reference, requirement)
+        max_attempts = 2
+        if not is_correct and attempt_number < max_attempts:
+            raise Study2WorkflowError(
+                "Recheck the candidate's CV against the job description's "
+                "mandatory requirement before continuing."
+            )
         submitted_at = _now()
         started_at = str(forcing.get("started_at_utc", submitted_at))
         try:
@@ -224,6 +247,7 @@ class Study2Session:
         forcing.update(
             {
                 "mandatory_requirement": requirement,
+                "is_correct": is_correct,
                 "submitted_at_utc": submitted_at,
                 "elapsed_seconds": round(elapsed, 3),
             }
@@ -292,13 +316,17 @@ class Study2Session:
         self.state["updated_at_utc"] = _now()
 
     def _validate_state(self) -> None:
-        if self.state.get("schema_version") != "study2-state-v6":
+        if self.state.get("schema_version") != "study2-state-v8":
             raise Study2WorkflowError(
                 "Stored session uses an unsupported Study 2 schema."
             )
         if self.state.get("delivery_spec_version") != DELIVERY_SPEC_VERSION:
             raise Study2WorkflowError(
                 "Stored session uses an unsupported delivery specification."
+            )
+        if self.state.get("case_set_id") != self.cases.case_set_id:
+            raise Study2WorkflowError(
+                "Stored session uses a different Study 2 case set."
             )
         try:
             get_study2_condition(str(self.state.get("condition_id", "")))
@@ -425,10 +453,6 @@ class Study2Session:
             elif rationale is not None or visible_sources or block_citations:
                 raise Study2WorkflowError(
                     "Explanation-absent assessment exposes explanatory evidence."
-                )
-            if not self.condition.explanation and output.get("challenge_history"):
-                raise Study2WorkflowError(
-                    "Explanation-absent assessment contains evidence examination."
                 )
         if phase == "recall" and "aided" not in current_trial:
             raise Study2WorkflowError(
