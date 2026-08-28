@@ -139,20 +139,38 @@ class Study1WorkflowTests(unittest.TestCase):
     def response() -> dict:
         return {
             "decision": "Advance candidate to human interview",
-            "certification": "IAPP AIGP",
+            "hard_criterion_judgment": "Yes",
             "confidence": 80,
             "decisive_evidence": "The accepted certification is present.",
-            "ambiguity": "None",
-            "realism_cues": "None",
+        }
+
+    @staticmethod
+    def post_study_response() -> dict:
+        return {
+            "role_requirement_clarity": 7,
+            "candidate_profile_realism": 6,
+            "qualification_difference_plausibility": 6,
+            "mandatory_information_identifiability": 7,
+            "information_sufficiency": 6,
+            "task_ecological_validity": 6,
+            "professional_disagreement": "No",
+            "disputed_profiles": [],
+            "disputed_profiles_reason": "",
+            "materials_feedback": "",
         }
 
     def test_session_contains_no_ai_or_experimental_assignments(self) -> None:
-        self.assertEqual(self.session.state["schema_version"], "study1-state-v3")
+        self.assertEqual(self.session.state["schema_version"], "study1-state-v4")
+        self.assertEqual(
+            self.session.state["instrument_version"], "study1-instrument-v4"
+        )
         self.assertEqual(self.session.state["case_set_id"], self.cases.case_set_id)
         self.assertEqual(self.session.phase, "screening")
         self.assertNotIn("phase_b_responses", self.session.state)
         self.assertNotIn("artifact_assignments", self.session.state)
         self.assertNotIn("condition", self.session.state)
+        for construct in ("ppbe", "ant", "pce", "trust"):
+            self.assertNotIn(construct, json.dumps(self.session.state).lower())
 
     def test_each_expert_gets_all_six_profiles_in_a_stable_randomized_order(
         self,
@@ -170,25 +188,47 @@ class Study1WorkflowTests(unittest.TestCase):
             set(self.session.state["profile_order"]), set(self.cases.references)
         )
 
-    def test_sixth_judgment_completes_session_without_an_ai_phase(self) -> None:
+    def test_final_review_is_required_after_all_six_judgments(self) -> None:
         references = [self.session.submit_judgment(self.response()) for _ in range(6)]
         self.assertEqual(len(set(references)), 6)
-        self.assertTrue(self.session.complete)
+        self.assertEqual(self.session.phase, "post_study")
+        self.assertFalse(self.session.complete)
         self.assertEqual(len(self.session.state["responses"]), 6)
-        self.assertIsNotNone(self.session.state["completed_at_utc"])
+        self.assertIsNone(self.session.state["completed_at_utc"])
         with self.assertRaises(WorkflowError):
             self.session.submit_judgment(self.response())
+        self.session.submit_post_study(self.post_study_response())
+        self.assertTrue(self.session.complete)
+        self.assertIsNotNone(self.session.state["completed_at_utc"])
+        self.assertEqual(
+            self.session.state["post_study_response"]["professional_disagreement"],
+            "No",
+        )
 
-    def test_realism_and_unintended_cues_response_is_required(self) -> None:
-        response = self.response()
-        response["realism_cues"] = ""
-        with self.assertRaisesRegex(WorkflowError, "realism_cues"):
-            self.session.submit_judgment(response)
+    def test_hard_criterion_judgment_is_required_and_binary(self) -> None:
+        invalid_values = (
+            ("hard_criterion_judgment", None),
+            ("hard_criterion_judgment", "Unsure"),
+        )
+        for field, value in invalid_values:
+            response = self.response()
+            response[field] = value
+            with (
+                self.subTest(field=field, value=value),
+                self.assertRaises(WorkflowError),
+            ):
+                self.session.submit_judgment(response)
 
     def test_whitespace_only_open_responses_are_rejected(self) -> None:
         response = self.response()
         response["decisive_evidence"] = "   "
         with self.assertRaisesRegex(WorkflowError, "decisive_evidence"):
+            self.session.submit_judgment(response)
+
+    def test_study2_construct_fields_cannot_enter_study1_responses(self) -> None:
+        response = self.response()
+        response["trust"] = 7
+        with self.assertRaisesRegex(WorkflowError, "Unexpected judgment fields"):
             self.session.submit_judgment(response)
 
     def test_confidence_must_be_an_integer_percentage(self) -> None:
@@ -197,6 +237,37 @@ class Study1WorkflowTests(unittest.TestCase):
             response["confidence"] = invalid
             with self.subTest(invalid=invalid), self.assertRaises(WorkflowError):
                 self.session.submit_judgment(response)
+
+    def test_disputed_profile_explanation_is_required_only_for_yes(self) -> None:
+        for _ in range(6):
+            self.session.submit_judgment(self.response())
+        response = self.post_study_response()
+        response["professional_disagreement"] = "Yes"
+        with self.assertRaisesRegex(WorkflowError, "disputed candidate"):
+            self.session.submit_post_study(response)
+        response["disputed_profiles"] = ["C-05"]
+        response["disputed_profiles_reason"] = (
+            "C-05, because the expiry date may be overlooked."
+        )
+        self.session.submit_post_study(response)
+        self.assertTrue(self.session.complete)
+
+    def test_post_study_likert_items_are_required_and_bounded(self) -> None:
+        for _ in range(6):
+            self.session.submit_judgment(self.response())
+        for invalid in (None, 0, 8, 4.5, True):
+            response = self.post_study_response()
+            response["role_requirement_clarity"] = invalid
+            with self.subTest(invalid=invalid), self.assertRaises(WorkflowError):
+                self.session.submit_post_study(response)
+
+    def test_study2_construct_fields_cannot_enter_final_review(self) -> None:
+        for _ in range(6):
+            self.session.submit_judgment(self.response())
+        response = self.post_study_response()
+        response["ppbe"] = 7
+        with self.assertRaisesRegex(WorkflowError, "Unexpected final-review fields"):
+            self.session.submit_post_study(response)
 
     def test_restore_rejects_old_or_impossible_state(self) -> None:
         old_state = dict(self.session.state)
@@ -314,8 +385,8 @@ class TokenAndStorageTests(unittest.TestCase):
             self.assertEqual(second["event_id"], f"{session_id}:000002")
             restored = store.load(session_id)
             self.assertEqual(restored["event_sequence"], 2)
-            self.assertEqual(second["schema_version"], "study1-event-v3")
-            self.assertEqual(second["application_version"], "study1-app-v3")
+            self.assertEqual(second["schema_version"], "study1-event-v4")
+            self.assertEqual(second["application_version"], "study1-app-v4")
             self.assertEqual(
                 (Path(directory) / "sessions").stat().st_mode & 0o777,
                 0o700,

@@ -14,8 +14,9 @@ depend on Qualtrics page timing as its primary interaction record.
 
 ## Linkage Boundary
 
-Study 1 uses a study-specific pseudonymous identifier and signed, short-lived
-launch/completion tokens. Study 2 retains the previously working HAI linkage:
+Study 1 uses the same proven Prolific-ID and validated Qualtrics-return flow as
+the current application, deriving a deterministic pseudonymous session ID for
+resume and storage. Study 2 retains the previously working HAI linkage.
 Qualtrics supplies:
 
 - `PROLIFIC_PID` (with legacy `pid` fallback);
@@ -30,19 +31,21 @@ code repository.
 
 ## Study 1 Flow
 
-1. Qualtrics records consent and creates a pseudonymous linkage identifier;
-   eligibility may already have been verified during recruitment.
-2. Qualtrics launches the validation app with a signed Study 1 token.
+1. Qualtrics records consent; eligibility and professional background may
+   already have been verified during recruitment.
+2. Qualtrics launches the validation app with the Prolific ID and a validated
+   return route.
 3. The app randomizes and persists one six-profile order.
 4. The expert submits one locked ground-truth judgment for each candidate.
-5. After the sixth judgment, the app writes a completion record and returns a
-   short-lived signed completion token.
-6. Qualtrics verifies completion, presents closing information and the debrief,
-   and closes the study.
+5. After the sixth judgment, the expert submits the short final materials
+   review; only then does the app write a completion record.
+6. Qualtrics receives completion, collects the basic-demographics block,
+   presents closing information and the debrief, and closes the study.
 
 Study 1 has no AI recommendation, artifact assignment, experimental condition,
-or second application phase. The same application serves multiple experts while
-keeping their sessions and randomized orders isolated.
+or AI-task phase. The final materials review belongs to the same streamlined
+validation workflow. The same application serves multiple experts while keeping
+their sessions and randomized orders isolated.
 
 ## Study 2 Flow
 
@@ -144,13 +147,14 @@ Study 1 records, where applicable:
   time until the expert returns to the candidate;
 - randomized profile order;
 - profile and section visibility;
-- candidate decision, certification classification, confidence, decisive
-  evidence, ambiguity or missing-information response, realism or unintended-cue
-  response, and submission;
+- candidate decision, direct hard-criterion judgment, confidence, short decisive
+  evidence, and submission;
 - pre-submission response changes without storing keystroke content;
 - candidate-judgment lock;
-- session completion after six submitted judgments; and
-- return-token issuance.
+- final materials-review presentation and submission, including the six Likert
+  items, disputed-profile response, and optional combined feedback;
+- session completion only after six judgments and the final review; and
+- validated return-route handoff.
 
 ## Study 2 Events
 

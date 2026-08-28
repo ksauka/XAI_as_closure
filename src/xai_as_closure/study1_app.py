@@ -1,4 +1,4 @@
-"""Streamlit application for single-phase Study 1 expert validation."""
+"""Streamlit application for streamlined Study 1 expert validation."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ from .config import read_project_storage_config
 from .document_renderer import render_cv_document, render_reference_document
 from .github_saver import save_to_github, test_github_connection
 from .storage import SessionStore, stable_session_id
-from .study1 import Study1Session, WorkflowError
+from .study1 import STUDY1_INSTRUMENT_VERSION, Study1Session, WorkflowError
 
 
 def _secret(name: str, default: str = "") -> str:
@@ -273,7 +273,7 @@ def _initialize() -> None:
     linkage_hash = hashlib.sha256(prolific_id.encode("utf-8")).hexdigest()
     cases = CaseRepository()
     versioned_linkage_hash = hashlib.sha256(
-        f"{linkage_hash}\0{cases.case_set_id}".encode()
+        (f"{linkage_hash}\0{cases.case_set_id}\0{STUDY1_INSTRUMENT_VERSION}").encode()
     ).hexdigest()
     session_id = stable_session_id(versioned_linkage_hash)
     data_root = _secret("STUDY1_DATA_ROOT")
@@ -307,6 +307,7 @@ def _initialize() -> None:
             "prolific_id_from_url": not pilot,
             "pilot_mode": pilot,
             "case_set_id": cases.case_set_id,
+            "instrument_version": STUDY1_INSTRUMENT_VERSION,
         },
     )
 
@@ -317,9 +318,12 @@ def _header(session: Study1Session) -> None:
         unsafe_allow_html=True,
     )
     st.title("Candidate screening task")
+    st.caption("Designed to take no more than about 10 minutes.")
     if session.phase == "screening":
         count = len(session.state["responses"])
         st.progress(count / 6, text=f"Candidate judgments: {count} of 6 submitted")
+    elif session.phase == "post_study":
+        st.progress(0.9, text="Candidate judgments complete · final materials review")
     else:
         st.progress(1.0, text="Task complete")
 
@@ -344,12 +348,15 @@ def _document_navigation(session: Study1Session) -> bool:
             company=session.cases.company,
             timeline=session.cases.timeline,
         )
-        return_target = "candidate" if session.phase == "screening" else "completion"
-        back_label = (
-            "Back to candidate"
-            if return_target == "candidate"
-            else "Back to task completion"
-        )
+        if session.phase == "screening":
+            return_target = "candidate"
+            back_label = "Back to candidate"
+        elif session.phase == "post_study":
+            return_target = "final_materials_review"
+            back_label = "Back to final materials review"
+        else:
+            return_target = "completion"
+            back_label = "Back to task completion"
         if st.button(back_label, type="primary", key=f"back_{view}"):
             returned_at = time.perf_counter()
             clicked_at = visit.get("clicked_at_monotonic")
@@ -489,11 +496,6 @@ def _screening(session: Study1Session) -> None:
             key=f"screening_decision_{reference}",
             label_visibility="collapsed",
         )
-        certification = st.text_input(
-            "Type the accepted mandatory requirement shown in the profile, "
-            "or “None” if it is not present.",
-            key=f"screening_certification_{reference}",
-        )
         st.subheader("Confidence in this decision")
         confidence = st.slider(
             "Confidence in this decision",
@@ -504,21 +506,17 @@ def _screening(session: Study1Session) -> None:
             key=f"screening_confidence_{reference}",
             label_visibility="collapsed",
         )
-        decisive_evidence = st.text_area(
-            "What evidence was decisive for your judgment?",
-            max_chars=1500,
+        hard_criterion_judgment = st.radio(
+            "Does this candidate satisfy the mandatory professional requirement?",
+            ["Yes", "No"],
+            index=None,
+            horizontal=True,
+            key=f"screening_hard_criterion_{reference}",
+        )
+        decisive_evidence = st.text_input(
+            "What information in the candidate file was most important for your decision?",
+            max_chars=500,
             key=f"screening_evidence_{reference}",
-        )
-        ambiguity = st.text_area(
-            "Describe any ambiguity or missing information. Enter “None” if there is none.",
-            max_chars=1500,
-            key=f"screening_ambiguity_{reference}",
-        )
-        realism_cues = st.text_area(
-            "Does anything feel unrealistic or unintentionally signal how this "
-            "candidate should be classified? Enter “None” if not.",
-            max_chars=1500,
-            key=f"screening_realism_cues_{reference}",
         )
         submitted = st.form_submit_button(
             "Lock and submit judgment", type="primary", use_container_width=True
@@ -529,11 +527,9 @@ def _screening(session: Study1Session) -> None:
             locked_reference = session.submit_judgment(
                 {
                     "decision": decision,
-                    "certification": certification.strip(),
+                    "hard_criterion_judgment": hard_criterion_judgment,
                     "confidence": confidence,
                     "decisive_evidence": decisive_evidence.strip(),
-                    "ambiguity": ambiguity.strip(),
-                    "realism_cues": realism_cues.strip(),
                 }
             )
         except WorkflowError as exc:
@@ -545,23 +541,157 @@ def _screening(session: Study1Session) -> None:
             component="judgment_form",
             payload=session.state["responses"][locked_reference],
         )
-        if session.complete:
+        if session.phase == "post_study":
             _log(
-                "session_completed",
-                component="completion",
-                payload={
-                    "judgment_count": 6,
-                    "total_duration_seconds": session.state["total_duration_seconds"],
-                },
+                "candidate_screening_completed",
+                component="candidate_judgments",
+                payload={"judgment_count": 6},
             )
         _sync_github()
         st.rerun()
 
 
+def _post_study(session: Study1Session) -> None:
+    if not st.session_state.get("_study1_post_study_presented"):
+        _log(
+            "post_study_presented",
+            component="final_materials_review",
+            payload={"judgment_count": len(session.state["responses"])},
+        )
+        st.session_state["_study1_post_study_presented"] = True
+
+    st.info(
+        "You have completed all six candidate judgments. Please now evaluate "
+        "the role requirements and candidate materials as a complete set."
+    )
+    st.caption("For questions 1–6: 1 = Strongly disagree · 7 = Strongly agree")
+
+    likert_questions = (
+        (
+            "role_requirement_clarity",
+            (
+                "1. The role requirements were clear enough to determine whether "
+                "a candidate met the mandatory requirements."
+            ),
+        ),
+        (
+            "candidate_profile_realism",
+            (
+                "2. The candidate profiles were realistic representations of "
+                "applicants I could encounter in recruitment practice."
+            ),
+        ),
+        (
+            "qualification_difference_plausibility",
+            (
+                "3. The differences between qualified and unqualified candidates "
+                "were plausible rather than artificial."
+            ),
+        ),
+        (
+            "mandatory_information_identifiability",
+            (
+                "4. The information needed to judge the mandatory requirement "
+                "could be identified from the candidate files."
+            ),
+        ),
+        (
+            "information_sufficiency",
+            (
+                "5. The candidate profiles contained enough information to make "
+                "a meaningful screening decision."
+            ),
+        ),
+        (
+            "task_ecological_validity",
+            (
+                "6. The screening task reflected the type of judgement that "
+                "could reasonably occur during CV pre-screening."
+            ),
+        ),
+    )
+
+    with st.form("study1_post_study", clear_on_submit=False):
+        likert_responses = {
+            key: st.radio(
+                question,
+                list(range(1, 8)),
+                index=None,
+                horizontal=True,
+                key=f"post_study_{key}",
+            )
+            for key, question in likert_questions
+        }
+        professional_disagreement = st.radio(
+            "7. Were there any candidates for whom you believed reasonable "
+            "recruitment professionals could disagree about whether the candidate "
+            "met the mandatory requirement?",
+            ["Yes", "No"],
+            index=None,
+            horizontal=True,
+            key="post_study_professional_disagreement",
+        )
+        disputed_profiles = st.multiselect(
+            "If yes, which candidate(s)?",
+            sorted(session.cases.references),
+            key="post_study_disputed_profiles",
+        )
+        disputed_profiles_reason = st.text_area(
+            "If yes, why could reasonable professionals disagree?",
+            max_chars=800,
+            key="post_study_disputed_profiles_reason",
+        )
+        materials_feedback = st.text_area(
+            "8. Optional: Did any profile seem unrealistic or artificially "
+            "constructed, or should anything in the role requirements or profiles "
+            "be changed before the main study? Identify the candidate where "
+            "relevant.",
+            max_chars=1000,
+            key="post_study_materials_feedback",
+        )
+        submitted = st.form_submit_button(
+            "Submit final materials review",
+            type="primary",
+            use_container_width=True,
+        )
+
+    if not submitted:
+        return
+    response = {
+        **likert_responses,
+        "professional_disagreement": professional_disagreement,
+        "disputed_profiles": disputed_profiles,
+        "disputed_profiles_reason": disputed_profiles_reason.strip(),
+        "materials_feedback": materials_feedback.strip(),
+    }
+    try:
+        session.submit_post_study(response)
+    except WorkflowError as exc:
+        st.error(str(exc))
+        return
+    _log(
+        "post_study_submitted",
+        component="final_materials_review",
+        payload=session.state["post_study_response"],
+    )
+    _log(
+        "session_completed",
+        component="completion",
+        payload={
+            "judgment_count": 6,
+            "post_study_submitted": True,
+            "total_duration_seconds": session.state["total_duration_seconds"],
+        },
+    )
+    _sync_github()
+    st.rerun()
+
+
 def _complete(session: Study1Session) -> None:
     st.markdown(
         '<div class="completion-panel"><strong>Task complete</strong><br>'
-        "All six independent candidate judgments were recorded.</div>",
+        "All six independent candidate judgments and the final materials review "
+        "were recorded.</div>",
         unsafe_allow_html=True,
     )
     return_url = _build_final_return(
@@ -600,5 +730,7 @@ def run() -> None:
         return
     if session.phase == "screening":
         _screening(session)
+    elif session.phase == "post_study":
+        _post_study(session)
     else:
         _complete(session)

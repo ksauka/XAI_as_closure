@@ -203,12 +203,12 @@ class SessionStore:
             )
             sequence = state["event_sequence"]
             event = {
-                "schema_version": "study1-event-v3",
+                "schema_version": "study1-event-v4",
                 "event_id": f"{state['session_id']}:{sequence:06d}",
                 "event_sequence": sequence,
                 "server_timestamp_utc": now_utc(),
                 "application": "study1_validation",
-                "application_version": "study1-app-v3",
+                "application_version": "study1-app-v4",
                 "git_commit": current_git_commit(),
                 "material_manifest": material_manifest(),
                 "session_id": state["session_id"],

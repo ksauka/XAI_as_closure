@@ -26,8 +26,12 @@ The programme uses one Study 1 application and eight Study 2 applications:
 
 - The **Study 1 validation app** is one shared application for multiple experts.
   It presents the role and policy, randomizes all six profiles, and records a
-  locked independent judgment for every candidate. It never displays an AI
-  recommendation or implements an experimental condition.
+  locked independent judgment, direct hard-criterion judgment, confidence,
+  and short decisive-evidence response for every candidate. A short final
+  materials review then assesses the clarity, realism, discriminability,
+  sufficiency, and disputed-profile status of the complete stimulus set. The
+  instrument targets a completion time of no more than about 10 minutes. It never
+  displays an AI recommendation or implements an experimental condition.
 - Each **Study 2 experimental app** is permanently locked to one
   between-subjects condition and delivers six randomized unaided-then-aided
   candidate trials. A Qualtrics `cond` parameter must match that app's condition.

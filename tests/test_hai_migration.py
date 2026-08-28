@@ -243,6 +243,76 @@ class MigratedInfrastructureTests(unittest.TestCase):
             any("storage is not configured" in error.value for error in app.error)
         )
 
+    def test_study1_uses_streamlined_candidate_and_final_review_measures(self) -> None:
+        app_path = Path(__file__).resolve().parents[1] / "apps" / "study1_validation.py"
+        with tempfile.TemporaryDirectory() as directory:
+            app = AppTest.from_file(str(app_path))
+            app.query_params = {"PROLIFIC_PID": "study1-streamlined-measures"}
+            app.secrets = {
+                "GITHUB_REPO": "owner/private-study-data",
+                "GITHUB_TOKEN": "test-token",
+                "STUDY1_DATA_ROOT": directory,
+            }
+            with (
+                patch(
+                    "xai_as_closure.study1_app.test_github_connection",
+                    return_value=(True, "connected"),
+                ),
+                patch(
+                    "xai_as_closure.study1_app.save_to_github",
+                    return_value=(True, None),
+                ),
+            ):
+                app.run(timeout=20)
+                radio_labels = {radio.label for radio in app.radio}
+                self.assertIn("Screening decision", radio_labels)
+                self.assertIn(
+                    "Does this candidate satisfy the mandatory professional "
+                    "requirement?",
+                    radio_labels,
+                )
+                self.assertEqual(
+                    [slider.label for slider in app.slider],
+                    ["Confidence in this decision"],
+                )
+                self.assertIn(
+                    "What information in the candidate file was most important "
+                    "for your decision?",
+                    {field.label for field in app.text_input},
+                )
+
+                session = app.session_state.filtered_state["_study1_session"]
+                candidate_response = {
+                    "decision": "Advance candidate to human interview",
+                    "hard_criterion_judgment": "Yes",
+                    "confidence": 80,
+                    "decisive_evidence": "Certification identity and dates.",
+                }
+                for _ in range(6):
+                    session.submit_judgment(candidate_response)
+                app.run(timeout=20)
+
+            final_radio_labels = {radio.label for radio in app.radio}
+            self.assertIn(
+                "1. The role requirements were clear enough to determine whether "
+                "a candidate met the mandatory requirements.",
+                final_radio_labels,
+            )
+            self.assertIn(
+                "7. Were there any candidates for whom you believed reasonable "
+                "recruitment professionals could disagree about whether the "
+                "candidate met the mandatory requirement?",
+                final_radio_labels,
+            )
+            self.assertEqual(len(app.multiselect), 1)
+            self.assertFalse(
+                any(
+                    construct in label.lower()
+                    for label in final_radio_labels
+                    for construct in ("ppbe", "anthropomorphism", "pce", "trust")
+                )
+            )
+
     def test_study2_introduction_uses_summaries_with_optional_full_documents(
         self,
     ) -> None:

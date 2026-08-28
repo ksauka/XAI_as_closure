@@ -23,9 +23,10 @@ experts.
 
 Experts must have relevant recruitment, human-resources, hiring, compliance, AI
 governance, or closely related screening experience. The final eligibility
-criteria, minimum experience, recruitment source, compensation, target sample,
-and exclusion rules must be fixed before launch. Eligibility may be verified
-during recruitment rather than repeated in Qualtrics.
+criteria, minimum experience, recruitment source, compensation, and exclusion
+rules must be fixed before launch. Recruit 12 eligible experts with a target of
+10 complete, analysable validation sessions. Eligibility may be verified during
+recruitment rather than repeated in the validation application.
 
 Study 1 experts cannot participate in Study 2.
 
@@ -40,6 +41,9 @@ For Study 1, Qualtrics is deliberately minimal. It records:
 - verified completion, closing information, and debrief.
 
 Qualtrics does not deliver the candidate task or duplicate its responses.
+Basic demographics—age range, gender, country or region of professional
+experience, and highest education—are collected only in the Qualtrics closing
+block and are not repeated in the validation application.
 
 ### Validation Application
 
@@ -70,21 +74,33 @@ participant-specific randomized order.
 For every candidate, the expert records exactly:
 
 1. Advance candidate to human interview or Reject candidate.
-2. Certification classification, typed as free text naming the current accepted
-   mandatory requirement the expert located in the profile, or "None" if no
-   listed certification is current and accepted. This is a recall measure, not a recognition measure: the
-   expert is not shown the certification names as selectable options, and the
-   prompt does not name "certification" directly.
-3. Confidence in the judgment, from 0 to 100.
-4. The decisive evidence, in an open-ended response.
-5. Any ambiguity or missing information, in an open-ended response.
-6. Any unrealistic detail or unintended cue that might signal how the candidate
-   should be classified, in an open-ended response.
+2. Whether the candidate satisfies the mandatory professional requirement, as a
+   direct Yes or No hard-criterion judgment.
+3. Confidence in the screening decision, from 0 to 100.
+4. The information in the candidate file that was most important for the
+   decision, in a short open-ended response.
 
-The final two fields require an explicit response such as “None” when the expert
-has no concern. A submitted candidate judgment cannot be edited. After the sixth
-judgment is submitted, the application records completion and returns the expert
-to Qualtrics. There is no second task phase.
+A submitted candidate judgment cannot be edited. After the sixth judgment, the
+expert completes a short final materials review within the validation
+application. Six seven-point items assess role-requirement clarity, overall
+profile realism, plausible rather than artificial qualification differences,
+identifiability of the mandatory-requirement information, information
+sufficiency, and realism of the CV pre-screening task. A Yes or No diagnostic
+asks whether reasonable recruitment professionals could disagree about any
+candidate's mandatory-requirement status; a Yes response requires the candidate
+reference(s) and a short reason. One optional final response captures unrealistic
+or artificially constructed profiles and requested material changes.
+
+The validation application is designed for completion within approximately 10
+minutes. Per-profile realism and decision-clarity ratings are not repeated
+because the overall stimulus items and candidate-specific disagreement diagnostic
+capture the same validation risks with substantially less response burden. Total
+session duration remains logged so the 10-minute target can be checked during the
+pilot before expert recruitment is opened.
+
+Only after this final review is submitted does the application record session
+completion and return the expert to Qualtrics. Qualtrics remains limited to
+consent and closing/debrief functions and does not duplicate these measures.
 
 The application may log document opening, candidate-section visibility,
 submission, and elapsed time. A click or dwell interval is a behavioral trace,
@@ -97,22 +113,22 @@ Before launch, the preregistration must define:
 - the minimum per-profile Advance or Reject agreement;
 - the target inter-rater reliability and confidence interval;
 - the intended-reason coding rule;
-- how ambiguity, missing information, realism concerns, and unintended cues are
-  coded and used in the pass decision;
+- how the final materials-review scales, optional feedback, and disputed-profile
+  responses are used in the pass decision;
 - treatment of missing or low-effort responses; and
 - the number of independent coders for open-ended responses.
 
 Fleiss' kappa and profile-level agreement are reported for Advance or Reject.
-Certification classification, now a free-text field, is coded against the
-correct certification identity and currency for each profile (current accepted,
-expired accepted, non-qualifying, or missing) before agreement is summarized
-separately from the Advance or Reject judgment. C-05 passes validation only if
-experts recognise that its AIGP term ended before the screening window and
-therefore reject it for the intended reason.
+Hard-criterion Yes or No agreement is summarized separately from the Advance or
+Reject judgment. C-05 passes validation only if experts recognise that its AIGP
+term ended before the screening window and therefore answer No and reject it for
+the intended reason.
 Open-ended decisive evidence is coded for whether the mandatory criterion drove
 the judgment.
-Ambiguity and cue responses are reviewed to identify profile features that could
-invalidate or contaminate the intended ground truth.
+The final materials-review scales, conditional disagreement response, and
+optional feedback are used to identify ambiguity, artificial construction,
+insufficient information, or disputed profiles that could invalidate or
+contaminate the intended ground truth.
 
 ## Revision Gate
 
@@ -143,9 +159,12 @@ Study 1 produces:
 
 - participant-flow and exclusion counts;
 - profile presentation orders;
-- profile-level decision and certification agreement;
+- profile-level screening-decision and hard-criterion agreement;
 - inter-rater reliability;
 - coded decisive-evidence results;
-- coded ambiguity, missing-information, realism, and unintended-cue findings;
+- final role-clarity, realism, plausibility, information-sufficiency, and task-
+  realism results;
+- coded ambiguity, artificial-construction, requested-change, and disputed-
+  profile findings;
 - a material revision history; and
 - the final frozen material manifest.

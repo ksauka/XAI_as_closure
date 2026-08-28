@@ -25,11 +25,15 @@ serves multiple experts and presents the role, policy, and all six anonymized
 profiles in a participant-specific randomized order.
 
 For every candidate, each expert records Advance candidate to human
-interview or Reject candidate,
-certification classification, confidence, decisive evidence, ambiguity or
-missing information, and realism or unintended cues. Study 1 contains no AI
+interview or Reject candidate, confidence, a direct Yes or No judgment of the
+mandatory professional requirement, and a short decisive-evidence response. A
+brief final materials review records six overall validation ratings, a
+conditional disputed-profile diagnostic, and optional combined feedback. Study
+1 contains no AI
 recommendation, rationale, explanation, anthropomorphism, cognitive forcing, or
-experimental condition; it ends after the sixth candidate judgment.
+experimental condition; it completes only after all six candidate judgments and
+the materials review. Recruit 12 eligible experts to obtain 10 complete,
+analysable sessions, with an instrument target of no more than about 10 minutes.
 
 Profiles that fail the prespecified agreement or intended-reason criteria are
 revised and revalidated. Validated files are versioned and frozen before Study 2.
