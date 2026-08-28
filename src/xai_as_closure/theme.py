@@ -112,13 +112,6 @@ def apply_anthrokit_theme(st) -> None:
             margin-bottom: 1rem;
             color: #495057;
         }
-        /* Chat bubbles fill full column width */
-        [data-testid="stChatMessage"] p {
-            line-height: 1.75;
-        }
-        div[data-testid="stChatMessageContent"] {
-            max-width: 100% !important;
-        }
         /* Hide Streamlit branding */
         .viewerBadge_container__r5tak { display: none !important; }
         footer { visibility: hidden; }

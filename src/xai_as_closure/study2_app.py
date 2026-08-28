@@ -853,7 +853,7 @@ def _render_agent_output(session: Study2Session, reference: str) -> None:
     output = session.current_trial().get("agent_output")
     if not output:
         return
-    with st.chat_message("assistant"):
+    with st.container(border=True):
         st.caption(str(output["speaker_label"]))
         blocks = output.get("message_blocks", [])
         if blocks and session.condition.explanation:
@@ -1096,7 +1096,6 @@ def _complete(session: Study2Session) -> None:
 def run(locked_condition_id: str) -> None:
     st.set_page_config(
         page_title="Study 2 AI-assisted screening",
-        page_icon=":material/smart_toy:",
         layout="centered",
         initial_sidebar_state="expanded",
     )
