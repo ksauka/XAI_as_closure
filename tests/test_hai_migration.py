@@ -48,7 +48,7 @@ class MigratedAgentTests(unittest.TestCase):
                 "render",
             ],
         )
-        self.assertEqual(len(output.claims), 3)
+        self.assertEqual(len(output.claims), 4)
 
     def test_agent_exposes_only_the_current_registered_workflow(self) -> None:
         agent = AgenticHiringDecisionAgent(condition="P1_A1_F0", cases=self.cases)
@@ -268,7 +268,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 self.assertIn("Screening decision", radio_labels)
                 self.assertIn(
                     "Does this candidate satisfy the mandatory professional "
-                    "requirement?",
+                    "requirements?",
                     radio_labels,
                 )
                 self.assertEqual(
@@ -277,7 +277,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 )
                 self.assertIn(
                     "What information in the candidate file was most important "
-                    "for your decision?",
+                    'for your decision? Enter "None" if no information was decisive.',
                     {field.label for field in app.text_input},
                 )
 
@@ -301,7 +301,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
             self.assertIn(
                 "7. Were there any candidates for whom you believed reasonable "
                 "recruitment professionals could disagree about whether the "
-                "candidate met the mandatory requirement?",
+                "candidate met the mandatory professional requirements?",
                 final_radio_labels,
             )
             self.assertEqual(len(app.multiselect), 1)

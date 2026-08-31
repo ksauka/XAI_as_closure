@@ -507,14 +507,15 @@ def _screening(session: Study1Session) -> None:
             label_visibility="collapsed",
         )
         hard_criterion_judgment = st.radio(
-            "Does this candidate satisfy the mandatory professional requirement?",
+            "Does this candidate satisfy the mandatory professional requirements?",
             ["Yes", "No"],
             index=None,
             horizontal=True,
             key=f"screening_hard_criterion_{reference}",
         )
         decisive_evidence = st.text_input(
-            "What information in the candidate file was most important for your decision?",
+            "What information in the candidate file was most important for your "
+            'decision? Enter "None" if no information was decisive.',
             max_chars=500,
             key=f"screening_evidence_{reference}",
         )
@@ -591,7 +592,8 @@ def _post_study(session: Study1Session) -> None:
         (
             "mandatory_information_identifiability",
             (
-                "4. The information needed to judge the mandatory requirement "
+                "4. The information needed to judge the mandatory professional "
+                "requirements "
                 "could be identified from the candidate files."
             ),
         ),
@@ -625,7 +627,7 @@ def _post_study(session: Study1Session) -> None:
         professional_disagreement = st.radio(
             "7. Were there any candidates for whom you believed reasonable "
             "recruitment professionals could disagree about whether the candidate "
-            "met the mandatory requirement?",
+            "met the mandatory professional requirements?",
             ["Yes", "No"],
             index=None,
             horizontal=True,

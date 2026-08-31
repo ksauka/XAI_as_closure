@@ -112,7 +112,7 @@ def material_manifest() -> dict[str, Any]:
         digest.update(path.name.encode("ascii"))
         digest.update(content)
     return {
-        "material_set": "chi_six_profiles_v2",
+        "material_set": "chi_six_profiles_v3",
         "manifest_sha256": digest.hexdigest(),
         "files": files,
     }
@@ -136,7 +136,8 @@ def _cv_citation(section_id: str) -> tuple[str, str]:
         "cv_education": ("CV(2)", "2"),
         "cv_certifications": ("CV(4)", "4"),
         "cv_skills": ("CV(5)", "5"),
-        "cv_hobbies": ("CV(6)", "6"),
+        "cv_memberships": ("CV(6)", "6"),
+        "cv_hobbies": ("CV(7)", "7"),
     }
     if section_id in fixed:
         return fixed[section_id]
@@ -350,6 +351,26 @@ class CaseRepository:
             )
             if certification_section is None:
                 raise ValueError(f"Missing certifications for {reference}.")
+            membership_sections = [
+                section
+                for section in case["candidate_cv"]["sections"]
+                if section["id"] == "cv_memberships"
+            ]
+            if len(membership_sections) != 1:
+                raise ValueError(
+                    f"{reference} must contain exactly one professional-memberships section."
+                )
+            membership_lines = [
+                line.strip()
+                for line in membership_sections[0]["text"].splitlines()
+                if line.strip()
+            ]
+            if not membership_lines or any(
+                not re.search(r"\b20\d{2}\b", line) for line in membership_lines
+            ):
+                raise ValueError(
+                    f"Every professional membership listed for {reference} must include a current-through date."
+                )
             certification_lines = [
                 line.strip()
                 for line in certification_section["text"].splitlines()

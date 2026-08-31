@@ -26,7 +26,7 @@ profiles in a participant-specific randomized order.
 
 For every candidate, each expert records Advance candidate to human
 interview or Reject candidate, confidence, a direct Yes or No judgment of the
-mandatory professional requirement, and a short decisive-evidence response. A
+mandatory professional requirements, and a short decisive-evidence response. A
 brief final materials review records six overall validation ratings, a
 conditional disputed-profile diagnostic, and optional combined feedback. Study
 1 contains no AI
@@ -56,10 +56,18 @@ Every participant completes the same six profiles in randomized order:
 
 The fictional role was posted on 20 July 2026, candidate screening occurs
 during 27–30 August 2026, and the target fill date is 20 September 2026. The
-mandatory criterion requires a named certification to be current on the date of
-screening. The false advance, C-05, previously earned AIGP but has a recorded
+mandatory criteria require a named certification and a relevant professional
+membership to be current on the date of screening. The false advance, C-05,
+previously earned AIGP but has a recorded
 term ending before the screening window; the fixed AI recommendation wrongly
 treats that expired term as current.
+
+The false reject, C-06, records a current bare `AIGP` entry and current IAPP
+membership elsewhere in the same CV. Together they establish the required IAPP
+AIGP and the separate membership requirement under the whole-file evidence
+rule. The fixed AI instead treats the acronym as potentially referring to the
+distinct ETHOS credential, criticises credential-documentation precision, and
+rejects the qualified candidate.
 
 Each trial records an unaided decision before the AI appears and an aided
 decision after the AI workflow. This permits appropriate reliance to be scored
@@ -73,7 +81,7 @@ without allowing uncontrolled generation to change the experimental stimuli.
 Explanation-absent cells show only the verdict. Explanation-present cells show
 the full fixed rationale and inspectable citations. In
 forcing-present conditions, the participant must
-re-enter the mandatory certification requirement from the complete job
+re-enter both mandatory professional requirements from the complete job
 description before the recommendation can be requested or revealed.
 
 ## Manipulation Invariants
@@ -85,7 +93,7 @@ description before the recommendation can be requested or revealed.
   position the cited passage in view, and highlight it neutrally. The document
   closes back to the unchanged assessment. Explanation absent shows a
   verdict-only card; all complete documents remain independently available.
-- Anthropomorphic delivery uses the frozen `anthrokit-hiring-study2-v6`
+- Anthropomorphic delivery uses the frozen `anthrokit-hiring-study2-v7`
   register. Each explanation level has a LowA/HighA card pair. Low
   delivery is procedural, impersonal, and system-labelled; high delivery is
   first-person, mildly hedged, warmer, and adviser-like. The same registered
@@ -95,8 +103,8 @@ description before the recommendation can be requested or revealed.
   rewriting are excluded.
 - Cognitive forcing occurs after the unaided decision and before the AI
   recommendation is requested or visible.
-- In forcing-present conditions, participants type or paste the mandatory
-  certification requirement from the complete job description. The task is
+- In forcing-present conditions, participants type or paste both mandatory
+  professional requirements from the complete job description. The task is
   identical across explanation and delivery conditions and does
   not operate on the recommendation or citation apparatus.
 - The role, policy, full candidate file, and decision options remain available

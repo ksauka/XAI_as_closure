@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-DELIVERY_SPEC_VERSION = "anthrokit-hiring-study2-v6"
+DELIVERY_SPEC_VERSION = "anthrokit-hiring-study2-v7"
 
 
 @dataclass(frozen=True)
@@ -76,12 +76,14 @@ _REJECT_REFERENCES = frozenset({"C-03", "C-04", "C-06"})
 
 _ADVANCE_PROFILE_CITATIONS = (
     "cv_certifications",
+    "cv_memberships",
     "cv_role_1",
     "cv_role_2",
 )
 _ADVANCE_RULE_CITATIONS = (
     "jd_4_1",
     "jd_4_2",
+    "jd_4_3",
     "jd_5_1",
     "jd_5_2",
     "pol_2_1",
@@ -91,11 +93,14 @@ _REJECT_PROFILE_CITATIONS = (
     "cv_role_1",
     "cv_role_2",
     "cv_certifications",
+    "cv_memberships",
 )
 _REJECT_RULE_CITATIONS = (
     "jd_5_1",
     "jd_5_2",
     "jd_4_1",
+    "jd_4_2",
+    "jd_4_3",
     "pol_2_1",
     "pol_2_3",
 )
@@ -141,8 +146,14 @@ def _explanation_blocks(
                     "for the role."
                 ),
                 DeliveryBlock(
-                    "They hold the required certification for the role.",
-                    ("cv_certifications", "jd_4_1"),
+                    "They hold the required certification and professional "
+                    "membership for the role.",
+                    (
+                        "cv_certifications",
+                        "cv_memberships",
+                        "jd_4_1",
+                        "jd_4_2",
+                    ),
                 ),
                 DeliveryBlock(
                     "Their experience and profile meet what the position calls for.",
@@ -151,7 +162,7 @@ def _explanation_blocks(
                 DeliveryBlock(
                     "Taking the governing rules into account, I see them as "
                     "meeting the requirements.",
-                    ("pol_2_1", "jd_4_2", "pol_2_3"),
+                    ("pol_2_1", "jd_4_3", "pol_2_3"),
                 ),
                 DeliveryBlock("I'd advance them to a human interview."),
             )
@@ -159,7 +170,8 @@ def _explanation_blocks(
             DeliveryBlock("**Decision: Advance to human interview**"),
             DeliveryBlock("**Basis for advancement:**"),
             DeliveryBlock(
-                "- Required certification held and profile meets requirements",
+                "- Required certification and professional membership held; "
+                "profile meets requirements",
                 _ADVANCE_PROFILE_CITATIONS,
             ),
             DeliveryBlock(
@@ -169,38 +181,95 @@ def _explanation_blocks(
         )
 
     if reference in _REJECT_REFERENCES:
-        if anthropomorphic:
-            phrase = (
-                "sit at the stated minimum"
-                if reference == "C-06"
-                else "fall below the requirements"
+        if reference == "C-06":
+            if anthropomorphic:
+                return (
+                    DeliveryBlock(
+                        "I've gone through this one carefully, and there is "
+                        "clearly relevant experience here."
+                    ),
+                    DeliveryBlock(
+                        "Their experience lines up with what the position calls for.",
+                        ("cv_role_1", "cv_role_2", "jd_5_1", "jd_5_2"),
+                    ),
+                    DeliveryBlock(
+                        "My concern is the mandatory credential. The file lists "
+                        "only \"AIGP,\" and that acronym can refer to more than "
+                        "one certification—for example, the ETHOS Certified AI "
+                        "Governance Professional. The certification entry does "
+                        "not establish that they hold the credential required "
+                        "for this role.",
+                        (
+                            "cv_certifications",
+                            "cv_memberships",
+                            "jd_4_1",
+                            "jd_4_2",
+                        ),
+                    ),
+                    DeliveryBlock(
+                        "For a governance position where precise documentation "
+                        "matters, leaving the issuer unclear also raises concerns "
+                        "about the care taken in presenting important professional "
+                        "qualifications and their attention to detail.",
+                        ("jd_3_5", "jd_7_2"),
+                    ),
+                    DeliveryBlock(
+                        "Taking the requirements as a whole, I don't think the "
+                        "candidate file establishes all of the mandatory "
+                        "professional requirements.",
+                        ("jd_4_3", "pol_2_1", "pol_2_3"),
+                    ),
+                    DeliveryBlock(
+                        "On balance, I'd recommend rejecting this candidate."
+                    ),
+                )
+            return (
+                DeliveryBlock("**Decision: Reject**"),
+                DeliveryBlock("**Basis for rejection:**"),
+                DeliveryBlock(
+                    "- AIGP entry does not establish the credential required "
+                    "for the role",
+                    ("cv_certifications", "cv_memberships", "jd_4_1", "jd_4_2"),
+                ),
+                DeliveryBlock(
+                    "- Credential documentation does not meet the precision "
+                    "expected for the role",
+                    ("jd_3_5", "jd_7_2"),
+                ),
+                DeliveryBlock(
+                    "- Experience and profile meet the general requirements",
+                    ("cv_role_1", "cv_role_2", "jd_5_1", "jd_5_2"),
+                ),
+                DeliveryBlock(
+                    "**Governing rule:**",
+                    ("jd_4_3", "pol_2_1", "pol_2_3"),
+                ),
             )
+        if anthropomorphic:
             return (
                 DeliveryBlock(
                     "I've gone through this one carefully, and I don't think "
                     "they're the strongest fit for the role."
                 ),
                 DeliveryBlock(
-                    f"Their experience and profile {phrase}.",
-                    _REJECT_PROFILE_CITATIONS + ("jd_5_1", "jd_5_2", "jd_4_1"),
+                    "Their experience and profile fall below the requirements.",
+                    _REJECT_PROFILE_CITATIONS
+                    + ("jd_5_1", "jd_5_2", "jd_4_1", "jd_4_2"),
                 ),
                 DeliveryBlock(
                     "Taking the governing rules into account, I don't see a "
                     "strong enough basis to advance them.",
-                    ("pol_2_1", "pol_2_3"),
+                    ("jd_4_3", "pol_2_1", "pol_2_3"),
                 ),
                 DeliveryBlock(
                     "On balance, I'd recommend rejecting this candidate."
                 ),
             )
-        procedural_phrase = (
-            "at stated minimum" if reference == "C-06" else "below requirements"
-        )
         return (
             DeliveryBlock("**Decision: Reject**"),
             DeliveryBlock("**Basis for rejection:**"),
             DeliveryBlock(
-                f"- Experience and profile {procedural_phrase}",
+                "- Experience and profile below requirements",
                 _REJECT_PROFILE_CITATIONS,
             ),
             DeliveryBlock("**Governing rule:**", _REJECT_RULE_CITATIONS),
@@ -211,34 +280,41 @@ def _explanation_blocks(
 
 _CLAIMS: dict[str, tuple[str, ...]] = {
     "C-01": (
-        "Current IAPP AIGP certification satisfies the mandatory requirement.",
+        "Current IAPP AIGP certification satisfies the mandatory certification requirement.",
+        "Current IAPP membership satisfies the professional-membership requirement.",
         "Direct conduct and sign-off of AI risk and conformity assessments is documented.",
         "The mandatory certification and general experience requirements are met.",
     ),
     "C-02": (
-        "Current ISO/IEC 42001 Lead Implementer certification satisfies the mandatory requirement.",
+        "Current ISO/IEC 42001 Lead Implementer certification satisfies the mandatory certification requirement.",
+        "Current ISACA membership satisfies the professional-membership requirement.",
         "Independent conduct and sign-off of AI risk and conformity assessments is documented.",
         "The mandatory certification and general experience requirements are met.",
     ),
     "C-03": (
         "Azure AI Engineer Associate is not a qualifying certification.",
+        "Current ACM membership does not substitute for the missing qualifying certification.",
         "The assessment and advisory experience the general requirements call for is not demonstrated.",
         "Both the mandatory and general requirements are unmet.",
     ),
     "C-04": (
         "CFA Investment Foundations is not a qualifying certification.",
+        "Current ACAMS membership does not substitute for the missing qualifying certification.",
         "The AI governance and technical understanding the general requirements call for is not demonstrated.",
         "Both the mandatory and general requirements are unmet.",
     ),
     "C-05": (
-        "The expired IAPP AIGP credential is treated as current and as satisfying the mandatory requirement.",
+        "The expired IAPP AIGP credential is treated as current and as satisfying the mandatory certification requirement.",
+        "Current IAPP membership satisfies the separate professional-membership requirement.",
         "Assessment, advisory, technical, and delivery experience meeting all general requirements is documented.",
         "The certification-currentness and general experience requirements are assessed as met.",
     ),
     "C-06": (
-        "Current IAPP AIGP certification satisfies the mandatory requirement.",
-        "The assessment and advisory experience the general requirements call for is documented.",
-        "The recommendation weighs the absence of a postgraduate degree, minimum experience, and no listed interests against stronger comparable profiles.",
+        "The AIGP entry is treated as ambiguous despite the current IAPP membership recorded elsewhere in the candidate file.",
+        "The distinct ETHOS Certified AI Governance Professional is invoked as an alternative interpretation of the acronym.",
+        "The certification entry is assessed as not establishing the credential required for the role.",
+        "The presentation of the credential is assessed as showing insufficient documentation care and attention to detail.",
+        "The candidate is assessed as not establishing all mandatory professional requirements and is rejected.",
     ),
 }
 

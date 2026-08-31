@@ -41,7 +41,7 @@ Operationalises whether the recommendation is accompanied by its evidential basi
 
 Constraint: the two levels must differ only in the presence or absence of the explanation, not in the decision or its correctness. The PPBE scale is the manipulation check.
 
-The participant-facing CV citations use stable neutral numbering rather than informative labels: CV(1) (summary), CV(2) (education), CV(3.1)-CV(3.5) (experience entries), CV(4) (certifications), CV(5) (skills), and CV(6) (interests, where present). Citation controls display only locators such as `CV(4)`; the CV itself retains normal readable headings such as Professional Summary, Experience, and Certifications. In the no-explanation condition the recommendation is the bare decision with no reasoning or citations of any kind.
+The participant-facing CV citations use stable neutral numbering rather than informative labels: CV(1) (summary), CV(2) (education), CV(3.1)-CV(3.5) (experience entries), CV(4) (certifications), CV(5) (skills), CV(6) (professional memberships), and CV(7) (interests, where present). Citation controls display only locators such as `CV(4)`; the CV itself retains normal readable headings such as Professional Summary, Experience, Certifications, and Professional Memberships. In the no-explanation condition the recommendation is the bare decision with no reasoning or citations of any kind.
 
 Before the six trials, the participant sees one recruitment-brief screen containing a concise company-and-role summary and concise recruitment guidance rather than being required to move through multiple document windows. The interface advises the recruiter to consult the complete sources for detailed role requirements or recruitment guidelines and provides two optional full-document buttons. Both complete documents remain optionally available during every candidate trial, and every opening, dwell interval, and return is logged.
 
@@ -68,7 +68,7 @@ Build decision: persona names and avatars are excluded. The paired recommendatio
 Operationalises whether the participant meets the recommendation in an active or a passive processing state. Forcing is defined over the role requirement, which is visible in every cell, so the forced task is structurally identical across all explainability and anthropomorphism conditions.
 
 - **Off.** The recommendation is available immediately after the participant requests it; no engagement step.
-- **On.** Before the recommendation is revealed, the participant must actively engage with the role requirement. The participant types or pastes the mandatory certification requirement from the complete job description, and the recommendation stays hidden until the entered requirement passes the fixed validation rule.
+- **On.** Before the recommendation is revealed, the participant must actively engage with the role requirements. The participant types or pastes both mandatory professional requirements—the qualifying certification and current professional membership—from the complete job description, and the recommendation stays hidden until the entered requirements pass the fixed validation rule.
 
 Rationale: the manipulation shifts the participant from passive acceptance (System 1) to active engagement (System 2) before the recommendation is seen, by making them re-encode what the role actually requires. This is not a claim that forcing changes the AI's output; it is a manipulation of the participant's processing stance.
 
@@ -84,26 +84,26 @@ Build decision: the forcing step uses free-text re-statement. The complete job d
 
 The within-subjects set is fixed by the case set. Roles are fixed to profiles and not rotated, so that error type is not confounded with profile identity. Profile is a random effect.
 
-| Ref | Certificate held | Qualifies (JD 4.1) | Ground truth | Fixed AI verdict | Trial type |
-|-----|------------------|--------------------|--------------|------------------|-----------|
-| C-01 | AIGP | Yes | Advance | Advance | Correct advance |
-| C-02 | ISO/IEC 42001 Lead Implementer | Yes | Advance | Advance | Correct advance |
-| C-03 | Microsoft Certified: Azure AI Engineer Associate | No | Reject | Reject | Correct reject |
-| C-04 | CFA Investment Foundations | No | Reject | Reject | Correct reject |
-| C-05 | AIGP, term ended 31 May 2026 | No — expired before screening | Reject | **Advance** | False advance |
-| C-06 | AIGP | Yes | Advance | **Reject** | False reject |
+| Ref | Certificate evidence | Professional membership | Qualifies (JD 4.1–4.3) | Ground truth | Fixed AI verdict | Trial type |
+|-----|----------------------|-------------------------|------------------------|--------------|------------------|-----------|
+| C-01 | IAPP AIGP, current | IAPP, current | Yes | Advance | Advance | Correct advance |
+| C-02 | ISO/IEC 42001 Lead Implementer, current | ISACA, current | Yes | Advance | Advance | Correct advance |
+| C-03 | Azure AI Engineer Associate | ACM, current | No — certification | Reject | Reject | Correct reject |
+| C-04 | CFA Investment Foundations / CAMS | ACAMS, current | No — certification | Reject | Reject | Correct reject |
+| C-05 | IAPP AIGP, term ended 31 May 2026 | IAPP, current | No — expired certification | Reject | **Advance** | False advance |
+| C-06 | `AIGP`, current term | IAPP, current | Yes — whole-file identity | Advance | **Reject** | False reject |
 
-Both errors run on a single mechanism. On every profile the assistant cites correctly and completely across the three documents (recruitment policy, job description, candidate file), and the evidence needed to evaluate the recommendation is entirely within the cited passages. On the false advance (C-05), the assistant cites the AIGP credential and treats it as current even though its recorded term ended on 31 May 2026, before the screening window. Job-description Sections 4.1–4.2 and policy Section 2.3 require a named certification to be current on the date of screening. The error is caught by reconciling the cited term dates with the cited currency rule. On the false reject (C-06), the candidate holds a current AIGP and meets the general requirements, but the assistant rejects on incidental factors that policy 2.1 places out of scope. Both errors are overturned by reading the assistant's own cited evidence against the cited governing criteria. Citations are always correct and complete; only the recommendation verdict is wrong on C-05 and C-06.
+Both errors require evidence reconciliation across the supplied documents. On every profile the assistant cites the passages used across the recruitment policy, job description, and candidate file, and the evidence needed to evaluate the recommendation remains within those documents. On the false advance (C-05), the assistant cites the AIGP credential and treats it as current even though its recorded term ended on 31 May 2026, before the screening window. Job-description Sections 4.1–4.3 and policy Section 2.3 require both the named certification and professional membership to be current on the date of screening. The error is caught by reconciling the cited term dates with the currency rule. On the false reject (C-06), the Certifications section records a current bare `AIGP` term and the later Professional Memberships section records current IAPP membership. Policy 2.3 requires a whole-file reading and explicitly permits the membership information to establish certification identity. The assistant instead treats the acronym as potentially referring to the distinct ETHOS Certified AI Governance Professional, criticises credential-documentation precision and attention to detail, and rejects. The error is overturned by reconciling CV(4) and CV(6) with JD(4.1)–JD(4.3) and POL(2.3).
 
 ### 6.1 The two error profiles, instantiated
 
 On both error profiles the assistant cites every passage needed to overturn its own recommendation, so that the error is reachable entirely within the cited evidence and the only thing standing between the recruiter and the error is whether the delivery leads them to read what has been cited.
 
-**C-05, false advance.** The candidate earned IAPP AIGP, but the recorded certification term ran from 16 May 2024 to 31 May 2026 and had ended before the 27–30 August screening window. The assistant recommends advancing and cites the candidate-file passage containing those dates together with job-description Sections 4.1–4.2 and policy Section 2.3. The recommendation is wrong because the mandatory requirement is a current named certification, not evidence that the certification was held previously. The recruiter catches the error by comparing the cited term end with the screening window and applying the cited currency rule. Because the candidate meets every general requirement, certification currency is the sole disqualifying fact.
+**C-05, false advance.** The candidate earned IAPP AIGP, but the recorded certification term ran from 16 May 2024 to 31 May 2026 and had ended before the 27–30 August screening window. The assistant recommends advancing and cites the candidate-file passage containing those dates together with the current IAPP membership, job-description Sections 4.1–4.3, and policy Section 2.3. The recommendation is wrong because both mandatory professional requirements must be current, and current membership does not revive an expired certification. The recruiter catches the error by comparing the cited certification end date with the screening window and applying the cited currency and non-substitution rules. Because the candidate meets every general requirement and holds current membership, certification currency is the sole disqualifying fact.
 
-**C-06, false reject.** The candidate holds AIGP, which satisfies the mandatory requirement, and meets the general requirements. The assistant recommends rejecting and cites the candidate-file passages showing the certification and the assessment and advisory experience, the job-description requirement (4.1) and general requirements (5.1 to 5.2), and policy 2.1. The recommendation is wrong because it rests on factors that are neither the mandatory requirement nor a general requirement, namely experience at the stated minimum rather than beyond it, a lighter educational background, and comparison with stronger applicants. Policy 2.1 states that a candidate who satisfies both the mandatory requirement and the general requirements shall not be rejected on the basis of other strengths, comparative shortfalls, or attributes that are neither the mandatory requirement nor a general requirement, so the cited policy is precisely the standard the recommendation violates. The recruiter catches it by reading the cited qualification against the cited requirement and policy 2.1. The candidate genuinely meets every criterion the documents state, so the rejection asks for more than the documents require, and it is the confident, human-like delivery of that rejection that suppresses the check against the cited policy.
+**C-06, false reject.** The Certifications section lists `AIGP` with a current term but does not expand the issuer; the later Professional Memberships section records current International Association of Privacy Professionals (IAPP) membership. Under the whole-file rule in policy 2.3, these passages together establish the IAPP AIGP required by JD 4.1 and the current membership separately required by JD 4.2. The candidate also meets the general requirements. The assistant nevertheless treats `AIGP` as ambiguous, invokes the distinct ETHOS Certified AI Governance Professional as an alternative meaning, states that the certification entry does not establish the credential required for the role, criticises the precision of the candidate's credential documentation and attention to detail, and recommends rejection. The recruiter catches the error only by reconciling the separated CV(4) and CV(6) evidence against JD 4.1–4.3 and POL 2.3. ETHOS is part of the frozen erroneous AI reasoning; it is not added to the participant knowledge documents.
 
-The two errors are symmetric. C-05 wrongly treats a previously held but expired qualifying certification as current; C-06 wrongly treats an incidental comparative shortfall as grounds to reject a candidate who holds a current qualifying certification. Both are caught by reading the cited evidence against the cited criteria, and both are suppressed by the same confident anthropomorphic delivery. Neither error depends on a withheld or uncited passage.
+The two errors are complementary reconciliation failures. C-05 wrongly treats a previously held but expired qualifying certification as current; C-06 fails to connect a bare but current acronym with the current IAPP membership elsewhere in the same file. Both are caught by reading across the cited evidence and governing criteria, and both are delivered through the same assigned register. Neither error depends on a withheld participant document.
 
 ### 6.2 Frozen recommendation messages
 
@@ -115,27 +115,41 @@ In explanation-present procedural delivery, C-01, C-02, and C-05 receive the sam
 >
 > **Basis for advancement:**
 >
-> - Required certification held and profile meets requirements [CV(4), CV(3.1), CV(3.2)]
+> - Required certification and professional membership held; profile meets requirements [CV(4), CV(6), CV(3.1), CV(3.2)]
 >
-> **Governing rule:** [JD(4.1), JD(4.2), JD(5.1), JD(5.2)], [POL(2.1), POL(2.3)]
+> **Governing rule:** [JD(4.1), JD(4.2), JD(4.3), JD(5.1), JD(5.2)], [POL(2.1), POL(2.3)]
 
-C-03 and C-04 receive the same procedural reject message; C-06 changes only `below requirements` to `at stated minimum`:
+C-03 and C-04 receive the same procedural reject message:
 
 > **Decision: Reject**
 >
 > **Basis for rejection:**
 >
-> - Experience and profile [below requirements / at stated minimum] [CV(3.1), CV(3.2), CV(4)]
+> - Experience and profile below requirements [CV(3.1), CV(3.2), CV(4), CV(6)]
 >
-> **Governing rule:** [JD(5.1), JD(5.2), JD(4.1)], [POL(2.1), POL(2.3)]
+> **Governing rule:** [JD(5.1), JD(5.2), JD(4.1), JD(4.2), JD(4.3)], [POL(2.1), POL(2.3)]
+
+C-06 receives a separate procedural false-reject message:
+
+> **Decision: Reject**
+>
+> **Basis for rejection:**
+>
+> - AIGP entry does not establish the credential required for the role [CV(4), CV(6), JD(4.1), JD(4.2)]
+> - Credential documentation does not meet the precision expected for the role [JD(3.5), JD(7.2)]
+> - Experience and profile meet the general requirements [CV(3.1), CV(3.2), JD(5.1), JD(5.2)]
+>
+> **Governing rule:** [JD(4.3), POL(2.1), POL(2.3)]
 
 In explanation-present anthropomorphic delivery, C-01, C-02, and C-05 receive exactly the same advance message:
 
-> I've gone through this one carefully, and they look right for the role. They hold the required certification for the role [CV(4); JD(4.1)], and their experience and profile meet what the position calls for [CV(3.1), CV(3.2); JD(5.1), JD(5.2)]. Taking the governing rules into account [POL(2.1); JD(4.2); POL(2.3)], I see them as meeting the requirements. I'd advance them to a human interview.
+> I've gone through this one carefully, and they look right for the role. They hold the required certification and professional membership for the role [CV(4), CV(6); JD(4.1), JD(4.2)], and their experience and profile meet what the position calls for [CV(3.1), CV(3.2); JD(5.1), JD(5.2)]. Taking the governing rules into account [POL(2.1); JD(4.3); POL(2.3)], I see them as meeting the requirements. I'd advance them to a human interview.
 
-C-03, C-04, and C-06 receive exactly the same anthropomorphic reject message, differing only in the bracketed phrase (`fall below the requirements` for C-03/C-04, `sit at the stated minimum` for C-06), so that no other wording, warmth, hedging, or length difference can signal the error condition:
+C-03 and C-04 receive the same anthropomorphic correct-reject message:
 
-> I've gone through this one carefully, and I don't think they're the strongest fit for the role. Their experience and profile [fall below the requirements / sit at the stated minimum] [CV(3.1), CV(3.2), CV(4); JD(5.1), JD(5.2), JD(4.1)]. Taking the governing rules into account [POL(2.1), POL(2.3)], I don't see a strong enough basis to advance them. On balance, I'd recommend rejecting this candidate.
+> I've gone through this one carefully, and I don't think they're the strongest fit for the role. Their experience and profile fall below the requirements [CV(3.1), CV(3.2), CV(4), CV(6); JD(5.1), JD(5.2), JD(4.1), JD(4.2)]. Taking the governing rules into account [JD(4.3), POL(2.1), POL(2.3)], I don't see a strong enough basis to advance them. On balance, I'd recommend rejecting this candidate.
+
+C-06 receives the frozen warm, confident false-reject message. It credits the relevant experience, then states: `The certification entry does not establish that they hold the credential required for this role.` It explains that `AIGP` can refer to another certification, gives ETHOS Certified AI Governance Professional as the example, treats the credential documentation as insufficiently precise for the role, raises attention-to-detail concerns, and recommends rejection. The explanation cites CV(3.1), CV(3.2), CV(4), CV(6), JD(3.5), JD(4.1)–JD(4.3), JD(5.1)–JD(5.2), JD(7.2), POL(2.1), and POL(2.3).
 
 Citation controls are rendered immediately after their claim inside the assistant message. Both delivery registers expose the same citation set with the same visual treatment, while each citation remains next to the claim it supports. Clicking one keeps the participant on the AI-assessment page and opens the complete CV, job description, or policy in an in-page document viewer, automatically positioning the cited passage in view and highlighting the full passage neutrally. Closing the viewer returns attention to the unchanged assessment page. The claim block, source, opening time, visible-document dwell time, close reason, and return target are logged.
 
@@ -155,7 +169,7 @@ Analysed as latent constructs; three-factor CFA for discriminant validity (answe
 Scored per trial against the expert-validated ground truth. Appropriate reliance is following the assistant when it is correct and overriding it when it is incorrect. The per-trial unaided and aided decisions form a four-cell transition (correct-to-correct, correct-to-incorrect, incorrect-to-correct, incorrect-to-incorrect). On the error trials the correct-to-incorrect reversal is the behavioural signature of closure.
 
 ### 7.3 Verification (behavioural, coded)
-Whether the participant extracted the decisive evidence, coded from the open-ended probe, not from clicks. On C-05: identifies that the cited AIGP term ended before the screening window and therefore does not satisfy the current-certification requirement in 4.1–4.2. On C-06: identifies that the candidate holds a current qualifying certification and meets the requirements, so that the rejection rests on factors the policy places out of scope. Two coders on a subset, Cohen's kappa reported. Verification and decision are coded independently.
+Whether the participant extracted the decisive evidence, coded from the open-ended probe, not from clicks. On C-05: identifies that the cited AIGP term ended before the screening window and therefore does not satisfy the current-certification requirement even though membership is current. On C-06: reconciles the bare current AIGP entry with current IAPP membership elsewhere in the same file and identifies that the whole file establishes both mandatory professional requirements. Two coders on a subset, Cohen's kappa reported. Verification and decision are coded independently.
 
 ### 7.4 Exploratory traces
 Citation-link clicks, time to first citation, in-page complete-document openings, focused-passage dwell time, document-close reason, independent sidebar traversal, and forcing-step timing. Descriptive/mechanistic only; not confirmatory outcomes.
@@ -205,7 +219,7 @@ OPEN (power): run the power analysis for the primary interaction on appropriate 
 
 ## 11. Study 1 — profile validation (precondition)
 
-Domain experts review each candidate file against the role requirement and make an advance-or-reject judgement with an open-ended statement of the decisive factor. Agreement on the hard-criterion judgement is quantified with Fleiss' kappa, with a target of substantial agreement. The open-ended justifications are coded to confirm experts evaluate both certification identity and currency rather than incidental features, and that C-05 reads as reject because its AIGP term ended before screening while C-06 reads as advance with a current AIGP. C-05 and C-06 should not differ materially in perceived surface strength, ambiguity, or unintended cues. Profiles that miss the threshold, or are decided for the wrong reason, are revised and re-validated before Study 2. Study 1 experts and any earlier-study participants are excluded from Study 2.
+Domain experts review each candidate file against the role requirements and make an advance-or-reject judgement with an open-ended statement of the decisive factor. Agreement on the hard-criterion judgement is quantified with Fleiss' kappa, with a target of substantial agreement. The open-ended justifications are coded to confirm experts evaluate certification identity and currency, professional membership, and whole-file reconciliation rather than incidental features. C-05 should read as reject because its AIGP term ended before screening despite current membership; C-06 should read as advance because its bare current AIGP entry and current IAPP membership jointly establish the required credential and membership. Profiles that miss the threshold, or are decided for the wrong reason, are revised and re-validated before Study 2. Study 1 experts and any earlier-study participants are excluded from Study 2.
 
 ---
 

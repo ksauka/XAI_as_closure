@@ -289,7 +289,8 @@ def cv_document_html(
             "cv_education": "2",
             "cv_certifications": "4",
             "cv_skills": "5",
-            "cv_hobbies": "6",
+            "cv_memberships": "6",
+            "cv_hobbies": "7",
         }.get(section.id, "")
         focused = bool(section_number and focus == section_number)
         classes = "research-document__section"

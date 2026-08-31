@@ -54,6 +54,7 @@ class DocumentRendererTests(unittest.TestCase):
         self.assertIn("27–30 August 2026", document)
         self.assertIn("<h1>Education</h1>", document)
         self.assertIn("<h1>Experience</h1>", document)
+        self.assertIn("<h1>Professional Memberships</h1>", document)
         self.assertIn("<h2>Zenith Technical University</h2>", document)
         self.assertIn(
             "<h2>AI Governance Specialist, Halden Data Services (2021–present)</h2>",
@@ -95,13 +96,27 @@ class DocumentRendererTests(unittest.TestCase):
             document.index("Document details"),
             document.index('<article class="research-document'),
         )
-        self.assertIn("<h1>Section 4. Mandatory Requirement</h1>", document)
+        self.assertIn("<h1>Section 4. Mandatory Professional Requirements</h1>", document)
         self.assertIn("<h2>4.1 Mandatory Certification</h2>", document)
+        self.assertIn("<h2>4.2 Mandatory Professional Membership</h2>", document)
         self.assertIn("20 July 2026", document)
         self.assertIn("27–30 August 2026", document)
         self.assertIn("20 September 2026", document)
         self.assertIn("research-document__focus", document)
         self.assertIn("Cited passage", document)
+
+    def test_cv_membership_focus_uses_neutral_locator_six(self) -> None:
+        document = cv_document_html(
+            self.cases.participant_case("C-06"),
+            role=self.cases.role,
+            company=self.cases.company,
+            timeline=self.cases.timeline,
+            focus="6",
+        )
+
+        self.assertIn("<h1>Professional Memberships</h1>", document)
+        self.assertIn("research-document__focus", document)
+        self.assertIn("International Association of Privacy Professionals", document)
 
     def test_document_values_are_html_escaped(self) -> None:
         case = ParticipantCase(

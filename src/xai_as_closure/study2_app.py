@@ -934,8 +934,8 @@ def _agent(session: Study2Session, reference: str) -> None:
 def _forcing(session: Study2Session, reference: str) -> None:
     st.warning(
         "Before the AI assessment is revealed, check the candidate's file "
-        "against the job description's mandatory requirement, and enter what "
-        "you find here."
+        "against the job description's mandatory professional requirements, "
+        "and enter what you find here."
     )
     if st.button(
         "Open complete job description",
@@ -969,8 +969,10 @@ def _forcing(session: Study2Session, reference: str) -> None:
         st.rerun()
     with st.form(f"forcing_{reference}"):
         mandatory_requirement = st.text_area(
-            "Type or paste the strength from the CV that meets the job's "
-            'mandatory requirement, or type "None" if none does.',
+            "Type or paste the information from the CV that determines whether "
+            "the candidate meets both mandatory professional requirements "
+            '(certification and membership). If both are not met, type "None" '
+            "and identify the missing or non-current requirement.",
             max_chars=1000,
         )
         submitted = st.form_submit_button(

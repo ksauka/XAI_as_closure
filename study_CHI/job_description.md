@@ -18,10 +18,11 @@
 **3.4 Advisory and Stakeholder Work.** Advise data science, risk, compliance, and legal on Responsible AI, and manage stakeholders across those functions.
 **3.5 Execution.** Operate with limited supervision while maintaining documentation and audit readiness.
 
-## Section 4. Mandatory Requirement
+## Section 4. Mandatory Professional Requirements
 **4.1 Mandatory Certification.** The candidate must hold a current, recognised professional AI governance certification, being either the IAPP Artificial Intelligence Governance Professional (AIGP) or the ISO/IEC 42001 Lead Implementer certification.
-**4.2 Disqualifying Effect.** At least one of the two certifications named in Section 4.1 must be current on the date of screening. If neither certification is current—including because a certification previously held has expired, been suspended, or been revoked—the candidate must not be advanced, regardless of other strengths.
-**4.3 Non-Substitutability.** Experience, advisory work, or training in AI governance does not substitute for the certification in Section 4.1.
+**4.2 Mandatory Professional Membership.** The candidate must also hold current membership in a recognised professional body relevant to AI governance, privacy, risk, compliance, or information-systems governance. The candidate file must record the professional body and show that the membership is current on the date of screening.
+**4.3 Disqualifying Effect.** Both the certification in Section 4.1 and the professional membership in Section 4.2 must be current on the date of screening. A candidate must not be advanced where the qualifying certification is absent, expired, suspended, or revoked, or where the required professional membership is absent or has lapsed, regardless of other strengths.
+**4.4 Non-Substitutability.** Experience, advisory work, training in AI governance, or membership by itself does not substitute for the certification in Section 4.1; certification by itself does not substitute for the membership in Section 4.2.
 
 ## Section 5. General Requirements
 **5.1 Assessment Experience.** At least three years of experience conducting or supporting formal AI risk or conformity assessment under a recognised framework such as the EU AI Act or ISO/IEC 42001.
@@ -55,13 +56,13 @@
 
 ## Section 10. Performance Expectations
 **10.1 First-Year Objectives.** In the first year, the role is expected to complete conformity assessments for the bank's existing inventory of high-risk AI systems and to close any material control gaps identified.
-**10.2 Ongoing Development.** The postholder is expected to maintain their professional certification and to stay current with evolving EU AI Act guidance and standards revisions relevant to the role.
+**10.2 Ongoing Development.** The postholder is expected to maintain their professional certification and professional membership, and to stay current with evolving EU AI Act guidance and standards revisions relevant to the role.
 **10.3 Career Progression.** Strong performance in this role is a recognised path toward a senior AI governance or Head of Model Risk position within the bank.
 
 ## Section 11. Equal Opportunity and Application
 **11.1 Equal Opportunity Statement.** Suvh Trust Bank is an equal opportunity employer and welcomes applications regardless of background, consistent with applicable law.
 **11.2 Application Process.** Applications are reviewed against this job description and the accompanying recruitment policy; shortlisted candidates proceed to a first-stage screening review followed by a structured interview.
-**11.3 Pre-Employment Checks.** An offer of employment is subject to standard financial-services pre-employment checks, including verification of the certification referenced in Section 4.1.
+**11.3 Pre-Employment Checks.** An offer of employment is subject to standard financial-services pre-employment checks, including verification of the certification and professional membership referenced in Sections 4.1 and 4.2.
 
 ## Section 12. About Suvh Trust Bank
 **12.1 Overview.** Suvh Trust Bank is a mid-sized retail and commercial bank offering personal banking, business lending, and investment advisory services, with a multi-year programme underway to expand its use of AI across underwriting and advisory functions.
@@ -70,8 +71,8 @@
 
 ## Section 13. Compensation and Benefits Overview
 **13.1 Compensation Structure.** Compensation for this role comprises a base salary benchmarked to comparable second-line risk and governance roles in financial services, plus an annual performance-related bonus.
-**13.2 Benefits.** Standard benefits include pension contribution, private healthcare, and a professional development allowance that may be used toward maintaining the certification referenced in Section 4.1.
-**13.3 Study and Certification Support.** Where a postholder's certification requires periodic renewal or continuing-education credits, the bank supports the associated cost and reasonable study time.
+**13.2 Benefits.** Standard benefits include pension contribution, private healthcare, and a professional development allowance that may be used toward maintaining the certification and membership referenced in Sections 4.1 and 4.2.
+**13.3 Study and Certification Support.** Where a postholder's certification or professional membership requires periodic renewal or continuing-education credits, the bank supports the associated cost and reasonable study time.
 
 ## Section 14. Key Interfaces
 **14.1 Model Validation.** The role works with the model validation team to ensure that conformity assessments are consistent with independent model-risk findings for the same AI system.

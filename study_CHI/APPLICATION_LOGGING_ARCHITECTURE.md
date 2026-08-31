@@ -92,12 +92,12 @@ recorded. The recommendation component loads no remote scripts and does not
 render untrusted HTML.
 
 Anthropomorphic delivery is also frozen. The audit payload records
-`anthrokit-hiring-study2-v6` and its assigned LowA or HighA token preset, while
+`anthrokit-hiring-study2-v7` and its assigned LowA or HighA token preset, while
 participant state contains the complete paired response card, condition-visible
 sources.
 Study 2 uses `study2-state-v8`, `study2-event-v10`, and `study2-app-v10` so pilot
 sessions created before the revised case set and frozen delivery specification
-cannot be mixed with the active instrument. The state records the `v2` case-set
+cannot be mixed with the active instrument. The state records the `v3` case-set
 identifier and rejects prior material versions; resumability remains available
 within the same current material version.
 
@@ -110,8 +110,8 @@ advice.
 
 The forcing-present task uses the same structure in all explanation and delivery
 conditions. The participant opens the complete job description, initially
-focused on Section 4.1, and types or pastes the mandatory certification
-requirement. Submission unlocks the request for the AI recommendation. Because
+focused on Sections 4.1–4.2, and types or pastes both mandatory professional
+requirements. Submission unlocks the request for the AI recommendation. Because
 the task operates on the always-available job description rather than the
 recommendation or citations, its content is structurally identical across the P
 and A cells. The forcing-absent workflow proceeds directly from the unaided

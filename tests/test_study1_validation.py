@@ -62,7 +62,7 @@ class CaseRepositoryTests(unittest.TestCase):
 
     def test_material_manifest_changes_are_detectable(self) -> None:
         manifest = material_manifest()
-        self.assertEqual(manifest["material_set"], "chi_six_profiles_v2")
+        self.assertEqual(manifest["material_set"], "chi_six_profiles_v3")
         self.assertEqual(
             set(manifest["files"]),
             {
@@ -115,6 +115,27 @@ class CaseRepositoryTests(unittest.TestCase):
         self.assertIn("31 May 2026", c05.text)
         self.assertNotIn("PMI-CPMAI", c05.text)
 
+    def test_every_profile_has_one_current_dated_membership_section(self) -> None:
+        for reference in self.cases.references:
+            memberships = [
+                section
+                for section in self.cases.participant_case(reference).sections
+                if section.id == "cv_memberships"
+            ]
+            self.assertEqual(len(memberships), 1)
+            self.assertIn("current", memberships[0].text.lower())
+            self.assertIn("2026", memberships[0].text)
+
+    def test_c06_credential_identity_is_resolved_by_whole_file_evidence(self) -> None:
+        sections = {
+            section.id: section.text
+            for section in self.cases.participant_case("C-06").sections
+        }
+        self.assertIn("AIGP — certification term", sections["cv_certifications"])
+        self.assertNotIn("IAPP", sections["cv_certifications"])
+        self.assertIn("IAPP", sections["cv_memberships"])
+        self.assertIn("current", sections["cv_memberships"].lower())
+
     def test_case_set_rejects_a_changed_trial_composition(self) -> None:
         case_set = json.loads(CASE_SET_PATH.read_text(encoding="utf-8"))
         case_set["trial_composition"]["false_reject"] = 0
@@ -162,7 +183,7 @@ class Study1WorkflowTests(unittest.TestCase):
     def test_session_contains_no_ai_or_experimental_assignments(self) -> None:
         self.assertEqual(self.session.state["schema_version"], "study1-state-v4")
         self.assertEqual(
-            self.session.state["instrument_version"], "study1-instrument-v4"
+            self.session.state["instrument_version"], "study1-instrument-v5"
         )
         self.assertEqual(self.session.state["case_set_id"], self.cases.case_set_id)
         self.assertEqual(self.session.phase, "screening")
@@ -224,6 +245,15 @@ class Study1WorkflowTests(unittest.TestCase):
         response["decisive_evidence"] = "   "
         with self.assertRaisesRegex(WorkflowError, "decisive_evidence"):
             self.session.submit_judgment(response)
+
+    def test_none_is_accepted_when_no_information_was_decisive(self) -> None:
+        response = self.response()
+        response["decisive_evidence"] = "None"
+        reference = self.session.submit_judgment(response)
+        self.assertEqual(
+            self.session.state["responses"][reference]["decisive_evidence"],
+            "None",
+        )
 
     def test_study2_construct_fields_cannot_enter_study1_responses(self) -> None:
         response = self.response()

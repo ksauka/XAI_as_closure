@@ -25,8 +25,9 @@ present, the full fixed rationale and claim-linked neutral citations are
 available. `A` controls the frozen communication register. `F`
 controls whether, after the unaided
 decision but before the AI recommendation is requested or revealed, the
-participant must type or paste the mandatory certification requirement from the
-complete job description.
+participant must type or paste both mandatory professional requirements—the
+qualifying certification and current professional membership—from the complete
+job description.
 
 Before candidate screening, every condition presents the same single-screen
 recruitment brief: a concise company-and-role summary, concise recruitment
@@ -38,7 +39,7 @@ during every trial for verification.
 
 ## Frozen anthropomorphic-delivery manipulation
 
-The active delivery specification is `anthrokit-hiring-study2-v6`, implemented
+The active delivery specification is `anthrokit-hiring-study2-v7`, implemented
 in `src/xai_as_closure/study2_delivery.py`. It preserves the validated
 AnthroKit-Hiring contrast on five dimensions: self-reference, warmth, formality,
 empathic directness, and hedging.
@@ -53,8 +54,13 @@ empathic directness, and hedging.
 Explanation-present conditions use frozen procedural and anthropomorphic
 templates for the advance and reject sides. C-01/C-02/C-05 share one advance
 message. C-03/C-04 share one correct-reject message. C-06 has a separate frozen
-false-reject message that makes the comparative, more-than-the-minimum rationale
-explicit. Claim-level citations use neutral locators such as `CV(4)`. Each
+false-reject message that treats its bare AIGP entry as ambiguous despite the
+current IAPP membership elsewhere in the same candidate file. It invokes the
+distinct ETHOS Certified AI Governance Professional as an alternative meaning,
+then criticises credential-documentation precision and attention to detail. This
+is deliberately the AI's erroneous reasoning, not a fact added to the supplied
+knowledge documents. Claim-level citations use neutral locators such as `CV(4)`
+and `CV(6)`. Each
 citation opens the complete source document inside the AI-assessment page,
 automatically positions the cited passage in view, and highlights that passage
 without extracting or interpreting it. Citation placement, document treatment,
@@ -70,6 +76,17 @@ recommendation treats it as current. The shared advance citation set for
 C-01/C-02/C-05 includes `CV(4)`, `JD(4.1)`, `JD(4.2)`, `POL(2.1)`, and
 `POL(2.3)` so the evidence needed to overturn C-05 remains within the cited
 documents without giving the error trial a distinctive citation pattern.
+
+The false reject on C-06 is a whole-file reconciliation error. Its Certifications
+section records a current `AIGP` term without expanding the issuer. Its later
+Professional Memberships section records current International Association of
+Privacy Professionals (IAPP) membership. Read together under policy Section 2.3,
+these passages establish the current IAPP AIGP in job-description Section 4.1
+and the separate membership required by Section 4.2. The fixed recommendation
+instead treats `AIGP` as potentially referring to another provider and rejects
+the candidate. Its explanation cites the certification, membership, relevant
+experience, role requirements, and governing policy, so the error remains
+recoverable by reconciling the complete cited evidence.
 
 ## Current agent boundary
 
@@ -125,6 +142,6 @@ What distinguishes each manipulation on screen:
   structured "Recommendation: **X**." text. Anthropomorphic (`A1`): speaker
   label "AI screening assistant", first-person prose ("I'd recommend...").
 - **Forcing (F).** Present (`F1`): after the unaided decision, the participant
-  must re-encode the mandatory requirement from the role description before the
-  recommendation unlocks. Absent (`F0`): the recommendation is available
+  must re-encode both mandatory professional requirements from the role
+  description before the recommendation unlocks. Absent (`F0`): the recommendation is available
   immediately on request.

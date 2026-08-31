@@ -57,7 +57,8 @@ recruitment-platform identifiers, or raw Qualtrics Response IDs.
 Every expert receives the same versioned materials:
 
 - AI Governance Lead job description;
-- recruitment policy and certification identity-and-currency rules; and
+- recruitment policy and whole-file certification, membership, identity, and
+  currency rules; and
 - six participant-facing candidate profiles identified only as C-01 through
   C-06.
 
@@ -74,8 +75,8 @@ participant-specific randomized order.
 For every candidate, the expert records exactly:
 
 1. Advance candidate to human interview or Reject candidate.
-2. Whether the candidate satisfies the mandatory professional requirement, as a
-   direct Yes or No hard-criterion judgment.
+2. Whether the candidate satisfies the mandatory professional requirements, as
+   a direct Yes or No hard-criterion judgment.
 3. Confidence in the screening decision, from 0 to 100.
 4. The information in the candidate file that was most important for the
    decision, in a short open-ended response.
@@ -84,10 +85,10 @@ A submitted candidate judgment cannot be edited. After the sixth judgment, the
 expert completes a short final materials review within the validation
 application. Six seven-point items assess role-requirement clarity, overall
 profile realism, plausible rather than artificial qualification differences,
-identifiability of the mandatory-requirement information, information
+identifiability of the mandatory-requirements information, information
 sufficiency, and realism of the CV pre-screening task. A Yes or No diagnostic
 asks whether reasonable recruitment professionals could disagree about any
-candidate's mandatory-requirement status; a Yes response requires the candidate
+candidate's mandatory-requirements status; a Yes response requires the candidate
 reference(s) and a short reason. One optional final response captures unrealistic
 or artificially constructed profiles and requested material changes.
 
@@ -123,8 +124,11 @@ Hard-criterion Yes or No agreement is summarized separately from the Advance or
 Reject judgment. C-05 passes validation only if experts recognise that its AIGP
 term ended before the screening window and therefore answer No and reject it for
 the intended reason.
-Open-ended decisive evidence is coded for whether the mandatory criterion drove
-the judgment.
+C-06 passes only if experts reconcile the bare AIGP certification entry with the
+current IAPP membership elsewhere in the same file, answer Yes, and advance it.
+Open-ended decisive evidence is coded for whether certification identity and
+currency, professional membership, and the whole-file evidence rule drove the
+judgment where relevant.
 The final materials-review scales, conditional disagreement response, and
 optional feedback are used to identify ambiguity, artificial construction,
 insufficient information, or disputed profiles that could invalidate or

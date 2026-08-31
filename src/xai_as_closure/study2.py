@@ -81,8 +81,20 @@ def _forcing_answer_is_correct(reference: str, answer: str) -> bool:
     )
     names_iso = "42001" in normalized and "lead implementer" in normalized
     names_qualifying_cert = names_aigp or names_iso
+    names_membership = any(
+        term in normalized
+        for term in (
+            "membership",
+            "member",
+            "iapp",
+            "isaca",
+            "acm",
+            "acams",
+            "professional body",
+        )
+    )
     if reference in _FORCING_QUALIFYING_REFERENCES:
-        return names_qualifying_cert
+        return names_qualifying_cert and names_membership
     states_none_qualifies = any(
         phrase in normalized for phrase in _FORCING_NONE_QUALIFIES_PHRASES
     )
@@ -230,7 +242,7 @@ class Study2Session:
         if not is_correct and attempt_number < max_attempts:
             raise Study2WorkflowError(
                 "Recheck the candidate's CV against the job description's "
-                "mandatory requirement before continuing."
+                "mandatory professional requirements before continuing."
             )
         submitted_at = _now()
         started_at = str(forcing.get("started_at_utc", submitted_at))

@@ -4,10 +4,10 @@ This directory contains the current study materials for the CHI 2027 paper.
 
 ## Canonical materials
 
-- `job_description.md`: locked AI Governance Lead role, recruitment timeline, and current-certification criterion.
+- `job_description.md`: locked AI Governance Lead role, recruitment timeline, and current certification-and-membership criteria.
 - `recruitment_policy.md`: locked screening policy and two-outcome decision rule.
 - `six_candidate_profiles.md`: human-readable six-profile trial set.
-- `six_profiles_case_set.json`: structured `v2` implementation source for the six trials.
+- `six_profiles_case_set.json`: structured `v3` implementation source for the six trials.
 - `STUDY1_VALIDATION_PROTOCOL.md`: single-phase expert ground-truth validation procedure.
 - `STUDY2_CONDITIONS.md`: active 2 x 2 x 2 condition identifiers and invariants.
 - `APPLICATION_LOGGING_ARCHITECTURE.md`: Qualtrics linkage, app flow, and event schema.
@@ -47,7 +47,8 @@ The programme uses one Study 1 application and eight Study 2 applications:
   independent use of the complete source documents.
   Cognitive forcing, when assigned, occurs after the unaided decision and gates
   the still-hidden recommendation until the participant re-enters the mandatory
-  certification requirement from the complete job description. A neutral
+  certification and professional-membership requirements from the complete job
+  description. A neutral
   evidence-recall prompt follows every trial.
 
 For Study 1, Qualtrics is limited to consent, pseudonymous linkage, completion,

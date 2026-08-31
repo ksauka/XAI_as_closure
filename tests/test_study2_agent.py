@@ -123,7 +123,10 @@ class Study2WorkflowTests(unittest.TestCase):
     @staticmethod
     def correct_forcing_answer(reference: str) -> dict:
         if reference in ("C-01", "C-02", "C-06"):
-            text = "AIGP or ISO/IEC 42001 Lead Implementer certification"
+            text = (
+                "AIGP or ISO/IEC 42001 Lead Implementer certification and "
+                "current professional membership"
+            )
         else:
             text = "None of the certifications listed meet the requirement."
         return {"mandatory_requirement": text}
@@ -266,7 +269,7 @@ class Study2WorkflowTests(unittest.TestCase):
         previous = deepcopy(session.state)
         previous["schema_version"] = "study2-state-v7"
         previous["delivery_spec_version"] = "anthrokit-hiring-study2-v5"
-        previous["case_set_id"] = "ai_governance_lead_six_profiles_v1"
+        previous["case_set_id"] = "ai_governance_lead_six_profiles_v2"
 
         with self.assertRaisesRegex(
             Study2WorkflowError, "unsupported Study 2 schema"

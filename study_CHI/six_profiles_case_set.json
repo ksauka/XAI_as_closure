@@ -1,8 +1,8 @@
 {
-  "case_set_id": "ai_governance_lead_six_profiles_v2",
+  "case_set_id": "ai_governance_lead_six_profiles_v3",
   "role": "AI Governance Lead",
   "company": "Suvh Trust Bank",
-  "hard_criterion": "Holds a current IAPP AIGP or ISO/IEC 42001 Lead Implementer certification on the date of screening (job description Sections 4.1-4.2).",
+  "hard_criterion": "Holds a current IAPP AIGP or ISO/IEC 42001 Lead Implementer certification and current relevant professional membership on the date of screening (job description Sections 4.1-4.3).",
   "recruitment_timeline": {
     "posted_date": "2026-07-20",
     "screening_window_start": "2026-08-27",
@@ -79,6 +79,11 @@
             "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; stakeholder management across business, compliance, and technical functions."
           },
           {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026."
+          },
+          {
             "id": "cv_hobbies",
             "heading": "Hobbies and Interests",
             "text": "Long-distance cycling, amateur woodworking, and volunteering as treasurer for a local community choir."
@@ -87,13 +92,15 @@
       },
       "fixed_assessment": {
         "recommendation": "Advance candidate to human interview",
-        "rationale": "The candidate holds a current IAPP AIGP certification, satisfying the mandatory requirement, and the cited roles demonstrate the assessment and advisory experience required by JD 5.1 and 5.2. Both the mandatory and general requirements are met, so POL 2.1 requires advancing the candidate.",
+        "rationale": "The candidate holds a current IAPP AIGP certification and current IAPP professional membership, satisfying the mandatory professional requirements, and the cited roles demonstrate the assessment and advisory experience required by JD 5.1 and 5.2. All mandatory and general requirements are met, so POL 2.1 requires advancing the candidate.",
         "supporting_ids": [
           "cv_certifications",
+          "cv_memberships",
           "cv_role_1",
           "cv_role_2",
           "jd_4_1",
           "jd_4_2",
+          "jd_4_3",
           "jd_5_1",
           "jd_5_2",
           "pol_2_1",
@@ -101,7 +108,7 @@
         ],
         "caution_ids": []
       },
-      "design_note": "Correct advance. Holds AIGP; general requirements met via Roles 1-2 against JD 5.1-5.2. All citations correct and sufficient; POL 2.1 cited as the rule requiring advancement once both requirements are met."
+      "design_note": "Correct advance. Holds current IAPP AIGP and current relevant professional membership; general requirements are met via Roles 1-2 against JD 5.1-5.2. All citations are correct and sufficient; POL 2.1 requires advancement once all mandatory and general requirements are met."
     },
     {
       "case_id": "P2_correct_advance",
@@ -156,6 +163,11 @@
             "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; consulting and stakeholder management across functions."
           },
           {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- ISACA — professional membership current through 31 December 2026."
+          },
+          {
             "id": "cv_hobbies",
             "heading": "Hobbies and Interests",
             "text": "Enjoys sailing, amateur photography, and coaching a youth sports team on weekends."
@@ -164,13 +176,15 @@
       },
       "fixed_assessment": {
         "recommendation": "Advance candidate to human interview",
-        "rationale": "The candidate holds a current ISO/IEC 42001 Lead Implementer certification, satisfying the mandatory requirement, and the cited roles demonstrate the assessment and advisory experience required by JD 5.1 and 5.2. Both the mandatory and general requirements are met, so POL 2.1 requires advancing the candidate.",
+        "rationale": "The candidate holds a current ISO/IEC 42001 Lead Implementer certification and current ISACA professional membership, satisfying the mandatory professional requirements, and the cited roles demonstrate the assessment and advisory experience required by JD 5.1 and 5.2. All mandatory and general requirements are met, so POL 2.1 requires advancing the candidate.",
         "supporting_ids": [
           "cv_certifications",
+          "cv_memberships",
           "cv_role_1",
           "cv_role_2",
           "jd_4_1",
           "jd_4_2",
+          "jd_4_3",
           "jd_5_1",
           "jd_5_2",
           "pol_2_1",
@@ -178,7 +192,7 @@
         ],
         "caution_ids": []
       },
-      "design_note": "Correct advance. Holds ISO/IEC 42001; general requirements met via Roles 1-2 against JD 5.1-5.2. All citations correct and sufficient; POL 2.1 cited as the rule requiring advancement."
+      "design_note": "Correct advance. Holds current ISO/IEC 42001 Lead Implementer certification and current relevant professional membership; general requirements are met via Roles 1-2 against JD 5.1-5.2. All citations are correct and sufficient; POL 2.1 requires advancement."
     },
     {
       "case_id": "P3_correct_reject",
@@ -233,6 +247,11 @@
             "text": "Strong in machine-learning modelling, Python, SQL, and data analysis, with experience across the full modelling lifecycle from data preparation to deployment. Focused on predictive analytics and model performance."
           },
           {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- Association for Computing Machinery (ACM) — professional membership current through 31 December 2026."
+          },
+          {
             "id": "cv_hobbies",
             "heading": "Hobbies and Interests",
             "text": "Interests include competitive chess, hiking, and building small personal data-visualisation projects."
@@ -241,20 +260,23 @@
       },
       "fixed_assessment": {
         "recommendation": "Reject candidate",
-        "rationale": "The certification held is Azure AI Engineer Associate, which is not named in JD 4.1, so the mandatory requirement is not met. The cited roles also show no assessment or advisory experience against JD 5.1 and 5.2. Failing on both dimensions, POL 2.1 and 2.3 require rejection.",
+        "rationale": "The candidate holds current ACM professional membership but the Azure AI Engineer Associate certification is not named in JD 4.1, so the certification requirement is not met. The cited roles also show no assessment or advisory experience against JD 5.1 and 5.2. Failing the certification and general requirements, POL 2.1 and 2.3 require rejection.",
         "supporting_ids": [
           "cv_role_1",
           "cv_role_2",
           "cv_certifications",
+          "cv_memberships",
           "jd_5_1",
           "jd_5_2",
           "jd_4_1",
+          "jd_4_2",
+          "jd_4_3",
           "pol_2_1",
           "pol_2_3"
         ],
         "caution_ids": []
       },
-      "design_note": "Correct reject, unqualified on both dimensions. Azure AI Engineer Associate is not AIGP/ISO 42001; Roles 1-2 show no assessment/advisory experience against JD 5.1-5.2. POL 2.1/2.3 cited as the rejection basis."
+      "design_note": "Correct reject. Current ACM membership satisfies the membership requirement, but Azure AI Engineer Associate is not AIGP/ISO 42001 and Roles 1-2 show no assessment/advisory experience against JD 5.1-5.2. POL 2.1/2.3 are cited as the rejection basis."
     },
     {
       "case_id": "P4_correct_reject",
@@ -309,6 +331,11 @@
             "text": "Financial regulatory compliance, anti-money-laundering, audit coordination, and regulatory reporting, with strong attention to documentation and regulatory detail in a financial services setting."
           },
           {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- Association of Certified Anti-Money Laundering Specialists (ACAMS) — professional membership current through 31 December 2026."
+          },
+          {
             "id": "cv_hobbies",
             "heading": "Hobbies and Interests",
             "text": "Enjoys long-distance running, amateur baking, and serving on the committee of a local running club."
@@ -317,20 +344,23 @@
       },
       "fixed_assessment": {
         "recommendation": "Reject candidate",
-        "rationale": "The certification held is the CFA Investment Foundations Certificate, which is not named in JD 4.1, so the mandatory requirement is not met. The cited roles also show that the profile falls below the stated general requirements. Failing on both dimensions, POL 2.1 and 2.3 require rejection.",
+        "rationale": "The candidate holds current ACAMS professional membership but none of the listed certifications is named in JD 4.1, so the certification requirement is not met. The cited roles also show that the profile falls below the stated general requirements. Failing the certification and general requirements, POL 2.1 and 2.3 require rejection.",
         "supporting_ids": [
           "cv_role_1",
           "cv_role_2",
           "cv_certifications",
+          "cv_memberships",
           "jd_5_1",
           "jd_5_2",
           "jd_4_1",
+          "jd_4_2",
+          "jd_4_3",
           "pol_2_1",
           "pol_2_3"
         ],
         "caution_ids": []
       },
-      "design_note": "Correct reject, unqualified on both dimensions. No AIGP/ISO 42001; Roles 1-2 are assessed below the general requirements. POL 2.1/2.3 are cited as the rejection basis."
+      "design_note": "Correct reject. Current ACAMS membership satisfies the membership requirement, but no listed certification is AIGP/ISO 42001 and Roles 1-2 are assessed below the general requirements. POL 2.1/2.3 are cited as the rejection basis."
     },
     {
       "case_id": "P5_false_advance",
@@ -385,6 +415,11 @@
             "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment support; advisory and stakeholder management across business, compliance, and technical functions."
           },
           {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026."
+          },
+          {
             "id": "cv_hobbies",
             "heading": "Hobbies and Interests",
             "text": "Enjoys sailing, board-game design, and mentoring early-career project coordinators through a professional association."
@@ -393,13 +428,15 @@
       },
       "fixed_assessment": {
         "recommendation": "Advance candidate to human interview",
-        "rationale": "The assistant correctly identifies the cited AIGP credential and assesses the cited roles as meeting the general requirements, but incorrectly treats the credential as current. Its recorded term ended on 31 May 2026, before the 27-30 August 2026 screening window. JD 4.1-4.2 and POL 2.3 require a qualifying certification to be current on the date of screening, so the advance is wrong and is catchable entirely within the cited evidence.",
+        "rationale": "The assistant correctly identifies the cited AIGP credential, current IAPP membership, and roles meeting the general requirements, but incorrectly treats the credential as current. Its recorded term ended on 31 May 2026, before the 27-30 August 2026 screening window. JD 4.1-4.3 and POL 2.3 require both mandatory professional requirements to be current on the date of screening, so the advance is wrong and is catchable entirely within the cited evidence.",
         "supporting_ids": [
           "cv_certifications",
+          "cv_memberships",
           "cv_role_1",
           "cv_role_2",
           "jd_4_1",
           "jd_4_2",
+          "jd_4_3",
           "jd_5_1",
           "jd_5_2",
           "pol_2_1",
@@ -407,7 +444,7 @@
         ],
         "caution_ids": []
       },
-      "design_note": "FALSE ADVANCE. Strong on all general requirements (5.1-5.4); fails only the certification-currentness requirement. The candidate previously earned AIGP, but the recorded term ended on 31 May 2026 before the screening window. The AI cites the real credential and treats it as current. Reading CV(4) against JD 4.1-4.2 and POL 2.3 overturns the recommendation. Ground truth = Reject."
+      "design_note": "FALSE ADVANCE. Strong on all general requirements (5.1-5.4) and holds current IAPP membership; fails only certification currentness. The candidate previously earned AIGP, but the recorded term ended on 31 May 2026 before the screening window. The AI cites the real credential and treats it as current. Reading CV(4) against JD 4.1-4.3 and POL 2.3 overturns the recommendation. Ground truth = Reject."
     },
     {
       "case_id": "P6_false_reject",
@@ -454,31 +491,41 @@
           {
             "id": "cv_certifications",
             "heading": "Certifications",
-            "text": "- Certified ScrumMaster (CSM) — certification term 6 March 2025–6 March 2027.\n- IAPP Artificial Intelligence Governance Professional (AIGP) — certification term 18 June 2025–30 June 2027.\n- AWS Certified Cloud Practitioner — certification term 9 September 2024–9 September 2027."
+            "text": "- Certified ScrumMaster (CSM) — certification term 6 March 2025–6 March 2027.\n- AIGP — certification term 18 June 2025–30 June 2027.\n- AWS Certified Cloud Practitioner — certification term 9 September 2024–9 September 2027."
           },
           {
             "id": "cv_skills",
             "heading": "Skills and Knowledge",
-            "text": "AI and machine-learning systems including generative AI; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment; consulting and stakeholder management across functions. No postgraduate degree listed; experience meets the stated minimum; no professional interests listed."
+            "text": "AI and machine-learning systems including generative AI; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment; consulting and stakeholder management across business, compliance, and technical functions."
+          },
+          {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026."
           }
         ]
       },
       "fixed_assessment": {
         "recommendation": "Reject candidate",
-        "rationale": "The cited certification and roles establish that the candidate holds a current IAPP AIGP certification and meets the assessment and advisory experience required by JD 5.1 and 5.2 -- both the mandatory and general requirements are met on the assistant's own cited evidence. The assistant nonetheless rejects, citing the absence of a postgraduate degree, experience at the stated minimum rather than beyond it, and no listed interests. None of these is the mandatory requirement or a general requirement, and POL 2.1 states a candidate who meets both must not be rejected on such grounds. The error is inside the cited evidence: reading the assistant's own citations against POL 2.1 overturns it.",
+        "rationale": "The candidate file lists a current AIGP credential and current International Association of Privacy Professionals (IAPP) membership. Read together under POL 2.3, those sections establish the current IAPP AIGP required by JD 4.1 as well as the membership required by JD 4.2; the cited roles meet JD 5.1 and 5.2. The assistant nonetheless treats the acronym as ambiguous, invokes the distinct ETHOS Certified AI Governance Professional, criticises the documentation and attention to detail, and rejects. The error is overturned by reconciling the cited Certifications and Professional Memberships sections against JD 4.1-4.3 and POL 2.3.",
         "supporting_ids": [
+          "cv_certifications",
+          "cv_memberships",
           "cv_role_1",
           "cv_role_2",
-          "cv_certifications",
+          "jd_3_5",
+          "jd_7_2",
           "jd_5_1",
           "jd_5_2",
           "jd_4_1",
+          "jd_4_2",
+          "jd_4_3",
           "pol_2_1",
           "pol_2_3"
         ],
         "caution_ids": []
       },
-      "design_note": "FALSE REJECT. Holds AIGP and meets JD 5.1-5.2 via Roles 1-2, so the candidate is qualified on both dimensions. The assistant cites the evidence and POL 2.1, then wrongly treats being at the stated minimum as a basis for rejection. Catchable entirely within the cited evidence. Ground truth = Advance."
+      "design_note": "FALSE REJECT. The Certifications section lists only the current acronym AIGP; the later Professional Memberships section identifies current IAPP membership. Read together under POL 2.3, they establish the IAPP AIGP required by JD 4.1 and the membership required by JD 4.2. Roles 1-2 meet JD 5.1-5.2. The assistant confidently invokes the distinct ETHOS AIGP, treats the certification entry as insufficient, and infers poor documentation care despite the resolving membership evidence. Catchable entirely by reconciling the cited whole-file evidence. Ground truth = Advance."
     }
   ]
 }

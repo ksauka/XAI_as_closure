@@ -28,15 +28,17 @@ class Study2ArtifactTests(unittest.TestCase):
 
     def test_error_trial_explanation_sources_match_registered_mechanisms(self) -> None:
         c05 = self.cases.artifact("C-05", ArtifactVariant(True, False))
-        self.assertEqual(len(c05.sources), 9)
+        self.assertEqual(len(c05.sources), 11)
         self.assertEqual(
             [source.citation for source in c05.sources],
             [
                 "CV(4)",
+                "CV(6)",
                 "CV(3.1)",
                 "CV(3.2)",
                 "JD(4.1)",
                 "JD(4.2)",
+                "JD(4.3)",
                 "JD(5.1)",
                 "JD(5.2)",
                 "POL(2.1)",
@@ -48,20 +50,27 @@ class Study2ArtifactTests(unittest.TestCase):
         self.assertEqual(
             [source.citation for source in c06.sources],
             [
+                "CV(4)",
+                "CV(6)",
                 "CV(3.1)",
                 "CV(3.2)",
-                "CV(4)",
+                "JD(3.5)",
+                "JD(7.2)",
                 "JD(5.1)",
                 "JD(5.2)",
                 "JD(4.1)",
+                "JD(4.2)",
+                "JD(4.3)",
                 "POL(2.1)",
                 "POL(2.3)",
             ],
         )
-        self.assertIn("AIGP", c06.sources[2].text)
+        self.assertIn("AIGP", c06.sources[0].text)
+        self.assertNotIn("IAPP", c06.sources[0].text)
+        self.assertIn("IAPP", c06.sources[1].text)
 
     def test_delivery_version_separates_rewritten_explanation_stimuli(self) -> None:
-        self.assertEqual(DELIVERY_SPEC_VERSION, "anthrokit-hiring-study2-v6")
+        self.assertEqual(DELIVERY_SPEC_VERSION, "anthrokit-hiring-study2-v7")
 
     def test_participant_messages_never_expose_semantic_labels_or_raw_ids(self) -> None:
         for reference in self.cases.references:
@@ -84,10 +93,9 @@ class Study2ArtifactTests(unittest.TestCase):
                     "jd_",
                     "cv_role",
                     "cv_certifications",
+                    "cv_memberships",
                     "false advance",
                     "false reject",
-                    "certifications",
-                    "skills and knowledge",
                 ):
                     self.assertNotIn(forbidden, serialized)
 
@@ -159,7 +167,8 @@ class Study2ArtifactTests(unittest.TestCase):
                     advances[0],
                     "I've gone through this one carefully, and they look right "
                     "for the role.\n\n"
-                    "They hold the required certification for the role.\n\n"
+                    "They hold the required certification and professional "
+                    "membership for the role.\n\n"
                     "Their experience and profile meet what the position calls "
                     "for.\n\nTaking the governing rules into account, I see them "
                     "as meeting the requirements.\n\n"
@@ -185,15 +194,21 @@ class Study2ArtifactTests(unittest.TestCase):
                     "basis to advance them.\n\nOn balance, I'd recommend "
                     "rejecting this candidate.",
                 )
-                self.assertEqual(
-                    c03.replace("fall below the requirements", "sit at the stated minimum"),
+                self.assertIn("The file lists only \"AIGP,\"", c06)
+                self.assertIn(
+                    "The certification entry does not establish that they hold "
+                    "the credential required for this role.",
                     c06,
                 )
+                self.assertIn("ETHOS Certified AI Governance Professional", c06)
+                self.assertIn("attention to detail", c06)
             else:
-                self.assertEqual(
-                    c03.replace("below requirements", "at stated minimum"),
+                self.assertIn(
+                    "AIGP entry does not establish the credential required for "
+                    "the role",
                     c06,
                 )
+                self.assertIn("Experience and profile meet", c06)
 
     def test_explanation_absent_cards_are_verdict_only_in_both_registers(self) -> None:
         forbidden = (
@@ -228,21 +243,32 @@ class Study2ArtifactTests(unittest.TestCase):
         ).assess("C-06")
         payload = output.participant_payload()
         blocks = payload["message_blocks"]
-        self.assertEqual(len(blocks), 4)
+        self.assertEqual(len(blocks), 6)
         self.assertEqual(
             [citation["citation"] for citation in blocks[1]["citations"]],
             [
                 "CV(3.1)",
                 "CV(3.2)",
-                "CV(4)",
                 "JD(5.1)",
                 "JD(5.2)",
-                "JD(4.1)",
             ],
         )
         self.assertEqual(
             [citation["citation"] for citation in blocks[2]["citations"]],
-            ["POL(2.1)", "POL(2.3)"],
+            [
+                "CV(4)",
+                "CV(6)",
+                "JD(4.1)",
+                "JD(4.2)",
+            ],
+        )
+        self.assertEqual(
+            [citation["citation"] for citation in blocks[3]["citations"]],
+            ["JD(3.5)", "JD(7.2)"],
+        )
+        self.assertEqual(
+            [citation["citation"] for citation in blocks[4]["citations"]],
+            ["JD(4.3)", "POL(2.1)", "POL(2.3)"],
         )
         self.assertTrue(
             all(
