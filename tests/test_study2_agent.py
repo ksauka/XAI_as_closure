@@ -269,7 +269,7 @@ class Study2WorkflowTests(unittest.TestCase):
         previous = deepcopy(session.state)
         previous["schema_version"] = "study2-state-v7"
         previous["delivery_spec_version"] = "anthrokit-hiring-study2-v5"
-        previous["case_set_id"] = "ai_governance_lead_six_profiles_v2"
+        previous["case_set_id"] = "ai_governance_lead_six_profiles_v3"
 
         with self.assertRaisesRegex(
             Study2WorkflowError, "unsupported Study 2 schema"

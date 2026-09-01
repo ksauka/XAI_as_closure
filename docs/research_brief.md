@@ -62,8 +62,9 @@ previously earned AIGP but has a recorded
 term ending before the screening window; the fixed AI recommendation wrongly
 treats that expired term as current.
 
-The false reject, C-06, records a current bare `AIGP` entry and current IAPP
-membership elsewhere in the same CV. Together they establish the required IAPP
+The false reject, C-06, records a current bare `AIGP` entry and IAPP membership
+elsewhere in the same CV, both with the 18 June 2025–30 June 2027 term. Together
+they establish the required IAPP
 AIGP and the separate membership requirement under the whole-file evidence
 rule. The fixed AI instead treats the acronym as potentially referring to the
 distinct ETHOS credential, criticises credential-documentation precision, and

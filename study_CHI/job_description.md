@@ -19,7 +19,7 @@
 **3.5 Execution.** Operate with limited supervision while maintaining documentation and audit readiness.
 
 ## Section 4. Mandatory Professional Requirements
-**4.1 Mandatory Certification.** The candidate must hold a current, recognised professional AI governance certification, being either the IAPP Artificial Intelligence Governance Professional (AIGP) or the ISO/IEC 42001 Lead Implementer certification.
+**4.1 Mandatory Certification.** The candidate must hold a current, recognised professional AI governance certification, being either the IAPP Artificial Intelligence Governance Professional (AIGP) or the ISO/IEC 42001 Lead Implementer certification. The candidate file must record the certification and show that it is current on the date of screening.
 **4.2 Mandatory Professional Membership.** The candidate must also hold current membership in a recognised professional body relevant to AI governance, privacy, risk, compliance, or information-systems governance. The candidate file must record the professional body and show that the membership is current on the date of screening.
 **4.3 Disqualifying Effect.** Both the certification in Section 4.1 and the professional membership in Section 4.2 must be current on the date of screening. A candidate must not be advanced where the qualifying certification is absent, expired, suspended, or revoked, or where the required professional membership is absent or has lapsed, regardless of other strengths.
 **4.4 Non-Substitutability.** Experience, advisory work, training in AI governance, or membership by itself does not substitute for the certification in Section 4.1; certification by itself does not substitute for the membership in Section 4.2.

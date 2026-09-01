@@ -80,7 +80,8 @@ documents without giving the error trial a distinctive citation pattern.
 The false reject on C-06 is a whole-file reconciliation error. Its Certifications
 section records a current `AIGP` term without expanding the issuer. Its later
 Professional Memberships section records current International Association of
-Privacy Professionals (IAPP) membership. Read together under policy Section 2.3,
+Privacy Professionals (IAPP) membership with the same 18 June 2025–30 June 2027
+term. Read together under policy Section 2.3,
 these passages establish the current IAPP AIGP in job-description Section 4.1
 and the separate membership required by Section 4.2. The fixed recommendation
 instead treats `AIGP` as potentially referring to another provider and rejects

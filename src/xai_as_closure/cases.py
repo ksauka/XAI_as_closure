@@ -112,7 +112,7 @@ def material_manifest() -> dict[str, Any]:
         digest.update(path.name.encode("ascii"))
         digest.update(content)
     return {
-        "material_set": "chi_six_profiles_v3",
+        "material_set": "chi_six_profiles_v4",
         "manifest_sha256": digest.hexdigest(),
         "files": files,
     }

@@ -177,7 +177,7 @@ Worked on AI governance documentation, risk registers, and compliance reporting,
 AI and machine-learning systems including generative AI; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment; consulting and stakeholder management across business, compliance, and technical functions.
 
 **Professional Memberships**
-- International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026.
+- International Association of Privacy Professionals (IAPP) — professional membership term 18 June 2025–30 June 2027 (current on the screening date).
 
 > **AI assistant recommendation:** Reject candidate
 > **Cited sources:** cv_certifications, cv_memberships, cv_role_1, cv_role_2, jd_3_5, jd_7_2, jd_5_1, jd_5_2, jd_4_1, jd_4_2, jd_4_3, pol_2_1, pol_2_3

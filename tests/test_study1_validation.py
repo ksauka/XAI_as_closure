@@ -12,6 +12,7 @@ from pathlib import Path
 from xai_as_closure.cases import (
     CASE_SET_PATH,
     INTERNAL_FIELDS,
+    ROLE_PATH,
     CaseRepository,
     material_manifest,
 )
@@ -62,7 +63,7 @@ class CaseRepositoryTests(unittest.TestCase):
 
     def test_material_manifest_changes_are_detectable(self) -> None:
         manifest = material_manifest()
-        self.assertEqual(manifest["material_set"], "chi_six_profiles_v3")
+        self.assertEqual(manifest["material_set"], "chi_six_profiles_v4")
         self.assertEqual(
             set(manifest["files"]),
             {
@@ -115,6 +116,19 @@ class CaseRepositoryTests(unittest.TestCase):
         self.assertIn("31 May 2026", c05.text)
         self.assertNotIn("PMI-CPMAI", c05.text)
 
+    def test_mandatory_credential_currency_rules_are_parallel(self) -> None:
+        role = ROLE_PATH.read_text(encoding="utf-8")
+        self.assertIn(
+            "The candidate file must record the certification and show that it is "
+            "current on the date of screening.",
+            role,
+        )
+        self.assertIn(
+            "The candidate file must record the professional body and show that the "
+            "membership is current on the date of screening.",
+            role,
+        )
+
     def test_every_profile_has_one_current_dated_membership_section(self) -> None:
         for reference in self.cases.references:
             memberships = [
@@ -123,8 +137,17 @@ class CaseRepositoryTests(unittest.TestCase):
                 if section.id == "cv_memberships"
             ]
             self.assertEqual(len(memberships), 1)
+            self.assertRegex(memberships[0].text, r"\b20\d{2}\b")
             self.assertIn("current", memberships[0].text.lower())
-            self.assertIn("2026", memberships[0].text)
+
+    def test_c05_fails_only_certification_currency(self) -> None:
+        sections = {
+            section.id: section.text
+            for section in self.cases.participant_case("C-05").sections
+        }
+        self.assertIn("31 May 2026", sections["cv_certifications"])
+        self.assertIn("current through 31 December 2026", sections["cv_memberships"])
+        self.assertNotIn("lapsed", sections["cv_memberships"].lower())
 
     def test_c06_credential_identity_is_resolved_by_whole_file_evidence(self) -> None:
         sections = {
@@ -135,6 +158,8 @@ class CaseRepositoryTests(unittest.TestCase):
         self.assertNotIn("IAPP", sections["cv_certifications"])
         self.assertIn("IAPP", sections["cv_memberships"])
         self.assertIn("current", sections["cv_memberships"].lower())
+        self.assertIn("18 June 2025–30 June 2027", sections["cv_certifications"])
+        self.assertIn("18 June 2025–30 June 2027", sections["cv_memberships"])
 
     def test_case_set_rejects_a_changed_trial_composition(self) -> None:
         case_set = json.loads(CASE_SET_PATH.read_text(encoding="utf-8"))
