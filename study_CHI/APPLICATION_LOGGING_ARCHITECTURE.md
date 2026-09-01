@@ -97,7 +97,7 @@ participant state contains the complete paired response card, condition-visible
 sources.
 Study 2 uses `study2-state-v8`, `study2-event-v10`, and `study2-app-v10` so pilot
 sessions created before the revised case set and frozen delivery specification
-cannot be mixed with the active instrument. The state records the `v4` case-set
+cannot be mixed with the active instrument. The state records the `v5` case-set
 identifier and rejects prior material versions; resumability remains available
 within the same current material version.
 

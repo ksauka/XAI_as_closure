@@ -7,7 +7,7 @@ This directory contains the current study materials for the CHI 2027 paper.
 - `job_description.md`: locked AI Governance Lead role, recruitment timeline, and current certification-and-membership criteria.
 - `recruitment_policy.md`: locked screening policy and two-outcome decision rule.
 - `six_candidate_profiles.md`: human-readable six-profile trial set.
-- `six_profiles_case_set.json`: structured `v4` implementation source for the six trials.
+- `six_profiles_case_set.json`: structured `v5` implementation source for the six trials.
 - `STUDY1_VALIDATION_PROTOCOL.md`: single-phase expert ground-truth validation procedure.
 - `STUDY2_CONDITIONS.md`: active 2 x 2 x 2 condition identifiers and invariants.
 - `APPLICATION_LOGGING_ARCHITECTURE.md`: Qualtrics linkage, app flow, and event schema.

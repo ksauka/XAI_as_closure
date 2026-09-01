@@ -1,5 +1,5 @@
 {
-  "case_set_id": "ai_governance_lead_six_profiles_v4",
+  "case_set_id": "ai_governance_lead_six_profiles_v5",
   "role": "AI Governance Lead",
   "company": "Suvh Trust Bank",
   "hard_criterion": "Holds a current IAPP AIGP or ISO/IEC 42001 Lead Implementer certification and current relevant professional membership on the date of screening (job description Sections 4.1-4.3).",
@@ -501,7 +501,7 @@
           {
             "id": "cv_memberships",
             "heading": "Professional Memberships",
-            "text": "- International Association of Privacy Professionals (IAPP) — professional membership term 18 June 2025–30 June 2027 (current on the screening date)."
+            "text": "- International Association of Privacy Professionals (IAPP) — professional membership current from 18 June 2025 through 30 June 2027."
           }
         ]
       },

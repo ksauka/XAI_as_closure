@@ -63,7 +63,7 @@ class CaseRepositoryTests(unittest.TestCase):
 
     def test_material_manifest_changes_are_detectable(self) -> None:
         manifest = material_manifest()
-        self.assertEqual(manifest["material_set"], "chi_six_profiles_v4")
+        self.assertEqual(manifest["material_set"], "chi_six_profiles_v5")
         self.assertEqual(
             set(manifest["files"]),
             {
@@ -159,7 +159,11 @@ class CaseRepositoryTests(unittest.TestCase):
         self.assertIn("IAPP", sections["cv_memberships"])
         self.assertIn("current", sections["cv_memberships"].lower())
         self.assertIn("18 June 2025–30 June 2027", sections["cv_certifications"])
-        self.assertIn("18 June 2025–30 June 2027", sections["cv_memberships"])
+        self.assertIn(
+            "professional membership current from 18 June 2025 through "
+            "30 June 2027",
+            sections["cv_memberships"],
+        )
 
     def test_case_set_rejects_a_changed_trial_composition(self) -> None:
         case_set = json.loads(CASE_SET_PATH.read_text(encoding="utf-8"))
