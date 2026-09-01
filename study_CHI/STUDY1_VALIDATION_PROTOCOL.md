@@ -93,11 +93,13 @@ reference(s) and a short reason. One optional final response captures unrealisti
 or artificially constructed profiles and requested material changes.
 
 The validation application is designed for completion within approximately 10
-minutes. Per-profile realism and decision-clarity ratings are not repeated
-because the overall stimulus items and candidate-specific disagreement diagnostic
-capture the same validation risks with substantially less response burden. Total
-session duration remains logged so the 10-minute target can be checked during the
-pilot before expert recruitment is opened.
+minutes. A neutral elapsed-time clock remains visible throughout the application;
+it counts upward, carries across candidate and document views, and neither imposes
+a deadline nor triggers automatic submission. Per-profile realism and
+decision-clarity ratings are not repeated because the overall stimulus items and
+candidate-specific disagreement diagnostic capture the same validation risks with
+substantially less response burden. Total session duration remains logged so the
+10-minute target can be checked before expert recruitment is opened.
 
 Only after this final review is submitted does the application record session
 completion and return the expert to Qualtrics. Qualtrics remains limited to

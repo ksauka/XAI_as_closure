@@ -88,6 +88,31 @@ def _apply_theme() -> None:
             font-weight: 650;
             margin-bottom: .2rem;
         }
+        .elapsed-timer {
+            align-items: baseline;
+            background: #ffffff;
+            border: 1px solid #c9d0d7;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            margin: .45rem 0 .8rem;
+            padding: .7rem 1rem;
+        }
+        .elapsed-timer__label {
+            color: #53606d;
+            font-size: .86rem;
+            font-weight: 650;
+            letter-spacing: .035em;
+            text-transform: uppercase;
+        }
+        .elapsed-timer__value {
+            color: #20252b;
+            font-size: 2rem;
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+            letter-spacing: .02em;
+            line-height: 1;
+        }
         .completion-panel {
             background: #f2f8f4;
             border: 1px solid #9cc7a8;
@@ -107,6 +132,34 @@ def _apply_theme() -> None:
 def _elapsed() -> float:
     started = st.session_state.get("_study1_started", time.perf_counter())
     return round(time.perf_counter() - started, 3)
+
+
+def _format_elapsed_time(elapsed_seconds: float) -> str:
+    total_seconds = max(0, int(elapsed_seconds))
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    if hours:
+        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    return f"{minutes:02d}:{seconds:02d}"
+
+
+@st.fragment(run_every=1)
+def _render_elapsed_timer() -> None:
+    session: Study1Session | None = st.session_state.get("_study1_session")
+    if session is None:
+        return
+    if session.complete:
+        elapsed_seconds = float(session.state.get("total_duration_seconds") or 0)
+    else:
+        elapsed_seconds = _elapsed()
+    formatted = _format_elapsed_time(elapsed_seconds)
+    st.markdown(
+        '<div class="elapsed-timer" role="timer" aria-label="Elapsed time">'
+        '<span class="elapsed-timer__label">Elapsed time</span>'
+        f'<span class="elapsed-timer__value">{formatted}</span>'
+        "</div>",
+        unsafe_allow_html=True,
+    )
 
 
 def _position(session: Study1Session, reference: str) -> int:
@@ -319,6 +372,7 @@ def _header(session: Study1Session) -> None:
     )
     st.title("Candidate screening task")
     st.caption("Designed to take no more than about 10 minutes.")
+    _render_elapsed_timer()
     if session.phase == "screening":
         count = len(session.state["responses"])
         st.progress(count / 6, text=f"Candidate judgments: {count} of 6 submitted")

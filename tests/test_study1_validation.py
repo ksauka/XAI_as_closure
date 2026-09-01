@@ -18,6 +18,7 @@ from xai_as_closure.cases import (
 )
 from xai_as_closure.storage import SessionStore, pseudonymize_linkage, stable_session_id
 from xai_as_closure.study1 import Study1Session, WorkflowError
+from xai_as_closure.study1_app import _format_elapsed_time
 from xai_as_closure.tokens import (
     TokenError,
     create_token,
@@ -212,7 +213,7 @@ class Study1WorkflowTests(unittest.TestCase):
     def test_session_contains_no_ai_or_experimental_assignments(self) -> None:
         self.assertEqual(self.session.state["schema_version"], "study1-state-v4")
         self.assertEqual(
-            self.session.state["instrument_version"], "study1-instrument-v5"
+            self.session.state["instrument_version"], "study1-instrument-v6"
         )
         self.assertEqual(self.session.state["case_set_id"], self.cases.case_set_id)
         self.assertEqual(self.session.phase, "screening")
@@ -221,6 +222,11 @@ class Study1WorkflowTests(unittest.TestCase):
         self.assertNotIn("condition", self.session.state)
         for construct in ("ppbe", "ant", "pce", "trust"):
             self.assertNotIn(construct, json.dumps(self.session.state).lower())
+
+    def test_elapsed_timer_format_has_no_deadline_or_warning_state(self) -> None:
+        self.assertEqual(_format_elapsed_time(0), "00:00")
+        self.assertEqual(_format_elapsed_time(61.9), "01:01")
+        self.assertEqual(_format_elapsed_time(3661), "01:01:01")
 
     def test_each_expert_gets_all_six_profiles_in_a_stable_randomized_order(
         self,

@@ -264,6 +264,14 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 ),
             ):
                 app.run(timeout=20)
+                timer_markup = "\n".join(
+                    element.value
+                    for element in app.markdown
+                    if "elapsed-timer" in element.value
+                )
+                self.assertIn("Elapsed time", timer_markup)
+                self.assertIn('role="timer"', timer_markup)
+                self.assertNotIn("remaining", timer_markup.lower())
                 radio_labels = {radio.label for radio in app.radio}
                 self.assertIn("Screening decision", radio_labels)
                 self.assertIn(
@@ -402,6 +410,12 @@ class MigratedInfrastructureTests(unittest.TestCase):
                     if button.label == "Open job description"
                 ).click()
                 app.run(timeout=20)
+                self.assertTrue(
+                    any(
+                        "elapsed-timer" in element.value
+                        for element in app.markdown
+                    )
+                )
                 next(
                     button
                     for button in app.button

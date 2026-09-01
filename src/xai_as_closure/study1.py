@@ -8,7 +8,7 @@ from typing import Any
 
 from .cases import CaseRepository
 
-STUDY1_INSTRUMENT_VERSION = "study1-instrument-v5"
+STUDY1_INSTRUMENT_VERSION = "study1-instrument-v6"
 STUDY1_STATE_VERSION = "study1-state-v4"
 
 
