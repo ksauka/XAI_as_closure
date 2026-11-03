@@ -35,7 +35,7 @@ AI and machine-learning systems including generative AI; enterprise architecture
 - International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026.
 
 > **AI assistant recommendation:** Advance candidate to human interview
-> **Cited sources:** cv_certifications, cv_memberships, cv_role_1, cv_role_2, jd_4_1, jd_4_2, jd_4_3, jd_5_1, jd_5_2, pol_2_1, pol_2_3
+> **Cited sources:** cv_certifications, cv_memberships, cv_role_1, cv_role_2, jd_4_1, jd_4_2, jd_4_2_1, jd_4_3, jd_5_1, jd_5_2, pol_2_1, pol_2_3
 > **Ground truth (correct decision):** Advance candidate to human interview
 > **Trial type:** Correct advance
 
@@ -64,7 +64,7 @@ AI and machine-learning systems including generative AI; enterprise architecture
 - ISACA — professional membership current through 31 December 2026.
 
 > **AI assistant recommendation:** Advance candidate to human interview
-> **Cited sources:** cv_certifications, cv_memberships, cv_role_1, cv_role_2, jd_4_1, jd_4_2, jd_4_3, jd_5_1, jd_5_2, pol_2_1, pol_2_3
+> **Cited sources:** cv_certifications, cv_memberships, cv_role_1, cv_role_2, jd_4_1, jd_4_2, jd_4_2_1, jd_4_3, jd_5_1, jd_5_2, pol_2_1, pol_2_3
 > **Ground truth (correct decision):** Advance candidate to human interview
 > **Trial type:** Correct advance
 
@@ -93,7 +93,7 @@ Strong in machine-learning modelling, Python, SQL, and data analysis, with exper
 - Association for Computing Machinery (ACM) — professional membership current through 31 December 2026.
 
 > **AI assistant recommendation:** Reject candidate
-> **Cited sources:** cv_role_1, cv_role_2, cv_certifications, cv_memberships, jd_5_1, jd_5_2, jd_4_1, jd_4_2, jd_4_3, pol_2_1, pol_2_3
+> **Cited sources:** cv_role_1, cv_role_2, cv_certifications, cv_memberships, jd_4_1, jd_4_2, jd_4_2_1, jd_4_3, jd_3_5, jd_7_2, jd_5_1, jd_5_2, pol_2_1, pol_2_3
 > **Ground truth (correct decision):** Reject candidate
 > **Trial type:** Correct reject
 
@@ -122,7 +122,7 @@ Financial regulatory compliance, anti-money-laundering, audit coordination, and 
 - Association of Certified Anti-Money Laundering Specialists (ACAMS) — professional membership current through 31 December 2026.
 
 > **AI assistant recommendation:** Reject candidate
-> **Cited sources:** cv_role_1, cv_role_2, cv_certifications, cv_memberships, jd_5_1, jd_5_2, jd_4_1, jd_4_2, jd_4_3, pol_2_1, pol_2_3
+> **Cited sources:** cv_role_1, cv_role_2, cv_certifications, cv_memberships, jd_4_1, jd_4_2, jd_4_2_1, jd_4_3, jd_3_5, jd_7_2, jd_5_1, jd_5_2, pol_2_1, pol_2_3
 > **Ground truth (correct decision):** Reject candidate
 > **Trial type:** Correct reject
 
@@ -151,7 +151,7 @@ AI and machine-learning systems including generative AI; enterprise architecture
 - International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026.
 
 > **AI assistant recommendation:** Advance candidate to human interview
-> **Cited sources:** cv_certifications, cv_memberships, cv_role_1, cv_role_2, jd_4_1, jd_4_2, jd_4_3, jd_5_1, jd_5_2, pol_2_1, pol_2_3
+> **Cited sources:** cv_certifications, cv_memberships, cv_role_1, cv_role_2, jd_4_1, jd_4_2, jd_4_2_1, jd_4_3, jd_5_1, jd_5_2, pol_2_1, pol_2_3
 > **Ground truth (correct decision):** Reject candidate
 > **Trial type:** FALSE ADVANCE
 
@@ -180,7 +180,7 @@ AI and machine-learning systems including generative AI; EU AI Act and ISO/IEC 4
 - International Association of Privacy Professionals (IAPP) — professional membership current from 18 June 2025 through 30 June 2027.
 
 > **AI assistant recommendation:** Reject candidate
-> **Cited sources:** cv_certifications, cv_memberships, cv_role_1, cv_role_2, jd_3_5, jd_7_2, jd_5_1, jd_5_2, jd_4_1, jd_4_2, jd_4_3, pol_2_1, pol_2_3
+> **Cited sources:** cv_role_1, cv_role_2, cv_certifications, cv_memberships, jd_4_1, jd_4_2, jd_4_2_1, jd_4_3, jd_3_5, jd_7_2, jd_5_1, jd_5_2, pol_2_1, pol_2_3
 > **Ground truth (correct decision):** Advance candidate to human interview
 > **Trial type:** FALSE REJECT
 

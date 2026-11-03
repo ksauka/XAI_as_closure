@@ -176,6 +176,42 @@ class SessionStore:
                 events.append(event)
         return events
 
+    def restore_archive(self, state: dict[str, Any], events: list[dict[str, Any]]) -> None:
+        """Restore a verified remote snapshot without overwriting divergent events."""
+        session_id = _validated_session_id(str(state["session_id"]), "s1")
+        if not isinstance(events, list):
+            raise ValueError("Invalid archived events.")
+        sequences = []
+        for event in events:
+            if not isinstance(event, dict) or event.get("session_id") != session_id:
+                raise ValueError("Archived event identity differs.")
+            sequence = event.get("event_sequence")
+            if not isinstance(sequence, int) or isinstance(sequence, bool):
+                raise ValueError("Invalid archived event sequence.")
+            if (event.get("validation_round", "initial") != state.get("validation_round", "initial")
+                    or event.get("material_manifest", {}).get("manifest_sha256") != material_manifest()["manifest_sha256"]):
+                raise ValueError("Archived event material or round differs.")
+            sequences.append(sequence)
+        if sequences != list(range(1, len(events) + 1)) or state.get("event_sequence") != len(events):
+            raise ValueError("Archived events are incomplete or out of order.")
+        event_path = self.events / f"{session_id}.jsonl"
+        if event_path.exists():
+            if self.read_events(session_id) != events:
+                raise ValueError("Local and remote event histories differ.")
+        else:
+            temporary = event_path.with_suffix(f".{uuid4().hex}.tmp")
+            descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            try:
+                with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+                    for event in events:
+                        handle.write(json.dumps(event, ensure_ascii=True, sort_keys=True) + "\n")
+                    handle.flush()
+                    os.fsync(handle.fileno())
+                os.replace(temporary, event_path)
+            finally:
+                temporary.unlink(missing_ok=True)
+        self.save(state)
+
     def append_event(
         self,
         state: dict[str, Any],
@@ -203,12 +239,16 @@ class SessionStore:
             )
             sequence = state["event_sequence"]
             event = {
-                "schema_version": "study1-event-v4",
+                "schema_version": "study1-event-v5" if state.get("validation_round") == "round2" else "study1-event-v4",
                 "event_id": f"{state['session_id']}:{sequence:06d}",
                 "event_sequence": sequence,
                 "server_timestamp_utc": now_utc(),
                 "application": "study1_validation",
-                "application_version": "study1-app-v4",
+                "application_version": "study1-round2-app-v1" if state.get("validation_round") == "round2" else "study1-app-v4",
+                "validation_round": state.get("validation_round", "initial"),
+                "instrument_version": state.get("instrument_version"),
+                "case_set_id": state.get("case_set_id"),
+                "is_preview": bool(state.get("is_preview", False)),
                 "git_commit": current_git_commit(),
                 "material_manifest": material_manifest(),
                 "session_id": state["session_id"],

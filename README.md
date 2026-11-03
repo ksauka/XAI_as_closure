@@ -73,11 +73,25 @@ Never commit `.env`, `.streamlit/secrets.toml`, participant data, or raw logs.
 
 ## Running the applications
 
-Study 1:
+Study 1, revised-material expert assessment (version 2):
 
 ```bash
-streamlit run apps/study1_validation.py
+streamlit run apps/study1_validation_v2.py
 ```
+
+Deploy this entry point as a separate Streamlit app. The previous
+`apps/study1_validation.py` entry point is retained for the earlier instrument.
+The new app uses the same v6 materials as Study 2, instrument v7, and separate
+round-2 records. See [the round-2 launch guide](study_CHI/STUDY1_ROUND2_LAUNCH.md)
+for storage, survey linkage and the remaining recruitment requirements.
+
+For an isolated local rehearsal with synthetic records and no remote writes:
+
+```bash
+python tools/local_study1_round2.py
+```
+
+The default preview address is http://localhost:8509/.
 
 Example Study 2 condition:
 
@@ -89,7 +103,9 @@ See `apps/README.md` for all eight Study 2 entry points and condition IDs.
 
 ## Data and logging
 
-- Study 1 stores pseudonymously linked validation sessions.
+- Study 1 stores linked validation sessions. Round-2 private checkpoints
+  retain the Prolific platform identifier for the survey merge; event logs use
+  the linkage hash. Keep these records in restricted research storage.
 - Study 2 writes one local JSONL event stream per session and can mirror the
   complete session to a private GitHub repository after each completed trial.
 - Study 2 logs retain the Prolific ID required by the existing Qualtrics merge
@@ -114,11 +130,23 @@ python -m ruff check src tests apps
 python -m ruff format --check src tests apps
 ```
 
+Before any Study 2 pilot or deployment, run the frozen-instrument audit:
+
+```bash
+PYTHONPATH=src python -m xai_as_closure.release_audit
+```
+
+The audit fails if a frozen material, recommendation, condition mapping,
+explanation boundary, delivery register, or version identifier has drifted.
+
 ## Documentation
 
 - `docs/research_brief.md` — research questions and two-study design
 - `study_CHI/STUDY1_VALIDATION_PROTOCOL.md` — expert-validation procedure
 - `study_CHI/STUDY2_CONDITIONS.md` — condition definitions and invariants
+- `study_CHI/STUDY2_ANALYSIS_PLAN.md` — confirmatory outcomes, models, and exclusions
+- `study_CHI/STUDY2_DEPLOYMENT_CHECKLIST.md` — eight-condition pilot and launch gate
+- `study_CHI/STUDY2_MATERIAL_FREEZE.json` — executable material/version freeze
 - `study_CHI/APPLICATION_LOGGING_ARCHITECTURE.md` — linkage, logging, and storage
 - `study_CHI/HAI_MIGRATION_MAP.md` — mapping from the former HAI implementation
 
@@ -126,3 +154,8 @@ python -m ruff format --check src tests apps
 
 This is a research instrument built with fictional hiring materials. It must
 not be used to make real employment, screening, promotion, or hiring decisions.
+
+
+## Current Study 2 analysis
+
+The [v2 analysis plan](study_CHI/STUDY2_ANALYSIS_PLAN.md) specifies diagnostic reliance, H1/H3 confirmatory tests and H2 estimation. [Analysis tools](analysis/study2/README.md) reproduce precision planning and check operational inputs. [Operational specifications](study_CHI/STUDY2_OPERATIONAL_SPEC.json) keep unavailable final survey and pilot values explicit rather than declaring recruitment readiness.

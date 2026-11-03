@@ -1,0 +1,103 @@
+{
+  "sample_sizes": [
+    400
+  ],
+  "scenarios": [
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "sparse",
+      "correct_ai_disagreement_probability": 0.1,
+      "incorrect_ai_disagreement_probability": 0.35
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "central",
+      "correct_ai_disagreement_probability": 0.25,
+      "incorrect_ai_disagreement_probability": 0.6
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "dense",
+      "correct_ai_disagreement_probability": 0.45,
+      "incorrect_ai_disagreement_probability": 0.8
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.0,
+      "delivery_or": 1.0,
+      "forcing_or": 1.0,
+      "interaction_or": 1.0,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "central_null",
+      "correct_ai_disagreement_probability": 0.25,
+      "incorrect_ai_disagreement_probability": 0.6
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 1.2,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "central_high_dependence",
+      "correct_ai_disagreement_probability": 0.25,
+      "incorrect_ai_disagreement_probability": 0.6
+    }
+  ],
+  "assumption_status": "Illustrative planning scenarios; not pilot estimates or a claim of design adequacy."
+}

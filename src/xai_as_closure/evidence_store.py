@@ -30,6 +30,7 @@ class EvidenceStore:
             section for section in self.sections if section.label.startswith(prefix)
         ]
 
+
 def build_evidence_store(
     reference: str,
     cases: CaseRepository | None = None,

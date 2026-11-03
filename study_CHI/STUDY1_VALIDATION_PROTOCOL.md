@@ -1,5 +1,16 @@
 # Study 1 Expert-Validation Protocol
 
+> Round-2 update, 3 November 2026: the revised-material assessment uses
+> `apps/study1_validation_v2.py`, instrument v7 and the shared v6 materials.
+> `STUDY1_ROUND2_LAUNCH.md` and `STUDY1_ROUND2_MATERIALS.json` specify the
+> changes and launch requirements. The earlier outcome and retention discussion
+> below describes the initial batches, not validation of the revised materials.
+> The new round remains pending. Its evidence question includes both the
+> requirement and candidate evidence. Production checkpoints contain the
+> Prolific platform identifier for linkage, correcting the older no-raw-platform-ID
+> statement below. Duration must be piloted rather than promised as ten minutes.
+> Fix the revised-round criteria before recruitment and analyse it separately.
+
 ## Purpose and Contribution
 
 Study 1 establishes a defensible profile-level ground truth for the six
@@ -127,7 +138,7 @@ Reject judgment. C-05 passes validation only if experts recognise that its AIGP
 term ended before the screening window and therefore answer No and reject it for
 the intended reason.
 C-06 passes only if experts reconcile the bare AIGP certification entry with the
-current IAPP membership elsewhere in the same file, answer Yes, and advance it.
+current IAPP membership elsewhere in the same file under JD 4.2.1, answer Yes, and advance it.
 Open-ended decisive evidence is coded for whether certification identity and
 currency, professional membership, and the whole-file evidence rule drove the
 judgment where relevant.
@@ -151,12 +162,36 @@ When a profile fails:
 5. Preserve an audit record of the change without combining obsolete and revised
    ratings as though they concerned the same stimulus.
 
-Study 2 cannot launch until every profile passes the prespecified Study 1
-validation rules.
+Study 2 cannot treat a failed profile as though it achieved the prespecified
+agreement rule. A decision to retain a profile on an explicit rule-based ground
+truth despite lower expert agreement must be documented as a protocol
+deviation, justified from the supplied evidence, and disclosed in reporting
+before Study 2 launches.
+
+## Observed Validation Outcome and Retention Decision
+
+The combined occupationally eligible analysis included 16 experts from 25
+valid completers. C-01 through C-04 showed high agreement. C-05 and C-06 did not
+reach the intended substantial-agreement target: they were the profiles that
+required certification-date comparison and whole-file identity reconciliation.
+
+The profiles are retained as rule-determinable error cases rather than reported
+as consensus-validated cases. C-05's recorded IAPP AIGP term ended before the
+screening window, so its ground truth is Reject under the explicit current-
+certification rule. C-06's current AIGP entry and matching current IAPP
+membership establish the required credential and membership under the explicit
+whole-file rule, so its ground truth is Advance. The expert disagreement is
+reported as evidence that these cases require consequential reconciliation; it
+is not used to redefine their answers by majority vote.
+
+This retention is a documented deviation from the initial consensus gate. It
+does not make Study 1 an unaided benchmark or control condition for Study 2.
+Study 2 tests the randomized explanation, delivery, and forcing conditions
+against the frozen rule-based ground truth.
 
 ## Freeze and Outputs
 
-The validated job description, policy, participant-facing profiles, and
+The frozen job description, policy, participant-facing profiles, and
 structured case set receive immutable version identifiers and file hashes. Study
 2 then uses those frozen materials as its ground-truth basis and logs their
 identifiers on every session and trial.

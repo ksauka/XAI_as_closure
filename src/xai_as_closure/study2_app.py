@@ -28,7 +28,13 @@ from .document_renderer import (
     render_cv_document as show_cv_document,
 )
 from .github_saver import test_github_connection
-from .logger import DEFAULT_LOG_DIR, EventLogger, load_state, restored_logger
+from .logger import (
+    DEFAULT_LOG_DIR,
+    EventLogger,
+    load_remote_checkpoint,
+    load_state,
+    restored_logger,
+)
 from .recommendation_component import render_recommendation_passage
 from .study2 import Study2Session, Study2WorkflowError
 from .study2_delivery import (
@@ -38,7 +44,16 @@ from .study2_delivery import (
 from .theme import apply_anthrokit_theme, show_study_banner
 
 
+def _local_preview() -> bool:
+    """Explicit server-side preview; URL parameters cannot enable it."""
+    return os.getenv("STUDY2_LOCAL_PREVIEW") == "1"
+
+
 def _secret(name: str, default: str = "") -> str:
+    if _local_preview():
+        if name == "STUDY2_DATA_ROOT":
+            return os.environ["STUDY2_PREVIEW_DATA_ROOT"]
+        return default
     try:
         value = st.secrets.get(name)
     except StreamlitSecretNotFoundError:
@@ -73,6 +88,9 @@ def _read_qualtrics_params() -> None:
 
 def _prolific_gate() -> None:
     """Use the original HAI manual fallback when no Prolific ID is supplied."""
+    if _local_preview():
+        st.session_state["prolific_pid"] = os.environ["STUDY2_PREVIEW_ID"]
+        return
     if st.session_state.get("prolific_pid"):
         return
     st.header("Welcome to the study task")
@@ -95,7 +113,12 @@ def _prolific_gate() -> None:
 
 def _check_private_storage() -> None:
     """Require working private-GitHub storage for production launches."""
-    production_launch = bool(_query("PROLIFIC_PID") or _query("pid"))
+    production_launch = not _local_preview() and bool(
+        _query("PROLIFIC_PID") or _query("pid")
+    )
+    if _local_preview():
+        st.caption("Local preview · synthetic sessions · remote saving disabled")
+        return
     if not production_launch and "_project_storage_config" not in st.session_state:
         st.session_state["_project_storage_config"] = read_project_storage_config()
     repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
@@ -137,7 +160,7 @@ def _safe_qualtrics_return(raw_return: str) -> str | None:
     except ValueError:
         return None
     host = (parsed.hostname or "").lower()
-    if parsed.scheme not in {"http", "https"} or not (
+    if parsed.scheme != "https" or not (
         host == "qualtrics.com" or host.endswith(".qualtrics.com")
     ):
         return None
@@ -156,10 +179,10 @@ def _build_final_return(
         return None
     parsed = urlparse(safe_return)
     query = dict(parse_qsl(parsed.query, keep_blank_values=True))
-    query.setdefault("PROLIFIC_PID", prolific_pid)
-    query.setdefault("session_id", session_id)
-    query.setdefault("cond", condition_id)
-    query.setdefault("done", "1")
+    query["PROLIFIC_PID"] = prolific_pid
+    query["session_id"] = session_id
+    query["cond"] = condition_id
+    query["done"] = "1"
     return urlunparse(parsed._replace(query=urlencode(query, doseq=True)))
 
 
@@ -186,6 +209,8 @@ def _log(
         payload=payload,
     )
     session.state["turn_id"] = logger.turn_id
+    if not _local_preview():
+        session.state["archive_pending"] = True
     logger.save_state(session.state)
 
 
@@ -203,11 +228,17 @@ def _sync_github() -> None:
         "survey_linkage_id": session.state["session_id"],
     }
     success = logger.push_to_github(repo=repo, github_token=token)
-    if not success:
-        st.warning(
-            "The private GitHub backup could not be updated. The local HAI event "
-            "log remains available; please notify the researcher."
+    if success:
+        session.state["archive_pending"] = False
+        logger.save_state(session.state)
+    elif not st.session_state.get("_study2_pilot", True):
+        st.error(
+            "Your last step could not be saved securely. Please retry before continuing."
         )
+        st.button("Retry saving", key="retry_secure_save")
+        st.stop()
+    else:
+        st.warning("Pilot backup could not be updated; local records remain available.")
 
 
 def _initialize(locked_condition_id: str) -> None:
@@ -220,6 +251,11 @@ def _initialize(locked_condition_id: str) -> None:
             "The Qualtrics condition does not match this condition-locked application."
         )
     participant_id = str(st.session_state["prolific_pid"])
+    production_launch = not _local_preview() and bool(
+        _query("PROLIFIC_PID") or _query("pid")
+    )
+    if production_launch and re.fullmatch(r"[0-9a-fA-F]{24}", participant_id) is None:
+        raise Study2WorkflowError("The supplied Prolific ID is invalid.")
     data_root = _secret("STUDY2_DATA_ROOT")
     log_dir = Path(data_root) if data_root else DEFAULT_LOG_DIR
     cases = CaseRepository()
@@ -227,6 +263,15 @@ def _initialize(locked_condition_id: str) -> None:
         f"{participant_id.strip()}\0{cases.case_set_id}".encode()
     ).hexdigest()
     stored_state = load_state(session_id, log_dir)
+    if production_launch and stored_state is None:
+        stored_state = load_remote_checkpoint(
+            session_id,
+            participant_id,
+            locked_condition_id,
+            _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO"),
+            _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN"),
+            log_dir,
+        )
     if stored_state and stored_state.get("condition_id") not in (
         None,
         locked_condition_id,
@@ -257,7 +302,7 @@ def _initialize(locked_condition_id: str) -> None:
     st.session_state["_study2_agent"] = Study2DecisionAgent(
         condition=condition, cases=cases
     )
-    st.session_state["_study2_pilot"] = not bool(
+    st.session_state["_study2_pilot"] = _local_preview() or not bool(
         _query("PROLIFIC_PID") or _query("pid")
     )
     _log(
@@ -270,6 +315,7 @@ def _initialize(locked_condition_id: str) -> None:
             "case_set_id": cases.case_set_id,
         },
     )
+    _sync_github()
 
 
 def _header(session: Study2Session) -> None:
@@ -563,6 +609,7 @@ def _introduction(session: Study2Session) -> None:
             component="recruitment_brief",
             payload={"from_step": previous_step, "to_step": next_step},
         )
+        _sync_github()
         st.rerun()
 
 
@@ -570,6 +617,8 @@ def _open_reference_document(document: str, origin: str) -> None:
     """Open an optional source document and start visit timing."""
     if document not in {"role", "policy", "cv"}:
         raise Study2WorkflowError("Unknown source document.")
+    session: Study2Session = st.session_state["_study2_session"]
+    reference = session.current_reference() if session.state.get("introduction_step") == "complete" else None
     visit = {
         "document_visit_id": uuid4().hex,
         "document": document,
@@ -583,6 +632,7 @@ def _open_reference_document(document: str, origin: str) -> None:
     st.session_state["_study2_document_visit"] = visit
     _log(
         "document_opened",
+        reference=reference,
         component=document,
         payload={
             key: value for key, value in visit.items() if not key.endswith("_monotonic")
@@ -903,6 +953,7 @@ def _unaided(session: Study2Session, reference: str) -> None:
             component="unaided_form",
             payload=session.current_trial()["unaided"],
         )
+        _sync_github()
         st.rerun()
 
 
@@ -928,14 +979,15 @@ def _agent(session: Study2Session, reference: str) -> None:
             component="agent_output",
             payload=output.audit_payload(),
         )
+        _sync_github()
         st.rerun()
 
 
 def _forcing(session: Study2Session, reference: str) -> None:
     st.warning(
-        "Before the AI assessment is revealed, check the candidate's file "
-        "against the job description's mandatory professional requirements, "
-        "and enter what you find here."
+        "Before the AI assessment is revealed, use the complete job description "
+        "to identify and enter both mandatory professional requirements for "
+        "this role."
     )
     if st.button(
         "Open complete job description",
@@ -949,7 +1001,7 @@ def _forcing(session: Study2Session, reference: str) -> None:
             "clicked_at_monotonic": time.perf_counter(),
         }
         st.session_state["_study2_document"] = "role"
-        st.session_state["_study2_document_focus"] = ""
+        st.session_state["_study2_document_focus"] = "4.1"
         st.session_state["_study2_active_source"] = None
         st.session_state["_study2_document_opened_at"] = visit["clicked_at_monotonic"]
         st.session_state["_study2_document_visit"] = visit
@@ -962,21 +1014,21 @@ def _forcing(session: Study2Session, reference: str) -> None:
                 "document_visit_id": visit["document_visit_id"],
                 "document": "role",
                 "origin": visit["origin"],
-                "focus_section": "",
+                "focus_section": "4.1",
             },
         )
         _sync_github()
         st.rerun()
     with st.form(f"forcing_{reference}"):
         mandatory_requirement = st.text_area(
-            "Type or paste the information from the CV that determines whether "
-            "the candidate meets both mandatory professional requirements "
-            '(certification and membership). If both are not met, type "None" '
-            "and identify the missing or non-current requirement.",
+            "Type or paste both mandatory professional requirements from the "
+            "job description: the qualifying certification requirement and the "
+            "professional-membership requirement, including their current-status "
+            "rule.",
             max_chars=1000,
         )
         submitted = st.form_submit_button(
-            "Confirm requirement and continue", type="primary"
+            "Confirm requirements and continue", type="primary"
         )
     if submitted:
         try:
@@ -995,6 +1047,7 @@ def _forcing(session: Study2Session, reference: str) -> None:
                     "is_correct": False,
                 },
             )
+            _sync_github()
             st.error(str(exc))
             return
         _log(
@@ -1004,6 +1057,7 @@ def _forcing(session: Study2Session, reference: str) -> None:
             component="forcing_form",
             payload=session.current_trial()["forcing"],
         )
+        _sync_github()
         st.rerun()
 
 
@@ -1044,6 +1098,7 @@ def _aided(session: Study2Session, reference: str) -> None:
             component="aided_form",
             payload=session.current_trial()["aided"],
         )
+        _sync_github()
         st.rerun()
 
 
@@ -1107,10 +1162,12 @@ def run(locked_condition_id: str) -> None:
     _check_private_storage()
     try:
         _initialize(locked_condition_id)
-    except (Study2WorkflowError, ValueError) as exc:
+    except (Study2WorkflowError, ValueError, TypeError) as exc:
         st.error(f"Study link unavailable: {exc}")
         st.stop()
     session: Study2Session = st.session_state["_study2_session"]
+    if session.state.get("archive_pending") and not _local_preview():
+        _sync_github()
     _header(session)
     _sidebar(session)
     if _document_view(session):

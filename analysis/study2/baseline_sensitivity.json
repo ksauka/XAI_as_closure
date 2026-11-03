@@ -1,0 +1,46 @@
+{
+  "sample_sizes": [
+    400
+  ],
+  "scenarios": [
+    {
+      "baseline_appropriate_probability": 0.5,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "central_baseline_50",
+      "correct_ai_disagreement_probability": 0.25,
+      "incorrect_ai_disagreement_probability": 0.6
+    },
+    {
+      "baseline_appropriate_probability": 0.8,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "central_baseline_80",
+      "correct_ai_disagreement_probability": 0.25,
+      "incorrect_ai_disagreement_probability": 0.6
+    }
+  ],
+  "assumption_status": "Illustrative planning scenarios; not pilot estimates or a claim of design adequacy."
+}

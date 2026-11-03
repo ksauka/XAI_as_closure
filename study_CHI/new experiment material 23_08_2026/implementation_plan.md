@@ -1,16 +1,18 @@
 # Implementation Plan — When Explanation Becomes Closure
 ### CHI 2027 (Chapter 8). Variables, manipulations, and operationalisation.
 
-This plan specifies how the study is built and run. It assumes the finalised stimuli (AI Governance Recruitment Policy, AI Governance Lead job description, six candidate profiles) and the finalised measurement battery (PPBE, ANT, TRUST). Items still to be fixed in build are marked OPEN.
+Analysis authority: `../STUDY2_ANALYSIS_PLAN.md` (study2-analysis-v2) supersedes earlier H4–H6 and N=312 specifications. Operational values and pending instrument fields are tracked in `../STUDY2_OPERATIONAL_SPEC.json`.
+
+This plan specifies how the study is built and run. It assumes the finalised stimuli (AI Governance Recruitment Policy, AI Governance Lead job description, six candidate profiles) and the planned measurement battery; final item keys and response ranges remain to be verified in the operational specification. Application build decisions are locked below. Items requiring ethics, Qualtrics, power-artifact, or technical-pilot evidence are labelled external launch gates rather than silently treated as complete.
 
 ---
 
 ## 1. Design summary
 
-The study is a mixed design. Three manipulated factors are varied between subjects in a 2 x 2 x 2 arrangement, and six screening trials of fixed error type are presented within subjects. On every trial the participant records an unaided decision before the assistant appears and an aided decision afterwards. The primary outcome is appropriate reliance, scored per trial against the expert-validated ground truth. The perception constructs (perceived provenance-based explainability, perceived anthropomorphism, trust) are measured once after the six trials.
+The study is a mixed design. Three manipulated factors are varied between subjects in a 2 x 2 x 2 arrangement, and six screening trials of fixed error type are presented within subjects. On every trial the participant records an unaided decision before the assistant appears and an aided decision afterwards. The primary outcome is appropriate reliance on diagnostic initial human–AI disagreements only; final accuracy is scored separately across all completed trials. The perception constructs (perceived provenance-based explainability, perceived anthropomorphism, trust) are measured once after the six trials.
 
 - Between-subjects: explanation (no-explanation / explanation) x anthropomorphic delivery (procedural / anthropomorphic) x cognitive forcing (off / on) = 8 cells.
-- Within-subjects: six candidate profiles (2 correct advance, 2 correct reject, 1 false advance, 1 false reject), order randomised per participant, profile entered as a random effect.
+- Within-subjects: six candidate profiles (2 correct advance, 2 correct reject, 1 false advance, 1 false reject), order randomised per participant, profile entered as a fixed effect.
 - Each participant is assigned to one between-subjects cell and completes all six trials under that cell's conditions.
 
 ---
@@ -163,10 +165,11 @@ This interaction reduces retrieval and page-switching cost without replacing the
 - Perceived provenance-based explainability (PPBE), five items, availability/presence framing; manipulation check for Variable 1.
 - Perceived anthropomorphism (ANT), five human-likeness items; manipulation check for Variable 2.
 - Trust (TRUST), nine items, competence/benevolence/integrity, re-domained to candidate assessment.
-Analysed as latent constructs; three-factor CFA for discriminant validity (answers the halo/common-method critique). Reliability re-estimated in this study.
+Exact researcher-supplied wording and PPBE item 5 reverse scoring are in `../STUDY2_QUESTIONNAIRE.md`. Mean scoring and completeness rules are in the operational specification; final response anchors and export keys remain to be supplied. Reliability and discriminant validity are evaluated in the study. Perceived risk, adoption intent, and social presence are excluded; explanation satisfaction is not the PPBE manipulation check.
 
 ### 7.2 Primary outcome — appropriate reliance (behavioural)
-Scored per trial against the expert-validated ground truth. Appropriate reliance is following the assistant when it is correct and overriding it when it is incorrect. The per-trial unaided and aided decisions form a four-cell transition (correct-to-correct, correct-to-incorrect, incorrect-to-correct, incorrect-to-incorrect). On the error trials the correct-to-incorrect reversal is the behavioural signature of closure.
+
+Score aided correctness only when the unaided judgement and fixed AI recommendation disagree. Initial-agreement trials are not scored for reliance. Report correct self-reliance and correct AI reliance separately. All-trial final accuracy and all decision transitions are separate outcomes. The v2 exporter writes diagnostic_disagreement, reliance_direction and nullable directional outcomes; regenerate older exports.
 
 ### 7.3 Verification (behavioural, coded)
 Whether the participant extracted the decisive evidence, coded from the open-ended probe, not from clicks. On C-05: identifies that the cited AIGP term ended before the screening window and therefore does not satisfy the current-certification requirement even though membership is current. On C-06: reconciles the bare current AIGP entry with current IAPP membership elsewhere in the same file and identifies that the whole file establishes both mandatory professional requirements. Two coders on a subset, Cohen's kappa reported. Verification and decision are coded independently.
@@ -178,21 +181,7 @@ Citation-link clicks, time to first citation, in-page complete-document openings
 
 ## 8. Hypotheses
 
-Foundational (perception arc; established in prior work, verified here as a mediation/manipulation check, not headlined as contributions):
-- F1. Perceived provenance-based explainability is positively associated with perceived anthropomorphism.
-- F2. Perceived anthropomorphism is positively associated with trust.
-- F3. Perceived anthropomorphism mediates the association between perceived explainability and trust.
-
-Contribution:
-- **H4.** Trust is positively associated with following the AI recommendation.
-- **H5.** Provenance-based explainability, amplified by anthropomorphic delivery, degrades appropriate reliance on incorrect recommendations (closure): the provenance-by-delivery interaction reduces overriding of incorrect advice.
-- **H6.** Cognitive forcing improves appropriate reliance: forced (active) participants are better calibrated across trials, following correct recommendations and overriding incorrect recommendations more appropriately than un-forced (passive) participants. The prediction is calibration in both directions, not merely more overriding.
-
-Integrative claim (the thesis arc): explanation functions as closure in anthropomorphic conversational AI, raising overreliance risk (H5), and cognitive forcing improves appropriate reliance by inducing active processing (H6). The strongest form is a three-way pattern in which closure most degrades appropriate reliance where explainability and anthropomorphic delivery are both high, and forcing most improves it in those same cells.
-
-OPEN (analysis/power): whether the three-way explainability x anthropomorphism x forcing interaction on appropriate reliance is stated as a powered confirmatory effect or reported as the integrative pattern with H5 and H6 tested as the component effects. This decision fixes the target sample size.
-
----
+H1 tests the explanation-package benefit on diagnostic appropriate reliance. H2 estimates attenuation of that benefit under anthropomorphic delivery. H3 tests the requirement-re-entry benefit on diagnostic appropriate reliance. H1/H3 form the Holm-adjusted confirmatory family; H2 is the focal directional estimation target. Forcing interactions, including the three-way interaction, are exploratory. Post-task trust associations are secondary. See the authoritative analysis plan for exact statements and contrasts.
 
 ## 9. Procedure (per participant)
 
@@ -203,87 +192,49 @@ OPEN (analysis/power): whether the three-way explainability x anthropomorphism x
 
 The unaided capture on every trial is lightweight (a quick advance/reject with confidence), to preserve the baseline that identifies the assistant's influence while keeping the six-trial session within acceptable length.
 
-OPEN (ethics): confirm approval covers the per-trial unaided-then-aided structure across six trials.
+External launch gate: confirm that ethics approval covers the per-trial unaided-then-aided structure across six trials before recruitment opens.
 
 ---
 
 ## 10. Identification and analysis
 
-Identification. Because the unaided decision precedes the manipulations and assignment to cells is random, differences in appropriate reliance across conditions are attributable to the manipulations rather than to unaided reading. The unaided-to-aided reversal isolates assistant-induced error, because a reversal that appears only after the assistant cannot be explained by prior reading. The verification measure is protected from circularity, because the decisive evidence is reachable by any participant regardless of whether citation links were shown; the provenance manipulation varies how easily the evidence is reached, not whether it can be reached.
+Random assignment identifies workflow contrasts. Analyse diagnostic disagreement trials with explanation, delivery, forcing, explanation × delivery, centred trial position, profile fixed effects and a participant random intercept. Report the two direction-specific decomposition models. Later unaided judgements can reflect prior workflow exposure; include order and prespecified order robustness analyses. Post-task trust and perception associations do not establish causal mediation. The authoritative plan defines coding, multiplicity, exclusions, missingness and convergence handling.
 
-Analysis. Perception arc (F1–F3, H4) by a mediation model with a common-method check and cautious causal language; discriminant validity by three-factor CFA. Behavioural outcomes by mixed-effects models at the trial level, with participant and profile as random effects: appropriate reliance and the unaided-to-aided reversal by mixed-effects logistic regression; the provenance-by-delivery interaction tests H5; the forcing effect on appropriate reliance across trials tests H6. Exploratory traces analysed descriptively. Verification coded by two raters on a subset with Cohen's kappa.
+## 11. Study 1 — stimulus validation
 
-OPEN (power): run the power analysis for the primary interaction on appropriate reliance before build; fix N.
+Domain experts reviewed each candidate file against the role requirements and made an advance-or-reject judgement, a direct hard-criterion judgement, and an open-ended statement of decisive evidence. The final occupationally eligible analysis included 16 experts from 25 valid completers. C-01 through C-04 produced high decision and hard-criterion accuracy. C-05 and C-06 produced lower agreement because they required certification-currency and whole-file identity reconciliation, respectively.
 
----
-
-## 11. Study 1 — profile validation (precondition)
-
-Domain experts review each candidate file against the role requirements and make an advance-or-reject judgement with an open-ended statement of the decisive factor. Agreement on the hard-criterion judgement is quantified with Fleiss' kappa, with a target of substantial agreement. The open-ended justifications are coded to confirm experts evaluate certification identity and currency, professional membership, and whole-file reconciliation rather than incidental features. C-05 should read as reject because its AIGP term ended before screening despite current membership; C-06 should read as advance because its bare current AIGP entry and current IAPP membership jointly establish the required credential and membership. Profiles that miss the threshold, or are decided for the wrong reason, are revised and re-validated before Study 2. Study 1 experts and any earlier-study participants are excluded from Study 2.
+This outcome does not turn Study 1 into a no-AI benchmark or a ninth Study 2 condition. Study 1 documents whether the intended evidence and rule-based answers are recoverable and whether the error cases are trivial or consequential. The fixed ground truth remains determined by the explicit dated requirements: C-05 is Reject because its AIGP term ended before screening despite current membership; C-06 is Advance because its current bare AIGP entry and current IAPP membership jointly establish the required credential and membership under the whole-file rule. The observed disagreement is reported rather than hidden or removed through correctness-based exclusions. Study 1 experts and earlier-study participants are excluded from Study 2.
 
 ---
 
-## 12. Build gate — open items to close before running
+## 12. Build and launch gates
 
-- Cognitive-forcing step: selection vs re-statement; exact prompt; unlock mechanism.
-- Explanation/no-explanation: pilot the frozen verdict-only versus claim-linked-citation messages.
-- Procedural/anthropomorphic delivery: pilot the frozen paired wording without a name or avatar.
-- Three-way interaction: confirmatory-and-powered vs integrative-descriptive; fixes N.
-- Power analysis: run for the primary interaction on appropriate reliance; fix N.
-- Ethics: confirm coverage for the per-trial unaided-then-aided six-trial structure.
-- Interface: platform decision (Qualtrics with timing/unlock and show/hide, or custom build with real click/dwell logging) — determines what forcing unlock, citation links, and trace logging can be.
+Locked in the application:
+
+- cognitive forcing uses free-text re-entry of the two role requirements, is identical across profiles and conditions, and cannot unlock on an incorrect response;
+- explanation absent is verdict-only; explanation present uses the frozen rationale and inline citations;
+- procedural and anthropomorphic delivery use the frozen paired wording without a name or avatar;
+- the three-way interaction is exploratory; H1/H3 are confirmatory and H2 is estimated;
+- the ceiling is N = 400 analysable, with the target selected after precision review; and
+- the Streamlit applications provide timing, resume, private logging, citation highlighting, and condition-locked delivery while Qualtrics provides consent, assignment, post-task measures, and return routing.
+
+External launch gates still requiring documented sign-off:
+
+- ethics coverage for the six-trial unaided-then-aided procedure;
+- reproducible power-simulation code and output;
+- frozen Qualtrics measures, attention rule, and eight routing branches; and
+- an eight-condition technical pilot establishing manipulation fidelity, durable logs, return behaviour, and a non-coercive time allowance.
 
 ---
 
 ## 13. Time allowance and pacing
 
-### 13.1 Why the task must be time-bounded
-Without a per-trial or session time allowance, completion times vary widely, adding noise to the behavioural measures and allowing a minority of participants to spend far longer than the task requires, which distorts the comparison across conditions. A time allowance is therefore set. The allowance is intended to bound the extreme tail and keep total session length acceptable, not to impose time pressure.
+The allowance is derived from a separate technical pilot of all eight cells, with at least five complete sessions per cell. Use 1.25 times the largest cell-specific 95th percentile, rounded up to whole minutes; inspect technical interruptions and document any departure. The value remains unset until pilot records are supplied. There is no automatic submission or primary speed exclusion. Record the pilot input hash and chosen value in the operational specification; run analysis/study2/pilot_timing.py.
 
-### 13.2 No established benchmark exists for this task
-There is no peer-reviewed benchmark for per-candidate evaluation time in an AI-assisted screening task of this structure. Published recruiter-screening figures describe rapid triage of large resume stacks (initial scans in the order of seconds), which is the opposite of the considered single-candidate evaluation used here, in which the participant reads a candidate file, an AI recommendation with cited passages, records an unaided and an aided decision, and completes a verification probe. Those triage figures are therefore not an appropriate benchmark and are not used to set the allowance. The factorial resume-screening paradigm with fictitious resumes and AI recommendations is, however, well established (Lacroux and Martin-Lacroux, 2022; Wilson et al., 2026), and the present task follows that paradigm. Wilson et al. (2026) provides the closest peer-reviewed timing reference: in an AI-assisted resume-screening task they report an average viewing time of 27.2 seconds per resume (SD = 34.51), with most resumes viewed for under 60 seconds. That figure is a lower reference rather than an expected value for the present study, because their task was lighter: participants judged five short bullet-point resumes shown together with a one-line recommendation, whereas the present task presents one candidate at a time with a longer file, a cited recommendation, an unaided and an aided decision, a forcing step, and a verification probe, so per-trial times here will be higher by construction. Wilson et al. (2026) also report findings that inform pacing and order: longer viewing is associated with a roughly four percent higher selection chance per additional thirty seconds for candidates the AI did not recommend, participants spend up to 55.6 percent longer viewing resumes when no recommendation is given, and first trials are read about 13.4 seconds longer than last trials, a practice effect that the authors note confounds the recommendation effect because the no-recommendation scenario was always completed first, for which they recommend counterbalancing.
+## 14. Sample size and precision
 
-### 13.3 How the allowance is derived (three layers)
-1. **Reading-time floor (a priori).** The minimum time the task physically requires is the reading time of the materials, computed from the average adult silent reading rate of 238 words per minute (Brysbaert, 2019). For the present materials (candidate file approximately 100 words, visible role requirement approximately 83 words, AI recommendation approximately 60 to 150 words), reading alone is approximately 60 to 85 seconds per trial, before any decision-making, verification, or forcing step. The allowance must exceed this floor for every cell, or the task becomes impossible.
-2. **Empirical allowance (primary).** The operative allowance is derived from the completion-time distribution observed in Study 1 and the manipulation-check pilot, which time this exact task. The Study 2 allowance is set to accommodate a high percentile of genuine task engagement (for example the level that covers the bulk of responders while excluding the extreme tail), reported as a percentile of the observed distribution.
-3. **Paradigm precedent.** The scoping of the task follows prior factorial resume-screening studies (Lacroux and Martin-Lacroux, 2022; Wilson et al., 2026).
-
-### 13.4 Critical constraint: the allowance must not force closure
-Because the thesis claim is that closure suppresses verification, the time allowance must be generous enough that verification is possible for every participant in every cell. The per-trial reading floor for the present materials (approximately 60 to 85 seconds) already exceeds the 27.2 second average reported by Wilson et al. (2026) for their lighter task, confirming that a bound transplanted from prior work would be far too tight and would force closure. If the allowance were near the reading floor, not-verifying would be an artefact of time pressure rather than a choice, confounding the manipulation with time constraint. The allowance is therefore set to permit thorough verification, so that a decision not to verify is attributable to closure rather than to insufficient time. This is a design requirement, not a matter of convenience.
-
-### 13.5 What is recorded
-Per-trial time on task and total session time are logged. Per-trial time is available as a covariate and a manipulation/quality check, and the relationship between time on task and verification is reported descriptively as mechanism evidence, consistent with prior evidence that viewing time is associated with reliance behaviour in AI-assisted screening (Wilson et al., 2026).
-
-OPEN (Study 1 / pilot): fix the operative allowance from the observed completion-time distribution; confirm it exceeds the reading floor in every cell and permits verification.
-
----
-
-## 14. Sample size and power
-
-### 14.1 Target
-The study targets N = 312 recruited participants, randomly assigned to the eight between-subjects cells of the 2 x 2 x 2 design, approximately 39 per cell. The six-trial within-subjects structure is retained unchanged (two correct advances, two correct rejects, one false advance, one false reject). After anticipated exclusions of 10 to 15 per cent, the analysable sample is expected to be approximately 265 to 280, which remains within the adequately powered range below.
-
-### 14.2 Method
-Because the confirmatory outcome is a binary trial-level response (appropriate reliance) analysed with a logistic mixed-effects model with crossed random effects for participant and profile, power is evaluated by simulation of the actual generalised linear mixed model rather than by an analysis-of-variance approximation alone. A conventional G*Power approximation (fixed-effects ANOVA, eight groups, one numerator degree of freedom, alpha .05, power .80) indicates a minimum of approximately N = 199 for a small-to-medium factorial effect of Cohen's f = .20, and approximately N = 256 for additional headroom; this approximation does not model the binary outcome or the mixed-effects structure and is therefore treated as a design-level reference only. The operative power figures are taken from the mixed-model simulation.
-
-### 14.3 Simulation results (primary interaction, H5)
-The provenance-by-delivery interaction on appropriate reliance was simulated across a plausible range of interaction magnitudes (expressed as odds ratios, the natural scale for the binary outcome), with baseline appropriate reliance of approximately .70, participant and profile random-intercept standard deviations of 0.6 and 0.5 in the log-odds, and 2 x 2 x 2 assignment.
-
-| Interaction magnitude | Power at N = 312 |
-|-----------------------|------------------|
-| OR 2.0 (medium)       | .75 |
-| OR 2.2 (medium-large) | .86 |
-| OR 2.5 (large)        | .93 |
-
-At N = 312 the primary interaction reaches the conventional .80 threshold for interaction magnitudes of approximately OR 2.2 and larger, and approaches it for a medium interaction. Because the explainability manipulation and the perception measure have both been strengthened relative to the earlier study (a sharper provenance distinction and a purpose-built perceived-provenance scale in place of an explanation-satisfaction scale), the expected interaction is larger and cleaner than in the earlier work, so the medium-to-large range is the planning assumption.
-
-### 14.4 Confirmatory and exploratory split
-H4, H5, and H6 are treated as confirmatory at this sample size. The three-way explainability-by-anthropomorphism-by-forcing interaction is not adequately powered at this sample size and is reported as an exploratory, integrative pattern rather than a powered confirmatory test.
-
-### 14.5 Power claim for preregistration
-The preregistered statement is that the available sample is N = 312, that power for the confirmatory interaction is evaluated by simulation of the preregistered logistic mixed-effects model, and that this simulation indicates adequate power (at least .80) for the primary interaction under a medium-to-large effect (approximately OR 2.2 or greater), with the manipulation-check pilot used to confirm that the strengthened manipulation produces an effect in this range.
-
----
+The ceiling is N=400 analysable participants. The former N=312 and illustrative interaction-power table are superseded. Run analysis/study2/simulate_precision.py using the exact diagnostic-trial logistic random-intercept model with profile fixed effects. Archive seed, explicit nuisance/effect assumptions, package versions, failure counts, source hash and output. H1/H3 operating characteristics use Holm adjustment; H2 is assessed through CI width, coverage and sensitivity to diagnostic opportunities, not an .80 interaction-power claim. A final target and acceptable H2 width must be recorded before recruitment. Manipulation-check separation is not a behavioural effect-size justification.
 
 ## 15. Need for Cognition (individual difference; exploratory equity audit)
 

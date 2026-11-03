@@ -1,5 +1,5 @@
 {
-  "case_set_id": "ai_governance_lead_six_profiles_v5",
+  "case_set_id": "ai_governance_lead_six_profiles_v6",
   "role": "AI Governance Lead",
   "company": "Suvh Trust Bank",
   "hard_criterion": "Holds a current IAPP AIGP or ISO/IEC 42001 Lead Implementer certification and current relevant professional membership on the date of screening (job description Sections 4.1-4.3).",
@@ -100,6 +100,7 @@
           "cv_role_2",
           "jd_4_1",
           "jd_4_2",
+          "jd_4_2_1",
           "jd_4_3",
           "jd_5_1",
           "jd_5_2",
@@ -184,6 +185,7 @@
           "cv_role_2",
           "jd_4_1",
           "jd_4_2",
+          "jd_4_2_1",
           "jd_4_3",
           "jd_5_1",
           "jd_5_2",
@@ -266,11 +268,14 @@
           "cv_role_2",
           "cv_certifications",
           "cv_memberships",
-          "jd_5_1",
-          "jd_5_2",
           "jd_4_1",
           "jd_4_2",
+          "jd_4_2_1",
           "jd_4_3",
+          "jd_3_5",
+          "jd_7_2",
+          "jd_5_1",
+          "jd_5_2",
           "pol_2_1",
           "pol_2_3"
         ],
@@ -350,11 +355,14 @@
           "cv_role_2",
           "cv_certifications",
           "cv_memberships",
-          "jd_5_1",
-          "jd_5_2",
           "jd_4_1",
           "jd_4_2",
+          "jd_4_2_1",
           "jd_4_3",
+          "jd_3_5",
+          "jd_7_2",
+          "jd_5_1",
+          "jd_5_2",
           "pol_2_1",
           "pol_2_3"
         ],
@@ -436,6 +444,7 @@
           "cv_role_2",
           "jd_4_1",
           "jd_4_2",
+          "jd_4_2_1",
           "jd_4_3",
           "jd_5_1",
           "jd_5_2",
@@ -507,25 +516,26 @@
       },
       "fixed_assessment": {
         "recommendation": "Reject candidate",
-        "rationale": "The candidate file lists a current AIGP credential and current International Association of Privacy Professionals (IAPP) membership. Read together under POL 2.3, those sections establish the current IAPP AIGP required by JD 4.1 as well as the membership required by JD 4.2; the cited roles meet JD 5.1 and 5.2. The assistant nonetheless treats the acronym as ambiguous, invokes the distinct ETHOS Certified AI Governance Professional, criticises the documentation and attention to detail, and rejects. The error is overturned by reconciling the cited Certifications and Professional Memberships sections against JD 4.1-4.3 and POL 2.3.",
+        "rationale": "The candidate file lists a current AIGP credential and current International Association of Privacy Professionals (IAPP) membership. Read together under JD 4.2.1, those sections establish the current IAPP AIGP required by JD 4.1 as well as the membership required by JD 4.2; the cited roles meet JD 5.1 and 5.2. The assistant nonetheless treats the acronym as ambiguous, invokes the distinct ETHOS Certified AI Governance Professional, criticises the documentation and attention to detail, and rejects. The error is overturned by reconciling the cited Certifications and Professional Memberships sections against JD 4.1-4.3 and JD 4.2.1.",
         "supporting_ids": [
-          "cv_certifications",
-          "cv_memberships",
           "cv_role_1",
           "cv_role_2",
+          "cv_certifications",
+          "cv_memberships",
+          "jd_4_1",
+          "jd_4_2",
+          "jd_4_2_1",
+          "jd_4_3",
           "jd_3_5",
           "jd_7_2",
           "jd_5_1",
           "jd_5_2",
-          "jd_4_1",
-          "jd_4_2",
-          "jd_4_3",
           "pol_2_1",
           "pol_2_3"
         ],
         "caution_ids": []
       },
-      "design_note": "FALSE REJECT. The Certifications section lists only the current acronym AIGP; the later Professional Memberships section identifies current IAPP membership. Read together under POL 2.3, they establish the IAPP AIGP required by JD 4.1 and the membership required by JD 4.2. Roles 1-2 meet JD 5.1-5.2. The assistant confidently invokes the distinct ETHOS AIGP, treats the certification entry as insufficient, and infers poor documentation care despite the resolving membership evidence. Catchable entirely by reconciling the cited whole-file evidence. Ground truth = Advance."
+      "design_note": "FALSE REJECT. The Certifications section lists only the current acronym AIGP; the later Professional Memberships section identifies current IAPP membership. Read together under JD 4.2.1, they establish the IAPP AIGP required by JD 4.1 and the membership required by JD 4.2. Roles 1-2 meet JD 5.1-5.2. The assistant confidently invokes the distinct ETHOS AIGP, treats the certification entry as insufficient, and infers poor documentation care despite the resolving membership evidence. Catchable entirely by reconciling the cited whole-file evidence. Ground truth = Advance."
     }
   ]
 }

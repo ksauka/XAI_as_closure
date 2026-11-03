@@ -1,0 +1,37 @@
+{
+  "freeze_id": "study2-material-freeze-v2",
+  "frozen_on": "2026-10-30",
+  "case_set_id": "ai_governance_lead_six_profiles_v5",
+  "material_set": "chi_six_profiles_v5",
+  "material_manifest_sha256": "aaf775fef22873f20f5637c206587a2042eef4db7a363e27d9d025eb83e3387f",
+  "delivery_spec_version": "anthrokit-hiring-study2-v7",
+  "study2_state_schema": "study2-state-v9",
+  "study2_event_schema": "study2-event-v11",
+  "study2_application_version": "study2-app-v12",
+  "files": {
+    "study_CHI/six_profiles_case_set.json": "d4291c35d94c0ccaec0dc4e21b134b2059386e42ecd16046e5448a8122458fd7",
+    "study_CHI/job_description.md": "4a8921dc5348b7320ca52c238b66c97a2aba5686a658ee8f2e7474c8e1d83d51",
+    "study_CHI/recruitment_policy.md": "6e51a52b7550fd58971019564ca710f15151cd01adf9db301e4992fd8384f287",
+    "src/xai_as_closure/study2_delivery.py": "47d270a8bf8ec51a6feaef172fe4d06a6f80d2de651fb37effb0f498343465f3",
+    "src/xai_as_closure/anthrokit_hiring.yaml": "5635d3b1f0a4ba107cde356ddea1ac92c0ec532be961dbd2879a70729482038f"
+  },
+  "ground_truth": {
+    "C-01": "Advance",
+    "C-02": "Advance",
+    "C-03": "Reject",
+    "C-04": "Reject",
+    "C-05": "Reject",
+    "C-06": "Advance"
+  },
+  "fixed_ai_verdicts": {
+    "C-01": "Advance candidate to human interview",
+    "C-02": "Advance candidate to human interview",
+    "C-03": "Reject candidate",
+    "C-04": "Reject candidate",
+    "C-05": "Advance candidate to human interview",
+    "C-06": "Reject candidate"
+  },
+  "supersedes": "study2-material-freeze-v1",
+  "participant_materials_frozen_on": "2026-10-04",
+  "release_change": "Software-only release: explicit membership validation, remote checkpoint recovery, production save-failure blocking and isolated local previews. Participant materials, delivery, verdicts, case set and state/event schemas are unchanged."
+}

@@ -7,9 +7,14 @@ This directory contains the current study materials for the CHI 2027 paper.
 - `job_description.md`: locked AI Governance Lead role, recruitment timeline, and current certification-and-membership criteria.
 - `recruitment_policy.md`: locked screening policy and two-outcome decision rule.
 - `six_candidate_profiles.md`: human-readable six-profile trial set.
-- `six_profiles_case_set.json`: structured `v5` implementation source for the six trials.
-- `STUDY1_VALIDATION_PROTOCOL.md`: single-phase expert ground-truth validation procedure.
+- `six_profiles_case_set.json`: structured `v6` implementation source for the six trials.
+- `STUDY1_VALIDATION_PROTOCOL.md`: expert stimulus-validation procedure and initial-batch history.
+- `STUDY1_ROUND2_LAUNCH.md`: setup and launch checks for the standalone version-2 app.
+- `STUDY1_ROUND2_MATERIALS.json`: hashes and instrument version for the pending revised-material assessment.
 - `STUDY2_CONDITIONS.md`: active 2 x 2 x 2 condition identifiers and invariants.
+- `STUDY2_ANALYSIS_PLAN.md`: frozen confirmatory estimands, outcome definitions, models, exclusions, and reporting rules.
+- `STUDY2_DEPLOYMENT_CHECKLIST.md`: pre-launch technical, privacy, linkage, pilot, and rollback checks for all eight applications.
+- `STUDY2_MATERIAL_FREEZE.json`: machine-checkable versions and hashes for the locked Study 2 stimuli and delivery implementation.
 - `APPLICATION_LOGGING_ARCHITECTURE.md`: Qualtrics linkage, app flow, and event schema.
 - `HAI_MIGRATION_MAP.md`: direct mapping from the working HAI implementation to the active Study 2 modules.
 - `HAI_STREAMLIT_COMPARISON.md`: screen-by-screen disposition of the historical HAI interface.
@@ -21,6 +26,12 @@ The implemented entry points are `apps/study1_validation.py` and the eight
 condition-locked `apps/study2_*.py` applications listed in `apps/README.md`.
 Their domain, agent, state, linkage, and logging modules are under
 `src/xai_as_closure/`.
+
+Before a release, verify the frozen materials and all eight condition mappings:
+
+```bash
+PYTHONPATH=src python -m xai_as_closure.release_audit
+```
 
 The programme uses one Study 1 application and eight Study 2 applications:
 
@@ -68,3 +79,8 @@ directory retains the maintained `implementation_plan.md` and a pointer back to
 the canonical participant-facing documents in this directory.
 
 The current manuscript source is `../docs/CHI2027/CHI_draft.tex`.
+
+
+## Current FAccT analysis specification (22 October 2026)
+
+The active plan is [STUDY2_ANALYSIS_PLAN.md](STUDY2_ANALYSIS_PLAN.md): H1/H3 confirmatory with Holm adjustment, H2 interaction estimation, diagnostic disagreements only for reliance, and profile fixed effects. The sample ceiling is 400 analysable. Earlier H4–H6/N=312 passages are superseded. [STUDY2_OPERATIONAL_SPEC.json](STUDY2_OPERATIONAL_SPEC.json) records scoring, coding and timing status; [STUDY2_EVIDENCE_CODING.md](STUDY2_EVIDENCE_CODING.md) defines decisive evidence. Reproducible simulation and readiness tools are in [analysis/study2](../analysis/study2/README.md). Unset pilot and instrument fields are not evidence that launch gates have passed.

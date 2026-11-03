@@ -112,7 +112,7 @@ def material_manifest() -> dict[str, Any]:
         digest.update(path.name.encode("ascii"))
         digest.update(content)
     return {
-        "material_set": "chi_six_profiles_v5",
+        "material_set": "chi_six_profiles_v6",
         "manifest_sha256": digest.hexdigest(),
         "files": files,
     }
@@ -120,7 +120,7 @@ def material_manifest() -> dict[str, Any]:
 
 def _clauses(path: Path) -> dict[str, tuple[str, str]]:
     clauses: dict[str, tuple[str, str]] = {}
-    pattern = re.compile(r"^\*\*(\d+\.\d+)\s+([^*]+?)\.\*\*\s*(.+)$")
+    pattern = re.compile(r"^\*\*(\d+(?:\.\d+)+)\s+([^*]+?)\.\*\*\s*(.+)$")
     for raw_line in path.read_text(encoding="utf-8").splitlines():
         match = pattern.match(raw_line.strip())
         if match:

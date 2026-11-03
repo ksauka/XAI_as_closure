@@ -32,11 +32,15 @@ conditional disputed-profile diagnostic, and optional combined feedback. Study
 1 contains no AI
 recommendation, rationale, explanation, anthropomorphism, cognitive forcing, or
 experimental condition; it completes only after all six candidate judgments and
-the materials review. Recruit 12 eligible experts to obtain 10 complete,
-analysable sessions, with an instrument target of no more than about 10 minutes.
+the materials review. The original protocol specified recruiting 12 eligible
+experts to obtain 10 complete sessions. The revised-material assessment uses
+`apps/study1_validation_v2.py`; its recruitment settings and validation criteria
+must be fixed before launch, and its duration must be piloted.
 
-Profiles that fail the prespecified agreement or intended-reason criteria are
-revised and revalidated. Validated files are versioned and frozen before Study 2.
+Study 1 agreement and intended-reason results are reported profile by profile.
+Any retained profile that does not reach the original agreement target is
+documented as a protocol deviation and must remain determinable from the frozen
+written rules. The final files are versioned and frozen before Study 2.
 
 ### Study 2: Six-Profile Experiment
 
@@ -65,14 +69,13 @@ treats that expired term as current.
 The false reject, C-06, records a current bare `AIGP` entry and IAPP membership
 elsewhere in the same CV, both with the 18 June 2025–30 June 2027 term. Together
 they establish the required IAPP
-AIGP and the separate membership requirement under the whole-file evidence
-rule. The fixed AI instead treats the acronym as potentially referring to the
+AIGP under JD 4.2.1 and satisfy the separate membership requirement. The fixed AI instead treats the acronym as potentially referring to the
 distinct ETHOS credential, criticises credential-documentation precision, and
 rejects the qualified candidate.
 
 Each trial records an unaided decision before the AI appears and an aided
 decision after the AI workflow. This permits appropriate reliance to be scored
-in both directions and identifies assistant-induced reversals.
+on initial human–AI disagreements in both directions. Correct-to-incorrect and incorrect-to-correct transitions are descriptive; they do not by themselves establish individual causal effects.
 
 The Study 2 assistant is a bounded agentic workflow. For each candidate it
 constructs the fixed screening plan, retrieves the configured passages from the
@@ -94,7 +97,7 @@ description before the recommendation can be requested or revealed.
   position the cited passage in view, and highlight it neutrally. The document
   closes back to the unchanged assessment. Explanation absent shows a
   verdict-only card; all complete documents remain independently available.
-- Anthropomorphic delivery uses the frozen `anthrokit-hiring-study2-v7`
+- Anthropomorphic delivery uses the frozen `anthrokit-hiring-study2-v8`
   register. Each explanation level has a LowA/HighA card pair. Low
   delivery is procedural, impersonal, and system-labelled; high delivery is
   first-person, mildly hedged, warmer, and adviser-like. The same registered
@@ -119,25 +122,11 @@ description before the recommendation can be requested or revealed.
 
 ## Outcomes
 
-Primary behavioral outcomes:
+The primary outcome is appropriate reliance on diagnostic initial disagreements, decomposed into correct self-reliance and correct AI reliance. H1/H3 are confirmatory with Holm adjustment; H2 is the focal explanation-by-delivery estimation target. Final accuracy is assessed separately on all completed trials.
 
-- appropriate reliance on correct and incorrect recommendations;
-- unaided-to-aided decision transitions;
-- overriding of incorrect recommendations; and
-- extraction of the decisive evidence.
+Evidence identification, post-task perception/trust associations and confidence are secondary. Citation/document use, dwell times, forcing responses and extra treatment interactions are exploratory. Interaction traces are not proof of comprehension, and the post-decision evidence prompt does not establish when evidence was evaluated.
 
-Secondary and exploratory outcomes:
-
-- decision confidence;
-- document and passage inspection;
-- citation traversal, focused-passage dwell, and document-close route;
-- dwell and response time;
-- cognitive-forcing responses; and
-- post-task perceived explainability, anthropomorphism, and trust.
-
-Clicks and dwell time are behavioral traces, not proof of comprehension.
-Verification is based on whether the participant identifies the decisive
-evidence in a neutral prompt administered consistently across trials.
+The authority is `study_CHI/STUDY2_ANALYSIS_PLAN.md` (v2), with operational inputs in `STUDY2_OPERATIONAL_SPEC.json`. The sample ceiling is 400 analysable participants; no general .80 interaction-power claim is made.
 
 ## Data Architecture
 
@@ -149,5 +138,4 @@ Prolific ID required by the existing cleaning and merge pipeline. Study 2 also
 uses Qualtrics for condition assignment and questionnaires. Contact information
 and Qualtrics Response IDs are not collected by the applications.
 
-The Study 1 protocol, application architecture, logging schema, scoring rules,
-power analysis, and preregistration must be locked before data collection.
+The initial Study 1 batches are complete and their retention deviation must be reported. The revised v6 materials still require the second expert assessment; its responses must remain separate. Study 2 analysis, scoring, pilot timing, final questionnaire and precision decision must be frozen before recruitment.

@@ -64,7 +64,7 @@ class CaseRepositoryTests(unittest.TestCase):
 
     def test_material_manifest_changes_are_detectable(self) -> None:
         manifest = material_manifest()
-        self.assertEqual(manifest["material_set"], "chi_six_profiles_v5")
+        self.assertEqual(manifest["material_set"], "chi_six_profiles_v6")
         self.assertEqual(
             set(manifest["files"]),
             {
@@ -121,12 +121,12 @@ class CaseRepositoryTests(unittest.TestCase):
         role = ROLE_PATH.read_text(encoding="utf-8")
         self.assertIn(
             "The candidate file must record the certification and show that it is "
-            "current on the date of screening.",
+            "current during the screening window of 27–30 August 2026.",
             role,
         )
         self.assertIn(
             "The candidate file must record the professional body and show that the "
-            "membership is current on the date of screening.",
+            "membership is current during the screening window of 27–30 August 2026.",
             role,
         )
 
@@ -161,8 +161,7 @@ class CaseRepositoryTests(unittest.TestCase):
         self.assertIn("current", sections["cv_memberships"].lower())
         self.assertIn("18 June 2025–30 June 2027", sections["cv_certifications"])
         self.assertIn(
-            "professional membership current from 18 June 2025 through "
-            "30 June 2027",
+            "professional membership current from 18 June 2025 through 30 June 2027",
             sections["cv_memberships"],
         )
 

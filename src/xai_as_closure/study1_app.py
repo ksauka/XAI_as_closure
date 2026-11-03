@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
+import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -15,12 +17,21 @@ from uuid import uuid4
 import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
 
-from .cases import POLICY_PATH, ROLE_PATH, CaseRepository
+from .cases import POLICY_PATH, ROLE_PATH, CaseRepository, PROJECT_ROOT, material_manifest
 from .config import read_project_storage_config
 from .document_renderer import render_cv_document, render_reference_document
 from .github_saver import save_to_github, test_github_connection
-from .storage import SessionStore, stable_session_id
-from .study1 import STUDY1_INSTRUMENT_VERSION, Study1Session, WorkflowError
+from .storage import DEFAULT_DATA_ROOT, SessionStore, stable_session_id
+from .study1 import STUDY1_INSTRUMENT_VERSION, Study1Session, WorkflowError, instrument_version
+from .study1_round2_support import check_round2_materials, recover_round2_checkpoint, round2_archive_path
+
+
+def _round() -> str:
+    return str(st.session_state.get("_study1_validation_round", "initial"))
+
+
+def _local_preview() -> bool:
+    return os.getenv("STUDY1_LOCAL_PREVIEW") == "1"
 
 
 def _secret(name: str, default: str = "") -> str:
@@ -175,6 +186,8 @@ def _log(
 ) -> None:
     session: Study1Session = st.session_state["_study1_session"]
     store: SessionStore = st.session_state["_study1_store"]
+    if _round() == "round2" and not _local_preview():
+        session.state["archive_pending"] = True
     store.append_event(
         session.state,
         event_type,
@@ -193,6 +206,8 @@ def _sync_github() -> None:
     Streamlit Community Cloud's filesystem is ephemeral, so this mirrors
     Study 2's after-every-trial backup rather than relying on local JSONL alone.
     """
+    if _local_preview():
+        return
     repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
     token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
     if not repo or not token:
@@ -206,18 +221,22 @@ def _sync_github() -> None:
         "prolific_pid": st.session_state.get("prolific_pid", ""),
         "saved_at_utc": datetime.now(timezone.utc).isoformat(),
         **session.state,
+        "material_manifest": material_manifest(),
         "events": store.read_events(session_id),
     }
     date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    path = f"sessions/xai_as_closure/study1/{date_str}/{session_id}.json"
+    path = round2_archive_path(session_id) if _round() == "round2" else f"sessions/xai_as_closure/study1/{date_str}/{session_id}.json"
     success, _error = save_to_github(
         repo,
         path,
         json.dumps(payload, indent=2, ensure_ascii=True, default=str),
         f"Session: {session_id} | study1",
-        token,
+        github_token=token,
     )
-    if not success:
+    if _round() == "round2":
+        session.state["archive_pending"] = not success
+        store.save(session.state)
+    if not success and _round() != "round2":
         st.warning(
             "The private GitHub backup could not be updated. The local "
             "session log remains available; please notify the researcher."
@@ -226,6 +245,10 @@ def _sync_github() -> None:
 
 def _read_launch_params() -> None:
     """Read the Prolific-issued participant id, matching Study 2's flow."""
+    if _local_preview():
+        st.session_state.setdefault("prolific_pid", os.getenv("STUDY1_PREVIEW_ID", "LOCAL_PREVIEW_STUDY1_ROUND2"))
+        st.session_state["return_raw"] = ""
+        return
     pid = _query("PROLIFIC_PID") or _query("pid")
     if "prolific_pid" not in st.session_state and pid:
         st.session_state["prolific_pid"] = pid
@@ -257,9 +280,13 @@ def _prolific_gate() -> None:
 
 def _check_private_storage() -> None:
     """Require working private-GitHub storage for production launches."""
-    production_launch = bool(_query("PROLIFIC_PID") or _query("pid"))
+    if _local_preview():
+        return
+    production_launch = _round() == "round2" or bool(_query("PROLIFIC_PID") or _query("pid"))
     if not production_launch and "_project_storage_config" not in st.session_state:
         st.session_state["_project_storage_config"] = read_project_storage_config()
+    if _local_preview():
+        return
     repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
     token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
     if not repo or not token:
@@ -298,7 +325,7 @@ def _safe_qualtrics_return(raw_return: str) -> str | None:
     except ValueError:
         return None
     host = (parsed.hostname or "").lower()
-    if parsed.scheme not in {"http", "https"} or not (
+    if parsed.scheme != "https" or not (
         host == "qualtrics.com" or host.endswith(".qualtrics.com")
     ):
         return None
@@ -313,56 +340,68 @@ def _build_final_return(
         return None
     parsed = urlparse(safe_return)
     query = dict(parse_qsl(parsed.query, keep_blank_values=True))
-    query.setdefault("PROLIFIC_PID", prolific_pid)
-    query.setdefault("session_id", session_id)
-    query.setdefault("done", "1")
+    query["PROLIFIC_PID"] = prolific_pid
+    query["session_id"] = session_id
+    query["done"] = "1"
     return urlunparse(parsed._replace(query=urlencode(query, doseq=True)))
 
 
 def _initialize() -> None:
+    validation_round = _round()
     if "_study1_session" in st.session_state:
+        if st.session_state["_study1_session"].state.get("validation_round", "initial") != validation_round:
+            raise WorkflowError("This saved session belongs to a different validation round.")
         return
     prolific_id = str(st.session_state["prolific_pid"]).strip()
+    production = not _local_preview() and (validation_round == "round2" or bool(_query("PROLIFIC_PID") or _query("pid")))
+    if validation_round == "round2" and production and not re.fullmatch(r"[0-9a-fA-F]{24}", prolific_id):
+        raise WorkflowError("The supplied Prolific ID is invalid.")
     linkage_hash = hashlib.sha256(prolific_id.encode("utf-8")).hexdigest()
     cases = CaseRepository()
-    versioned_linkage_hash = hashlib.sha256(
-        (f"{linkage_hash}\0{cases.case_set_id}\0{STUDY1_INSTRUMENT_VERSION}").encode()
-    ).hexdigest()
-    session_id = stable_session_id(versioned_linkage_hash)
-    data_root = _secret("STUDY1_DATA_ROOT")
-    store = (
-        SessionStore(Path(data_root) if data_root else None)
-        if data_root
-        else SessionStore()
-    )
+    version = instrument_version(validation_round)
+    identity = f"{linkage_hash}\0{cases.case_set_id}\0{version}"
+    if validation_round == "round2":
+        identity += "\0round2"
+    session_id = stable_session_id(hashlib.sha256(identity.encode()).hexdigest())
+    if _local_preview():
+        data_root = os.getenv("STUDY1_PREVIEW_DATA_ROOT")
+        if not data_root:
+            data_root = st.session_state.setdefault("_study1_preview_root", tempfile.mkdtemp(prefix="facct-study1-round2-preview-"))
+        store = SessionStore(Path(data_root))
+    elif validation_round == "round2":
+        specific = _secret("STUDY1_ROUND2_DATA_ROOT")
+        generic = _secret("STUDY1_DATA_ROOT")
+        data_root = Path(specific) if specific else (Path(generic) / "round2" if generic else DEFAULT_DATA_ROOT.parent / "study1_round2")
+        store = SessionStore(data_root)
+    else:
+        data_root = _secret("STUDY1_DATA_ROOT")
+        store = SessionStore(Path(data_root)) if data_root else SessionStore()
     stored = store.load(session_id)
+    if stored is None and validation_round == "round2" and production:
+        stored = recover_round2_checkpoint(store=store, cases=cases,
+            repo=_secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO"),
+            token=_secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN"),
+            session_id=session_id, participant_id=prolific_id, linkage_hash=linkage_hash)
     if stored:
+        if stored.get("validation_round", "initial") != validation_round:
+            raise WorkflowError("The saved validation round does not match this app.")
         session = Study1Session.restore(stored, cases)
         event = "session_resumed"
     else:
-        session = Study1Session.create(
-            session_id=session_id,
-            linkage_hash=linkage_hash,
-            seed=linkage_hash,
-            cases=cases,
-        )
+        session = Study1Session.create(session_id=session_id, linkage_hash=linkage_hash,
+            seed=linkage_hash, cases=cases, validation_round=validation_round)
+        session.state["is_preview"] = _local_preview()
         store.save(session.state)
         event = "session_created"
-    pilot = not bool(_query("PROLIFIC_PID") or _query("pid"))
     st.session_state["_study1_started"] = time.perf_counter()
     st.session_state["_study1_session"] = session
     st.session_state["_study1_store"] = store
-    st.session_state["_study1_pilot"] = pilot
-    _log(
-        event,
-        component="launch",
-        payload={
-            "prolific_id_from_url": not pilot,
-            "pilot_mode": pilot,
-            "case_set_id": cases.case_set_id,
-            "instrument_version": STUDY1_INSTRUMENT_VERSION,
-        },
-    )
+    st.session_state["_study1_pilot"] = _local_preview() or not production
+    _log(event, component="launch", payload={
+        "prolific_id_from_url": production,
+        "pilot_mode": st.session_state["_study1_pilot"],
+        "validation_round": validation_round, "case_set_id": cases.case_set_id,
+        "instrument_version": version, "is_preview": _local_preview()})
 
 
 def _header(session: Study1Session) -> None:
@@ -371,7 +410,10 @@ def _header(session: Study1Session) -> None:
         unsafe_allow_html=True,
     )
     st.title("Candidate screening task")
-    st.caption("Designed to take no more than about 10 minutes.")
+    if _round() == "round2":
+        st.caption("Assess each candidate independently against the supplied requirements.")
+    else:
+        st.caption("Designed to take no more than about 10 minutes.")
     _render_elapsed_timer()
     if session.phase == "screening":
         count = len(session.state["responses"])
@@ -568,8 +610,11 @@ def _screening(session: Study1Session) -> None:
             key=f"screening_hard_criterion_{reference}",
         )
         decisive_evidence = st.text_input(
-            "What information in the candidate file was most important for your "
-            'decision? Enter "None" if no information was decisive.',
+            ('What information was most important for your decision? Identify the '
+             'relevant requirement and candidate evidence. Enter "None" if no information was decisive.')
+            if _round() == "round2" else
+            ('What information in the candidate file was most important for your '
+             'decision? Enter "None" if no information was decisive.'),
             max_chars=500,
             key=f"screening_evidence_{reference}",
         )
@@ -763,14 +808,22 @@ def _complete(session: Study1Session) -> None:
         st.info("Please return to your survey tab and continue.")
 
 
-def run() -> None:
+def run(validation_round: str = "initial") -> None:
     st.set_page_config(
         page_title="Study 1 expert validation",
         page_icon=":material/fact_check:",
         layout="centered",
         initial_sidebar_state="expanded",
     )
+    instrument_version(validation_round)
+    st.session_state["_study1_validation_round"] = validation_round
     _apply_theme()
+    if validation_round == "round2":
+        try:
+            check_round2_materials()
+        except WorkflowError as exc:
+            st.error(str(exc))
+            st.stop()
     _read_launch_params()
     _prolific_gate()
     _check_private_storage()
@@ -781,6 +834,13 @@ def run() -> None:
         st.stop()
 
     session: Study1Session = st.session_state["_study1_session"]
+    if validation_round == "round2" and session.state.get("archive_pending") and not _local_preview():
+        _sync_github()
+        if session.state.get("archive_pending"):
+            st.error("Your progress is saved locally, but the study backup has not completed. Please retry before continuing.")
+            if st.button("Retry saving", type="primary"):
+                st.rerun()
+            st.stop()
     _header(session)
     if _document_navigation(session):
         return

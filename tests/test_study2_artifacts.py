@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 import json
+import tempfile
 import unittest
+from pathlib import Path
 
 from xai_as_closure.cases import ArtifactVariant, CaseRepository
 from xai_as_closure.decision_agent import Study2DecisionAgent
+from xai_as_closure.release_audit import FREEZE_PATH, audit_release
 from xai_as_closure.study2_delivery import (
     DELIVERY_SPEC_VERSION,
     HIGH_ANTHROPOMORPHISM,
@@ -27,50 +30,19 @@ class Study2ArtifactTests(unittest.TestCase):
             )
 
     def test_error_trial_explanation_sources_match_registered_mechanisms(self) -> None:
-        c05 = self.cases.artifact("C-05", ArtifactVariant(True, False))
-        self.assertEqual(len(c05.sources), 11)
-        self.assertEqual(
-            [source.citation for source in c05.sources],
-            [
-                "CV(4)",
-                "CV(6)",
-                "CV(3.1)",
-                "CV(3.2)",
-                "JD(4.1)",
-                "JD(4.2)",
-                "JD(4.3)",
-                "JD(5.1)",
-                "JD(5.2)",
-                "POL(2.1)",
-                "POL(2.3)",
-            ],
-        )
-
+        expected_advance = ['CV(4)', 'CV(6)', 'CV(3.1)', 'CV(3.2)', 'JD(4.1)', 'JD(4.2)', 'JD(4.2.1)', 'JD(4.3)', 'JD(5.1)', 'JD(5.2)', 'POL(2.1)', 'POL(2.3)']
+        expected_reject = ['CV(3.1)', 'CV(3.2)', 'CV(4)', 'CV(6)', 'JD(4.1)', 'JD(4.2)', 'JD(4.2.1)', 'JD(4.3)', 'JD(3.5)', 'JD(7.2)', 'JD(5.1)', 'JD(5.2)', 'POL(2.1)', 'POL(2.3)']
+        for reference in self.cases.references:
+            artifact = self.cases.artifact(reference, ArtifactVariant(True, False))
+            expected = expected_advance if reference in {"C-01", "C-02", "C-05"} else expected_reject
+            self.assertEqual([source.citation for source in artifact.sources], expected)
         c06 = self.cases.artifact("C-06", ArtifactVariant(True, False))
-        self.assertEqual(
-            [source.citation for source in c06.sources],
-            [
-                "CV(4)",
-                "CV(6)",
-                "CV(3.1)",
-                "CV(3.2)",
-                "JD(3.5)",
-                "JD(7.2)",
-                "JD(5.1)",
-                "JD(5.2)",
-                "JD(4.1)",
-                "JD(4.2)",
-                "JD(4.3)",
-                "POL(2.1)",
-                "POL(2.3)",
-            ],
-        )
-        self.assertIn("AIGP", c06.sources[0].text)
-        self.assertNotIn("IAPP", c06.sources[0].text)
-        self.assertIn("IAPP", c06.sources[1].text)
+        certification = next(s for s in c06.sources if s.source_id == "cv_certifications")
+        self.assertIn("AIGP", certification.text)
+        self.assertNotIn("IAPP", certification.text)
 
     def test_delivery_version_separates_rewritten_explanation_stimuli(self) -> None:
-        self.assertEqual(DELIVERY_SPEC_VERSION, "anthrokit-hiring-study2-v7")
+        self.assertEqual(DELIVERY_SPEC_VERSION, "anthrokit-hiring-study2-v8")
 
     def test_participant_messages_never_expose_semantic_labels_or_raw_ids(self) -> None:
         for reference in self.cases.references:
@@ -194,7 +166,7 @@ class Study2ArtifactTests(unittest.TestCase):
                     "basis to advance them.\n\nOn balance, I'd recommend "
                     "rejecting this candidate.",
                 )
-                self.assertIn("The file lists only \"AIGP,\"", c06)
+                self.assertIn('The file lists only "AIGP,"', c06)
                 self.assertIn(
                     "The certification entry does not establish that they hold "
                     "the credential required for this role.",
@@ -260,6 +232,7 @@ class Study2ArtifactTests(unittest.TestCase):
                 "CV(6)",
                 "JD(4.1)",
                 "JD(4.2)",
+                "JD(4.2.1)",
             ],
         )
         self.assertEqual(
@@ -280,6 +253,20 @@ class Study2ArtifactTests(unittest.TestCase):
 
     def test_no_obsolete_within_subject_rendering_assignment_remains(self) -> None:
         self.assertFalse(hasattr(self.cases, "balanced_artifact_assignments"))
+
+    def test_frozen_release_audit_passes(self) -> None:
+        self.assertEqual(audit_release(), [])
+
+    def test_frozen_release_audit_detects_version_drift(self) -> None:
+        freeze = json.loads(FREEZE_PATH.read_text(encoding="utf-8"))
+        freeze["delivery_spec_version"] = "changed-without-a-new-freeze"
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "freeze.json"
+            path.write_text(json.dumps(freeze), encoding="utf-8")
+            failures = audit_release(path)
+        self.assertTrue(
+            any("delivery_spec_version differs" in failure for failure in failures)
+        )
 
 
 if __name__ == "__main__":

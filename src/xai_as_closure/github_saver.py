@@ -81,7 +81,12 @@ def test_github_connection(github_token: str, repo: str) -> tuple[bool, str]:
         }
         response = requests.get(api_url, headers=headers, timeout=10)
         if response.status_code == 200:
-            return True, f"✅ Connected to {response.json()['full_name']}"
+            metadata = response.json()
+            if metadata.get("private") is not True:
+                return False, "Study data storage must use a private repository."
+            if metadata.get("permissions", {}).get("push") is False:
+                return False, "Study data storage does not permit writes."
+            return True, "Private study-data repository is accessible."
         elif response.status_code == 404:
             return False, f"❌ Repository '{repo}' not found or no access"
         elif response.status_code == 401:

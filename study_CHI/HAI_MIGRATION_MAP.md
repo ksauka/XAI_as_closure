@@ -39,7 +39,7 @@ These exclusions are design-preserving, not omissions:
   whose six-trial explanation × anthropomorphism × forcing state machine is
   necessarily different. Stable `P0`/`P1` route IDs are retained for deployment.
 - Historical arbitrary CV upload and `documents.py` ingestion are excluded
-  because Study 2 must show exactly the six expert-validated CVs. Accepting an
+  because Study 2 must show exactly the six frozen, rule-based CV stimuli. Accepting an
   uploaded seventh profile would violate the case-set contract.
 - HIC Stage 1 steering, post-recommendation examination, open-ended styling,
   and semantic challenge search are excluded because HIC is no longer an

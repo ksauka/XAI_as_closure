@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-DELIVERY_SPEC_VERSION = "anthrokit-hiring-study2-v7"
+DELIVERY_SPEC_VERSION = "anthrokit-hiring-study2-v8"
 
 
 @dataclass(frozen=True)
@@ -83,6 +83,7 @@ _ADVANCE_PROFILE_CITATIONS = (
 _ADVANCE_RULE_CITATIONS = (
     "jd_4_1",
     "jd_4_2",
+    "jd_4_2_1",
     "jd_4_3",
     "jd_5_1",
     "jd_5_2",
@@ -96,11 +97,14 @@ _REJECT_PROFILE_CITATIONS = (
     "cv_memberships",
 )
 _REJECT_RULE_CITATIONS = (
-    "jd_5_1",
-    "jd_5_2",
     "jd_4_1",
     "jd_4_2",
+    "jd_4_2_1",
     "jd_4_3",
+    "jd_3_5",
+    "jd_7_2",
+    "jd_5_1",
+    "jd_5_2",
     "pol_2_1",
     "pol_2_3",
 )
@@ -153,6 +157,7 @@ def _explanation_blocks(
                         "cv_memberships",
                         "jd_4_1",
                         "jd_4_2",
+                        "jd_4_2_1",
                     ),
                 ),
                 DeliveryBlock(
@@ -194,7 +199,7 @@ def _explanation_blocks(
                     ),
                     DeliveryBlock(
                         "My concern is the mandatory credential. The file lists "
-                        "only \"AIGP,\" and that acronym can refer to more than "
+                        'only "AIGP," and that acronym can refer to more than '
                         "one certification—for example, the ETHOS Certified AI "
                         "Governance Professional. The certification entry does "
                         "not establish that they hold the credential required "
@@ -204,6 +209,7 @@ def _explanation_blocks(
                             "cv_memberships",
                             "jd_4_1",
                             "jd_4_2",
+                            "jd_4_2_1",
                         ),
                     ),
                     DeliveryBlock(
@@ -229,7 +235,7 @@ def _explanation_blocks(
                 DeliveryBlock(
                     "- AIGP entry does not establish the credential required "
                     "for the role",
-                    ("cv_certifications", "cv_memberships", "jd_4_1", "jd_4_2"),
+                    ("cv_certifications", "cv_memberships", "jd_4_1", "jd_4_2", "jd_4_2_1"),
                 ),
                 DeliveryBlock(
                     "- Credential documentation does not meet the precision "
@@ -254,16 +260,14 @@ def _explanation_blocks(
                 DeliveryBlock(
                     "Their experience and profile fall below the requirements.",
                     _REJECT_PROFILE_CITATIONS
-                    + ("jd_5_1", "jd_5_2", "jd_4_1", "jd_4_2"),
+                    + ("jd_5_1", "jd_5_2", "jd_4_1", "jd_4_2", "jd_4_2_1", "jd_3_5", "jd_7_2"),
                 ),
                 DeliveryBlock(
                     "Taking the governing rules into account, I don't see a "
                     "strong enough basis to advance them.",
                     ("jd_4_3", "pol_2_1", "pol_2_3"),
                 ),
-                DeliveryBlock(
-                    "On balance, I'd recommend rejecting this candidate."
-                ),
+                DeliveryBlock("On balance, I'd recommend rejecting this candidate."),
             )
         return (
             DeliveryBlock("**Decision: Reject**"),

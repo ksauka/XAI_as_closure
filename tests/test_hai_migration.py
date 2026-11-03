@@ -22,6 +22,12 @@ from xai_as_closure.session_flatten import (
     flatten_participant_rows,
     flatten_trial_rows,
 )
+from xai_as_closure.study1_app import (
+    _build_final_return as _build_study1_final_return,
+)
+from xai_as_closure.study1_app import (
+    _safe_qualtrics_return as _safe_study1_qualtrics_return,
+)
 from xai_as_closure.study2 import Study2Session, Study2WorkflowError
 from xai_as_closure.study2_app import (
     _citation_document_html,
@@ -117,6 +123,32 @@ class MigratedAgentTests(unittest.TestCase):
 
 
 class MigratedInfrastructureTests(unittest.TestCase):
+    def setUp(self) -> None:
+        # These UI tests use mocked remote storage and a fresh local snapshot.
+        recovery = patch(
+            "xai_as_closure.study2_app.load_remote_checkpoint", return_value=None
+        )
+        recovery.start()
+        self.addCleanup(recovery.stop)
+
+    def test_study1_return_route_is_https_and_overwrites_linkage_fields(self) -> None:
+        self.assertIsNone(
+            _safe_study1_qualtrics_return(
+                "http://example.qualtrics.com/jfe/form/SV_test"
+            )
+        )
+        returned = _build_study1_final_return(
+            "https://example.qualtrics.com/jfe/form/SV_test?"
+            "PROLIFIC_PID=attacker&session_id=wrong&done=0&stage=post",
+            "5f8e3c2a1b9d4e6f7a8b9c0d",
+            "expected-session",
+        )
+        self.assertIsNotNone(returned)
+        self.assertIn("PROLIFIC_PID=5f8e3c2a1b9d4e6f7a8b9c0d", returned or "")
+        self.assertIn("session_id=expected-session", returned or "")
+        self.assertIn("done=1", returned or "")
+        self.assertIn("stage=post", returned or "")
+
     def test_local_pilot_storage_config_accepts_spaced_dotenv_assignments(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             env_path = Path(directory) / ".env"
@@ -153,6 +185,10 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 patch(
                     "xai_as_closure.study2_app.test_github_connection",
                     return_value=(True, "connected"),
+                ),
+                patch(
+                    "xai_as_closure.logger.save_to_github",
+                    return_value=(True, None),
                 ),
             ):
                 app.run(timeout=20)
@@ -197,17 +233,25 @@ class MigratedInfrastructureTests(unittest.TestCase):
             (
                 "study1_validation.py",
                 "xai_as_closure.study1_app.test_github_connection",
+                "xai_as_closure.study1_app.save_to_github",
                 {},
                 "STUDY1_DATA_ROOT",
             ),
             (
                 "study2_01_lowP_lowA_noF.py",
                 "xai_as_closure.study2_app.test_github_connection",
+                "xai_as_closure.logger.save_to_github",
                 {"cond": "P0_A0_F0"},
                 "STUDY2_DATA_ROOT",
             ),
         )
-        for filename, connection_target, extra_query, data_root_key in cases:
+        for (
+            filename,
+            connection_target,
+            save_target,
+            extra_query,
+            data_root_key,
+        ) in cases:
             with self.subTest(app=filename), tempfile.TemporaryDirectory() as directory:
                 app = AppTest.from_file(str(app_root / filename))
                 app.query_params = {
@@ -219,9 +263,10 @@ class MigratedInfrastructureTests(unittest.TestCase):
                     "GITHUB_TOKEN": "test-token",
                     data_root_key: directory,
                 }
-                with patch(
-                    connection_target, return_value=(True, "connected")
-                ) as check:
+                with (
+                    patch(connection_target, return_value=(True, "connected")) as check,
+                    patch(save_target, return_value=(True, None)),
+                ):
                     app.run(timeout=20)
                 self.assertFalse(app.exception)
                 self.assertEqual(check.call_count, 1)
@@ -330,7 +375,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             app = AppTest.from_file(str(app_path))
             app.query_params = {
-                "PROLIFIC_PID": "study2-summary-introduction",
+                "PROLIFIC_PID": "000000000000000000000001",
                 "cond": "P0_A0_F0",
             }
             app.secrets = {
@@ -338,9 +383,15 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 "GITHUB_TOKEN": "test-token",
                 "STUDY2_DATA_ROOT": directory,
             }
-            with patch(
-                "xai_as_closure.study2_app.test_github_connection",
-                return_value=(True, "connected"),
+            with (
+                patch(
+                    "xai_as_closure.study2_app.test_github_connection",
+                    return_value=(True, "connected"),
+                ),
+                patch(
+                    "xai_as_closure.logger.save_to_github",
+                    return_value=(True, None),
+                ),
             ):
                 app.run(timeout=20)
                 brief_text = "\n".join(
@@ -411,10 +462,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 ).click()
                 app.run(timeout=20)
                 self.assertTrue(
-                    any(
-                        "elapsed-timer" in element.value
-                        for element in app.markdown
-                    )
+                    any("elapsed-timer" in element.value for element in app.markdown)
                 )
                 next(
                     button
@@ -438,7 +486,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             app = AppTest.from_file(str(app_root / "study2_01_lowP_lowA_noF.py"))
             app.query_params = {
-                "PROLIFIC_PID": "study2-document-visit",
+                "PROLIFIC_PID": "000000000000000000000002",
                 "cond": "P0_A0_F0",
             }
             app.secrets = {
@@ -521,14 +569,16 @@ class MigratedInfrastructureTests(unittest.TestCase):
         self.assertTrue(opened["trial_reference"])
         self.assertEqual(opened["trial_reference"], closed["trial_reference"])
 
-    def test_explanation_component_receives_only_neutral_registered_locators(self) -> None:
+    def test_explanation_component_receives_only_neutral_registered_locators(
+        self,
+    ) -> None:
         app_path = (
             Path(__file__).resolve().parents[1] / "apps" / "study2_05_highP_lowA_noF.py"
         )
         with tempfile.TemporaryDirectory() as directory:
             app = AppTest.from_file(str(app_path))
             app.query_params = {
-                "PROLIFIC_PID": "study2-citation-document",
+                "PROLIFIC_PID": "000000000000000000000003",
                 "cond": "P1_A0_F0",
             }
             app.secrets = {
@@ -563,8 +613,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 app.run(timeout=20)
                 self.assertFalse(
                     any(
-                        "Curriculum vitae" in element.value
-                        for element in app.subheader
+                        "Curriculum vitae" in element.value for element in app.subheader
                     )
                 )
                 self.assertTrue(
@@ -619,12 +668,14 @@ class MigratedInfrastructureTests(unittest.TestCase):
         self,
     ) -> None:
         app_path = (
-            Path(__file__).resolve().parents[1] / "apps" / "study2_07_highP_highA_noF.py"
+            Path(__file__).resolve().parents[1]
+            / "apps"
+            / "study2_07_highP_highA_noF.py"
         )
         with tempfile.TemporaryDirectory() as directory:
             app = AppTest.from_file(str(app_path))
             app.query_params = {
-                "PROLIFIC_PID": "study2-anthropomorphic-passage",
+                "PROLIFIC_PID": "000000000000000000000004",
                 "cond": "P1_A1_F0",
             }
             app.secrets = {
@@ -668,8 +719,9 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 component_args = json.loads(component[0].proto.json_args)
                 self.assertTrue(component_args["anthropomorphic"])
                 self.assertTrue(
-                    " ".join(block["text"] for block in component_args["blocks"])
-                    .startswith("I've ")
+                    " ".join(
+                        block["text"] for block in component_args["blocks"]
+                    ).startswith("I've ")
                 )
                 labels = [
                     citation["label"]
@@ -688,7 +740,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             app = AppTest.from_file(str(app_path))
             app.query_params = {
-                "PROLIFIC_PID": "study2-in-page-citation",
+                "PROLIFIC_PID": "000000000000000000000005",
                 "cond": "P1_A0_F0",
             }
             app.secrets = {
@@ -745,8 +797,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 self.assertEqual(len(app.get("iframe")), 1)
                 self.assertTrue(
                     any(
-                        button.label == "Close source document"
-                        for button in app.button
+                        button.label == "Close source document" for button in app.button
                     )
                 )
                 self.assertTrue(
@@ -830,26 +881,60 @@ class MigratedInfrastructureTests(unittest.TestCase):
         agent = AgenticHiringDecisionAgent(condition=condition, cases=cases)
         for _ in range(3):
             session.advance_introduction()
+        reference = session.current_reference()
         session.submit_unaided({"decision": "Reject candidate", "confidence": 65})
         session.request_agent_assessment(agent)
         session.submit_aided(
             {"decision": "Advance candidate to human interview", "confidence": 80}
         )
         session.submit_evidence_recall("The certification and experience mattered.")
-        event = {
-            "event_id": "s2_flatten:000001",
-            "event_sequence": 1,
-            "event_type": "agent_assessment_presented",
-            "payload": {"reference": "C-01"},
-        }
-        archive = {"state": session.state, "events": [event]}
+        events_source = [
+            {
+                "event_id": "s2_flatten:000001",
+                "event_sequence": 1,
+                "event_type": "agent_assessment_presented",
+                "trial_reference": reference,
+                "elapsed_seconds": 10.0,
+                "payload": {"reference": reference},
+            },
+            {
+                "event_id": "s2_flatten:000002",
+                "event_sequence": 2,
+                "event_type": "citation_clicked",
+                "trial_reference": reference,
+                "elapsed_seconds": 12.5,
+                "payload": {"citation": "[CV(4)]"},
+            },
+            {
+                "event_id": "s2_flatten:000003",
+                "event_sequence": 3,
+                "event_type": "document_opened",
+                "trial_reference": reference,
+                "elapsed_seconds": 12.5,
+                "payload": {"document": "cv"},
+            },
+            {
+                "event_id": "s2_flatten:000004",
+                "event_sequence": 4,
+                "event_type": "document_closed",
+                "trial_reference": reference,
+                "elapsed_seconds": 18.0,
+                "payload": {"document": "cv", "dwell_seconds": 5.5},
+            },
+        ]
+        archive = {"state": session.state, "events": events_source}
         participant = flatten_participant_rows([archive])
         trials = flatten_trial_rows([archive], cases)
         events = flatten_event_rows([archive])
         self.assertEqual(len(participant), 1)
         self.assertEqual(len(trials), 1)
         self.assertNotIn("challenge_count", trials[0])
-        self.assertEqual(len(events), 1)
+        self.assertEqual(trials[0]["confidence_change"], 15)
+        self.assertTrue(trials[0]["unaided_to_aided_reversal"])
+        self.assertEqual(trials[0]["citation_click_count"], 1)
+        self.assertEqual(trials[0]["time_to_first_citation_seconds"], 2.5)
+        self.assertEqual(trials[0]["document_dwell_seconds"], 5.5)
+        self.assertEqual(len(events), 4)
 
 
 if __name__ == "__main__":

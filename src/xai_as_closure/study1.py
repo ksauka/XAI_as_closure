@@ -10,10 +10,19 @@ from .cases import CaseRepository
 
 STUDY1_INSTRUMENT_VERSION = "study1-instrument-v6"
 STUDY1_STATE_VERSION = "study1-state-v4"
+STUDY1_ROUND2_INSTRUMENT_VERSION = "study1-instrument-v7"
 
 
 class WorkflowError(ValueError):
     pass
+
+
+def instrument_version(validation_round: str) -> str:
+    if validation_round == "initial":
+        return STUDY1_INSTRUMENT_VERSION
+    if validation_round == "round2":
+        return STUDY1_ROUND2_INSTRUMENT_VERSION
+    raise WorkflowError("Unknown validation round.")
 
 
 def _now() -> str:
@@ -119,12 +128,15 @@ class Study1Session:
         linkage_hash: str,
         seed: str,
         cases: CaseRepository,
+        validation_round: str = "initial",
     ) -> Study1Session:
+        version = instrument_version(validation_round)
         order = cases.randomized_order(seed)
         return cls(
             state={
                 "schema_version": STUDY1_STATE_VERSION,
-                "instrument_version": STUDY1_INSTRUMENT_VERSION,
+                "instrument_version": version,
+                "validation_round": validation_round,
                 "case_set_id": cases.case_set_id,
                 "session_id": session_id,
                 "linkage_hash": linkage_hash,
@@ -213,7 +225,7 @@ class Study1Session:
     def _validate_state(self) -> None:
         if self.state.get("schema_version") != STUDY1_STATE_VERSION:
             raise WorkflowError("Stored session uses an unsupported Study 1 schema.")
-        if self.state.get("instrument_version") != STUDY1_INSTRUMENT_VERSION:
+        if self.state.get("instrument_version") != instrument_version(self.state.get("validation_round", "initial")):
             raise WorkflowError("Stored session uses a different Study 1 instrument.")
         if self.state.get("case_set_id") != self.cases.case_set_id:
             raise WorkflowError("Stored session uses a different Study 1 case set.")

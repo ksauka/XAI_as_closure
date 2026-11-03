@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
+
+import requests
 
 from .cases import PROJECT_ROOT, material_manifest
 from .conditions import Study2Condition
@@ -17,6 +20,8 @@ from .storage import _append_json_line, _atomic_write_json, _private_directory
 DEFAULT_LOG_DIR = (
     PROJECT_ROOT / "study_CHI" / "data" / "raw" / "study2" / "interaction_logs"
 )
+EVENT_SCHEMA_VERSION = "study2-event-v11"
+APPLICATION_VERSION = "study2-app-v12"
 
 
 class EventLogger:
@@ -44,12 +49,14 @@ class EventLogger:
         """Append one event using the working HAI JSONL record structure."""
         self.turn_id += 1
         record: dict[str, object] = {
-            "schema_version": "study2-event-v10",
-            "application_version": "study2-app-v10",
+            "schema_version": EVENT_SCHEMA_VERSION,
+            "application_version": APPLICATION_VERSION,
             "session_id": self.session_id,
             "participant_id": self.participant_id,
             "prolific_pid": self.participant_id,
             "turn_id": self.turn_id,
+            "event_sequence": self.turn_id,
+            "event_id": f"{self.session_id}:{self.turn_id:06d}",
             "timestamp_utc": datetime.now(timezone.utc).isoformat(),
             "condition_id": self.condition.condition_id,
             "explanation_present": self.condition.explanation,
@@ -99,6 +106,8 @@ class EventLogger:
         extra_meta: dict[str, Any] | None = None,
     ) -> bool:
         """Push the full session log to the configured private GitHub repository."""
+        if os.getenv("STUDY2_LOCAL_PREVIEW") == "1":
+            return False
         token = (
             github_token or os.getenv("GITHUB_TOKEN") or os.getenv("GITHUB_DATA_TOKEN")
         )
@@ -131,8 +140,7 @@ class EventLogger:
         payload = self.github_payload()
         if extra_meta:
             payload.update(extra_meta)
-        date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        path = f"sessions/xai_as_closure/study2/{date_str}/{self.session_id}.json"
+        path = checkpoint_path(self.session_id)
         success, _error = save_to_github(
             resolved_repo,
             path,
@@ -168,3 +176,87 @@ def restored_logger(
     logger.turn_id = int(state.get("turn_id", 0))
     state["session_id"] = logger.session_id
     return logger
+
+
+def checkpoint_path(session_id: str) -> str:
+    if not session_id.isalnum():
+        raise ValueError("Invalid checkpoint session identifier")
+    return f"sessions/xai_as_closure/study2/checkpoints/{session_id}.json"
+
+
+def load_remote_checkpoint(
+    session_id: str,
+    participant_id: str,
+    condition_id: str,
+    repo: str,
+    token: str,
+    log_dir: Path | str,
+) -> dict[str, Any] | None:
+    """Restore the durable state and complete event history after host storage loss.
+
+    A network or validation failure never starts a replacement participant session.
+    """
+    if os.getenv("STUDY2_LOCAL_PREVIEW") == "1":
+        return None
+    try:
+        response = requests.get(
+            f"https://api.github.com/repos/{repo}/contents/{checkpoint_path(session_id)}",
+            headers={
+                "Authorization": f"token {token}",
+                "Accept": "application/vnd.github.v3+json",
+            },
+            timeout=15,
+        )
+        if response.status_code == 404:
+            return None
+        response.raise_for_status()
+        envelope = response.json()
+        payload = json.loads(base64.b64decode(envelope["content"]).decode("utf-8"))
+    except (requests.RequestException, KeyError, ValueError, TypeError) as exc:
+        raise ValueError(
+            "Saved task could not be recovered. Please retry or contact the researcher."
+        ) from exc
+    if not isinstance(payload, dict):
+        raise TypeError("Saved task checkpoint is invalid.")
+    if (
+        payload.get("session_id") != session_id
+        or payload.get("participant_id") != participant_id
+        or payload.get("condition_id") != condition_id
+    ):
+        raise ValueError(
+            "Saved task identity or condition does not match this study link."
+        )
+    events = payload.get("events")
+    if not isinstance(events, list) or not events:
+        raise ValueError("Saved task has no valid event history.")
+    for sequence, event in enumerate(events, 1):
+        if not isinstance(event, dict):
+            raise TypeError("Saved task event history is invalid.")
+        if (
+            event.get("session_id") != session_id
+            or event.get("participant_id") != participant_id
+            or event.get("condition_id") != condition_id
+            or event.get("event_sequence") != sequence
+            or event.get("material_manifest") != material_manifest()
+        ):
+            raise ValueError("Saved task event history or materials are inconsistent.")
+    if payload.get("turn_id") != len(events):
+        raise ValueError("Saved task checkpoint and event history disagree.")
+    from .cases import CaseRepository
+    from .study2 import Study2Session
+
+    state = {key: value for key, value in payload.items() if key != "events"}
+    Study2Session.restore(state, CaseRepository())
+    directory = Path(log_dir)
+    _private_directory(directory)
+    event_file = directory / f"{session_id}.jsonl"
+    temporary = directory / f".{session_id}.{uuid4().hex}.tmp"
+    descriptor = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+        for event in events:
+            handle.write(json.dumps(event, ensure_ascii=True) + "\n")
+        handle.flush()
+        os.fsync(handle.fileno())
+    os.replace(temporary, event_file)
+    _atomic_write_json(directory / f"{session_id}.state.json", state)
+    return state

@@ -13,6 +13,8 @@ from .conditions import Study2Condition, get_study2_condition
 from .decision_agent import AgentOutput, Study2DecisionAgent
 from .study2_delivery import DELIVERY_SPEC_VERSION
 
+STATE_SCHEMA_VERSION = "study2-state-v9"
+
 
 class Study2WorkflowError(ValueError):
     pass
@@ -44,36 +46,14 @@ def _validate_decision_response(response: dict[str, Any]) -> None:
         raise Study2WorkflowError("Confidence must be a whole number from 0 to 100.")
 
 
-_FORCING_QUALIFYING_REFERENCES = frozenset({"C-01", "C-02", "C-06"})
+def _forcing_answer_is_correct(answer: str) -> bool:
+    """Validate the condition-invariant role-requirement re-entry task.
 
-_FORCING_NONE_QUALIFIES_PHRASES = (
-    "none",
-    "no certification",
-    "no qualifying",
-    "not qualif",
-    "does not meet",
-    "doesn t meet",
-    "doesnt meet",
-    "not accepted",
-    "not one of",
-    "not the required",
-    "isn t accepted",
-    "isnt accepted",
-    "fails to meet",
-    "lacks the",
-)
-
-_FORCING_EXPIRED_PHRASES = (
-    "expired",
-    "not current",
-    "no longer current",
-    "out of date",
-    "lapsed",
-    "term ended",
-)
-
-
-def _forcing_answer_is_correct(reference: str, answer: str) -> bool:
+    Cognitive forcing operates on the job description, not on the current
+    candidate or the AI recommendation. Every forcing-present participant must
+    therefore enter the same two requirements: a current qualifying
+    certification and current relevant professional membership.
+    """
     normalized = re.sub(r"[^a-z0-9]+", " ", answer.lower())
     names_aigp = (
         "aigp" in normalized
@@ -81,26 +61,23 @@ def _forcing_answer_is_correct(reference: str, answer: str) -> bool:
     )
     names_iso = "42001" in normalized and "lead implementer" in normalized
     names_qualifying_cert = names_aigp or names_iso
-    names_membership = any(
+    names_membership = (
+        re.search(r"\b(member|membership|memberships)\b", normalized) is not None
+    )
+    names_currency = any(
         term in normalized
-        for term in (
-            "membership",
-            "member",
-            "iapp",
-            "isaca",
-            "acm",
-            "acams",
-            "professional body",
-        )
+        for term in ("current", "valid", "active", "in date", "not expired")
     )
-    if reference in _FORCING_QUALIFYING_REFERENCES:
-        return names_qualifying_cert and names_membership
-    states_none_qualifies = any(
-        phrase in normalized for phrase in _FORCING_NONE_QUALIFIES_PHRASES
+    negative_status = re.search(
+        r"\b(expired|lapsed|inactive|not current|not valid)\b",
+        normalized.replace("not expired", "current"),
     )
-    if reference == "C-05" and names_aigp:
-        return any(phrase in normalized for phrase in _FORCING_EXPIRED_PHRASES)
-    return states_none_qualifies and not names_qualifying_cert
+    return bool(
+        names_qualifying_cert
+        and names_membership
+        and names_currency
+        and not negative_status
+    )
 
 
 @dataclass
@@ -121,7 +98,7 @@ class Study2Session:
     ) -> Study2Session:
         return cls(
             state={
-                "schema_version": "study2-state-v8",
+                "schema_version": STATE_SCHEMA_VERSION,
                 "delivery_spec_version": DELIVERY_SPEC_VERSION,
                 "case_set_id": cases.case_set_id,
                 "session_id": session_id,
@@ -234,15 +211,12 @@ class Study2Session:
         forcing["attempt_count"] = attempt_number
         requirement = str(response.get("mandatory_requirement", "")).strip()
         if not requirement:
+            raise Study2WorkflowError("Enter your answer before continuing.")
+        is_correct = _forcing_answer_is_correct(requirement)
+        if not is_correct:
             raise Study2WorkflowError(
-                "Enter your answer before continuing."
-            )
-        is_correct = _forcing_answer_is_correct(reference, requirement)
-        max_attempts = 2
-        if not is_correct and attempt_number < max_attempts:
-            raise Study2WorkflowError(
-                "Recheck the candidate's CV against the job description's "
-                "mandatory professional requirements before continuing."
+                "Recheck the job description and enter both mandatory "
+                "professional requirements, including their current-status rule."
             )
         submitted_at = _now()
         started_at = str(forcing.get("started_at_utc", submitted_at))
@@ -328,7 +302,7 @@ class Study2Session:
         self.state["updated_at_utc"] = _now()
 
     def _validate_state(self) -> None:
-        if self.state.get("schema_version") != "study2-state-v8":
+        if self.state.get("schema_version") != STATE_SCHEMA_VERSION:
             raise Study2WorkflowError(
                 "Stored session uses an unsupported Study 2 schema."
             )
@@ -397,11 +371,11 @@ class Study2Session:
                 raise Study2WorkflowError(
                     f"Completed trial {reference} is missing required responses."
                 )
-            if (
-                self.condition.forcing
-                and not str(
+            if self.condition.forcing and (
+                not str(
                     trial.get("forcing", {}).get("mandatory_requirement", "")
                 ).strip()
+                or trial.get("forcing", {}).get("is_correct") is not True
             ):
                 raise Study2WorkflowError(
                     f"Completed trial {reference} is missing cognitive forcing."
@@ -419,7 +393,10 @@ class Study2Session:
             )
         if self.condition.forcing and phase in {"agent", "aided", "recall"}:
             forcing = current_trial.get("forcing", {})
-            if not str(forcing.get("mandatory_requirement", "")).strip():
+            if (
+                not str(forcing.get("mandatory_requirement", "")).strip()
+                or forcing.get("is_correct") is not True
+            ):
                 raise Study2WorkflowError(
                     "The current trial is missing its requirement-reencoding response."
                 )

@@ -95,7 +95,7 @@ Anthropomorphic delivery is also frozen. The audit payload records
 `anthrokit-hiring-study2-v7` and its assigned LowA or HighA token preset, while
 participant state contains the complete paired response card, condition-visible
 sources.
-Study 2 uses `study2-state-v8`, `study2-event-v10`, and `study2-app-v10` so pilot
+Study 2 uses `study2-state-v9`, `study2-event-v11`, and `study2-app-v11` so pilot
 sessions created before the revised case set and frozen delivery specification
 cannot be mixed with the active instrument. The state records the `v5` case-set
 identifier and rejects prior material versions; resumability remains available
@@ -108,10 +108,13 @@ is requested or revealed. It shifts the participant into an active processing
 state by requiring re-encoding of the role requirement before exposure to AI
 advice.
 
-The forcing-present task uses the same structure in all explanation and delivery
-conditions. The participant opens the complete job description, initially
-focused on Sections 4.1–4.2, and types or pastes both mandatory professional
-requirements. Submission unlocks the request for the AI recommendation. Because
+The forcing-present task uses the same structure for every candidate and in all
+explanation and delivery conditions. The participant opens the complete job
+description, initially focused on Section 4.1, and types or pastes both
+mandatory professional requirements. A fixed validation rule requires a current
+qualifying certification and current relevant professional membership; an
+incorrect response never unlocks the recommendation, regardless of the number
+of attempts. Submission unlocks the request for the AI recommendation. Because
 the task operates on the always-available job description rather than the
 recommendation or citations, its content is structurally identical across the P
 and A cells. The forcing-absent workflow proceeds directly from the unaided
@@ -205,8 +208,10 @@ Production logs are written to protected research storage, not the public code
 repository. Study 2 retains the HAI `EventLogger`: one local JSONL event stream
 per session and a full session-plus-events payload saved through the existing
 GitHub API utility to a configured private data repository. The backup is
-refreshed after each completed trial. Local directories and files use owner-only
-permissions.
+refreshed after every completed workflow step and after document interactions,
+so an interrupted cloud session can resume from the last durable state rather
+than only from the last completed candidate. Local directories and files use
+owner-only permissions.
 
 A session summary is derived from events but never replaces the raw append-only
 trace. Data exports retain schema and material versions so analyses can be
@@ -241,3 +246,8 @@ Rich logging means retaining research-relevant state and behavior, not collectin
 everything a browser can expose. Every logged field must have a documented
 purpose, consent basis, access rule, and retention period. Secondary analyses
 must remain compatible with the consent language and ethics approval.
+
+
+## Analysis export v2
+
+The material/event freeze is unchanged. Derived exports now carry `study2-analysis-v2`. Appropriate reliance is scored only on initial human–AI disagreements; initial-agreement trials and missing outcomes are null, not failures. `diagnostic_disagreement`, `reliance_direction`, `correct_self_reliance`, `correct_ai_reliance` and `underreliance` expose the correct denominators. `aided_correct` remains separate all-trial final accuracy. Regenerate older exports from their archives. Legacy assistant-induced/corrected field names describe transitions only, not an identified individual causal effect. See STUDY2_ANALYSIS_PLAN.md.

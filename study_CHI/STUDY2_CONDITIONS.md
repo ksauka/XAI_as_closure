@@ -27,7 +27,9 @@ controls whether, after the unaided
 decision but before the AI recommendation is requested or revealed, the
 participant must type or paste both mandatory professional requirements—the
 qualifying certification and current professional membership—from the complete
-job description.
+job description. The task is identical for every candidate. It does not ask the
+participant to classify the current CV, and an incorrect response never unlocks
+the recommendation.
 
 Before candidate screening, every condition presents the same single-screen
 recruitment brief: a concise company-and-role summary, concise recruitment
@@ -39,7 +41,7 @@ during every trial for verification.
 
 ## Frozen anthropomorphic-delivery manipulation
 
-The active delivery specification is `anthrokit-hiring-study2-v7`, implemented
+The active delivery specification is `anthrokit-hiring-study2-v8`, implemented
 in `src/xai_as_closure/study2_delivery.py`. It preserves the validated
 AnthroKit-Hiring contrast on five dimensions: self-reference, warmth, formality,
 empathic directness, and hedging.
@@ -73,7 +75,7 @@ explanation assignment cannot alter the delivery register.
 The false advance on C-05 is a certification-currentness error. The candidate's
 AIGP term ended on 31 May 2026, before the screening window, but the fixed
 recommendation treats it as current. The shared advance citation set for
-C-01/C-02/C-05 includes `CV(4)`, `JD(4.1)`, `JD(4.2)`, `POL(2.1)`, and
+C-01/C-02/C-05 includes `CV(4)`, `JD(4.1)`, `JD(4.2)`, `JD(4.2.1)`, `POL(2.1)`, and
 `POL(2.3)` so the evidence needed to overturn C-05 remains within the cited
 documents without giving the error trial a distinctive citation pattern.
 
@@ -81,7 +83,7 @@ The false reject on C-06 is a whole-file reconciliation error. Its Certification
 section records a current `AIGP` term without expanding the issuer. Its later
 Professional Memberships section records current International Association of
 Privacy Professionals (IAPP) membership with the same 18 June 2025–30 June 2027
-term. Read together under policy Section 2.3,
+term. Read together under job-description Section 4.2.1,
 these passages establish the current IAPP AIGP in job-description Section 4.1
 and the separate membership required by Section 4.2. The fixed recommendation
 instead treats `AIGP` as potentially referring to another provider and rejects
@@ -144,5 +146,11 @@ What distinguishes each manipulation on screen:
   label "AI screening assistant", first-person prose ("I'd recommend...").
 - **Forcing (F).** Present (`F1`): after the unaided decision, the participant
   must re-encode both mandatory professional requirements from the role
-  description before the recommendation unlocks. Absent (`F0`): the recommendation is available
-  immediately on request.
+  description before the recommendation unlocks. The full job description opens
+  focused at Section 4.1, and the same current-certification plus current-
+  membership validation applies on every profile. Absent (`F0`): the
+  recommendation is available immediately on request.
+
+## Shared material revision, 3 November 2026
+
+The active case set is `ai_governance_lead_six_profiles_v6`. Identity is governed only by JD 4.2.1; Policy 2.3 retains whole-file assessment and currency. All six profiles cite both provisions. C-01/C-02/C-05 share the same ordered 12-source list; C-03/C-04/C-06 share the same ordered 14-source list, including JD 3.5 and JD 7.2 on all three rejects. Candidate CVs, intended decisions and AI verdicts are unchanged. Material integrity checks do not replace the pending second expert assessment.

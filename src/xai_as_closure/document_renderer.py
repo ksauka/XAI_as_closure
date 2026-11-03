@@ -315,7 +315,7 @@ def _reference_sections(markdown: str, focus: str) -> tuple[str, str, str]:
     subtitle = ""
     body: list[str] = []
     open_section = False
-    clause_pattern = re.compile(r"^\*\*(\d+\.\d+)\s+([^*]+?)\.\*\*\s*(.*)$")
+    clause_pattern = re.compile(r"^\*\*(\d+(?:\.\d+)+)\s+([^*]+?)\.\*\*\s*(.*)$")
     for raw_line in markdown.splitlines():
         line = raw_line.strip()
         if not line:
@@ -402,7 +402,7 @@ def reference_document_html(
 def citation_document_frame_html(document: str) -> str:
     """Wrap a complete safe document and scroll its cited passage into view."""
     return (
-        "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\">"
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width, initial-scale=1">'
         f"{_DOCUMENT_STYLES}"
         "<style>body{margin:0;padding:.35rem;background:#f4f5f7;}"

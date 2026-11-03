@@ -96,7 +96,9 @@ class DocumentRendererTests(unittest.TestCase):
             document.index("Document details"),
             document.index('<article class="research-document'),
         )
-        self.assertIn("<h1>Section 4. Mandatory Professional Requirements</h1>", document)
+        self.assertIn(
+            "<h1>Section 4. Mandatory Professional Requirements</h1>", document
+        )
         self.assertIn("<h2>4.1 Mandatory Certification</h2>", document)
         self.assertIn("<h2>4.2 Mandatory Professional Membership</h2>", document)
         self.assertIn("20 July 2026", document)

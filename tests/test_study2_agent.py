@@ -122,14 +122,13 @@ class Study2WorkflowTests(unittest.TestCase):
 
     @staticmethod
     def correct_forcing_answer(reference: str) -> dict:
-        if reference in ("C-01", "C-02", "C-06"):
-            text = (
-                "AIGP or ISO/IEC 42001 Lead Implementer certification and "
-                "current professional membership"
+        del reference
+        return {
+            "mandatory_requirement": (
+                "A current AIGP or ISO/IEC 42001 Lead Implementer certification "
+                "and current relevant professional membership"
             )
-        else:
-            text = "None of the certifications listed meet the requirement."
-        return {"mandatory_requirement": text}
+        }
 
     def session(self, condition_id: str) -> Study2Session:
         session = Study2Session.create(
@@ -213,6 +212,31 @@ class Study2WorkflowTests(unittest.TestCase):
         self.assertEqual(session.phase, "forcing")
         self.assertNotIn("agent_output", session.current_trial())
 
+    def test_forcing_never_unlocks_after_repeated_incorrect_attempts(self) -> None:
+        session = self.session("P0_A0_F1")
+        session.submit_unaided(self.decision())
+        for _ in range(3):
+            with self.assertRaisesRegex(Study2WorkflowError, "both mandatory"):
+                session.submit_forcing(
+                    {"mandatory_requirement": "This candidate looks suitable."}
+                )
+        self.assertEqual(session.phase, "forcing")
+        self.assertEqual(session.current_trial()["forcing"]["attempt_count"], 3)
+        self.assertNotIn("agent_output", session.current_trial())
+
+    def test_forcing_task_is_identical_for_every_candidate(self) -> None:
+        session = self.session("P1_A1_F1")
+        agent = Study2DecisionAgent(condition=session.condition, cases=self.cases)
+        answer = self.correct_forcing_answer("unused")
+        for _ in range(6):
+            session.submit_unaided(self.decision())
+            session.submit_forcing(answer)
+            self.assertTrue(session.current_trial()["forcing"]["is_correct"])
+            session.request_agent_assessment(agent)
+            session.submit_aided(self.decision())
+            session.submit_evidence_recall("The source documents were decisive.")
+        self.assertTrue(session.complete)
+
     def test_all_six_trials_complete(self) -> None:
         session = self.session("P0_A0_F0")
         agent = Study2DecisionAgent(condition=session.condition, cases=self.cases)
@@ -255,7 +279,7 @@ class Study2WorkflowTests(unittest.TestCase):
 
     def test_restore_rejects_pre_frozen_delivery_sessions(self) -> None:
         session = self.session("P1_A0_F1")
-        session.state["schema_version"] = "study2-state-v2"
+        session.state["schema_version"] = "study2-state-v8"
         session.state.pop("delivery_spec_version")
         with self.assertRaisesRegex(Study2WorkflowError, "unsupported Study 2 schema"):
             Study2Session.restore(deepcopy(session.state), self.cases)
@@ -271,9 +295,7 @@ class Study2WorkflowTests(unittest.TestCase):
         previous["delivery_spec_version"] = "anthrokit-hiring-study2-v5"
         previous["case_set_id"] = "ai_governance_lead_six_profiles_v4"
 
-        with self.assertRaisesRegex(
-            Study2WorkflowError, "unsupported Study 2 schema"
-        ):
+        with self.assertRaisesRegex(Study2WorkflowError, "unsupported Study 2 schema"):
             Study2Session.restore(previous, self.cases)
 
     def test_restore_rejects_pre_explanation_presence_delivery(self) -> None:
@@ -312,6 +334,19 @@ class Study2WorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(Study2WorkflowError, "requirement-reencoding"):
             Study2Session.restore(deepcopy(session.state), self.cases)
 
+    def test_restore_rejects_an_incorrect_forcing_response(self) -> None:
+        session = self.session("P1_A0_F1")
+        session.submit_unaided(self.decision())
+        session.state["phase"] = "agent"
+        session.current_trial()["forcing"].update(
+            {
+                "mandatory_requirement": "AIGP",
+                "is_correct": False,
+            }
+        )
+        with self.assertRaisesRegex(Study2WorkflowError, "requirement-reencoding"):
+            Study2Session.restore(deepcopy(session.state), self.cases)
+
 
 class Study2InfrastructureTests(unittest.TestCase):
     def test_study2_uses_the_hai_qualtrics_return_fields(self) -> None:
@@ -334,6 +369,23 @@ class Study2InfrastructureTests(unittest.TestCase):
                 "P0_A0_F0",
             )
         )
+        self.assertIsNone(
+            _build_final_return(
+                "http://example.qualtrics.com/jfe/form/SV_test",
+                "pid",
+                "session",
+                "P0_A0_F0",
+            )
+        )
+        overwritten = _build_final_return(
+            "https://example.qualtrics.com/jfe/form/SV_test?cond=wrong&done=0",
+            "prolific-test",
+            "sessiontest",
+            "P1_A0_F1",
+        )
+        self.assertIn("cond=P1_A0_F1", overwritten or "")
+        self.assertIn("done=1", overwritten or "")
+        self.assertNotIn("cond=wrong", overwritten or "")
 
     def test_hai_event_logger_writes_local_jsonl(self) -> None:
         condition = get_study2_condition("P1_A0_F1")
@@ -349,8 +401,10 @@ class Study2InfrastructureTests(unittest.TestCase):
                 component="launch",
                 payload={"condition_id": condition.condition_id},
             )
-            self.assertEqual(event["schema_version"], "study2-event-v10")
-            self.assertEqual(event["application_version"], "study2-app-v10")
+            self.assertEqual(event["schema_version"], "study2-event-v11")
+            self.assertEqual(event["application_version"], "study2-app-v12")
+            self.assertEqual(event["event_sequence"], 1)
+            self.assertEqual(event["event_id"], "sessiontest:000001")
             self.assertTrue(event["explanation_present"])
             self.assertEqual(event["condition_id"], condition.condition_id)
             self.assertEqual(event["participant_id"], "prolific-test")

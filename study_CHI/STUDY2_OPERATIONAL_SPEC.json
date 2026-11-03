@@ -1,0 +1,303 @@
+{
+  "spec_version": "study2-analysis-v2",
+  "status": "working_pre_recruitment",
+  "sample_ceiling": 400,
+  "selected_analysable_target": null,
+  "h2_maximum_log_ci_width": null,
+  "timing": {
+    "soft_allowance_seconds": null,
+    "hard_timeout_seconds": null,
+    "automatic_submission": false,
+    "pilot_input_sha256": null,
+    "rule": "Round up to whole minutes: 1.25 times the largest cell-specific 95th percentile of complete technical-pilot session durations; at least five complete sessions per cell, all eight cells represented. The pilot is separate from confirmatory data. No decision is automatically submitted."
+  },
+  "evidence_coding": {
+    "manual_version": "study2-evidence-v2",
+    "independent_subset_fraction": 0.25,
+    "minimum_per_profile": 20,
+    "seed": 20261022,
+    "mask_treatment": true,
+    "mask_decision": true,
+    "adjudication": "Third reviewer resolves disagreements after both independent codes are locked; retain originals and adjudicated code. Freeze manual before coding the remaining responses; recode subset if manual changes.",
+    "agreement": [
+      "raw agreement",
+      "Cohen kappa",
+      "2x2 counts"
+    ],
+    "missing": "Missing/blank remains missing; explicit None or non-decisive text is code 0.",
+    "mechanisms": {
+      "C-05": [
+        "certification expiry before screening",
+        "expired certification fails mandatory currency rule"
+      ],
+      "C-06": [
+        "current AIGP linked to current IAPP membership elsewhere in the file",
+        "whole-file reconciliation satisfies the governing requirement"
+      ]
+    },
+    "code_values": {
+      "0": "decisive evidence not identified",
+      "1": "decisive evidence identified",
+      "NA": "response missing or unreadable"
+    }
+  },
+  "questionnaire": {
+    "status": "agreed_wording_and_main_anchors_recorded_export_pending",
+    "survey_export_sha256": null,
+    "global_scoring": "Mean of nonmissing item values after declared reverse scoring. Require ceil(0.8*k) answered items. No item deletion based on observed alpha or treatment separation; no single-item substitution.",
+    "scales": {
+      "PPBE": {
+        "status": "wording_and_anchors_confirmed_export_pending",
+        "expected_item_count_from_existing_plan": 5,
+        "timing": "post",
+        "items": [
+          "PPBE_1",
+          "PPBE_2",
+          "PPBE_3",
+          "PPBE_4",
+          "PPBE_5"
+        ],
+        "response_min": 1,
+        "response_max": 7,
+        "reverse_item_ids": [
+          "PPBE_5"
+        ],
+        "source": "User-supplied literature-grounded adaptation: Hamm et al. (2023); Wang & Benbasat (2016); traceability/inspectability wording grounded in Nauta et al. (2023) and Kulesza et al. (2015).",
+        "item_text": {
+          "PPBE_1": "The assistant made clear which evidence its recommendation was based on.",
+          "PPBE_2": "I could tell which parts of the source documents the recommendation came from.",
+          "PPBE_3": "The evidence behind the recommendation was available for me to examine.",
+          "PPBE_4": "The assistant showed enough of its supporting evidence for the recommendation to be checked.",
+          "PPBE_5": "It was unclear what evidence the recommendation actually relied on."
+        },
+        "canonical_ids_are_not_verified_export_keys": true,
+        "qualtrics_export_map": null,
+        "endpoint_labels": {
+          "1": "Strongly disagree",
+          "7": "Strongly agree"
+        }
+      },
+      "ANT": {
+        "status": "wording_and_anchors_confirmed_export_pending",
+        "expected_item_count_from_existing_plan": 5,
+        "timing": "post",
+        "items": [
+          "ANT_1",
+          "ANT_2",
+          "ANT_3",
+          "ANT_4",
+          "ANT_5"
+        ],
+        "response_min": 1,
+        "response_max": 7,
+        "reverse_item_ids": [],
+        "source": "User-supplied adaptation: Klein & Martinez (2023), Jensen et al. (2020), Bartneck et al. (2009). Five human-likeness items; no Gefen & Straub social-presence items.",
+        "item_text": {
+          "ANT_1": "Using this assistant gives me the feeling of personal communication.",
+          "ANT_2": "This assistant behaves human-like.",
+          "ANT_3": "This assistant shows human characteristics.",
+          "ANT_4": "The assistant communicated with me like a human would.",
+          "ANT_5": "The assistant's communication seemed human-like rather than machine-like."
+        },
+        "canonical_ids_are_not_verified_export_keys": true,
+        "qualtrics_export_map": null,
+        "endpoint_labels": {
+          "1": "Strongly disagree",
+          "7": "Strongly agree"
+        }
+      },
+      "PCE": {
+        "status": "wording_and_anchors_confirmed_export_pending",
+        "expected_item_count_from_existing_plan": 3,
+        "timing": "post",
+        "items": [
+          "PCE_1",
+          "PCE_2",
+          "PCE_3"
+        ],
+        "response_min": 1,
+        "response_max": 7,
+        "reverse_item_ids": [],
+        "source": "Candidate contextual adaptation: Rotgans and Schmidt (2011); Drosos et al. (2025); Fischer and Schraffenberger (2025). Task-specific independent evaluation wording; not an established cognitive-forcing scale.",
+        "administration": "forcing_only",
+        "structural_missing_rule": "F0: structurally not applicable; never score as zero or compare PCE between forcing conditions.",
+        "item_text": {
+          "PCE_1": "Re-entering the role requirements before the AI assessment required me to think carefully about the mandatory requirements.",
+          "PCE_2": "Re-entering the role requirements before the AI assessment required me to work out what those requirements meant for screening a candidate.",
+          "PCE_3": "Re-entering the role requirements before the AI assessment required me to evaluate the mandatory requirements for myself."
+        },
+        "endpoint_labels": {
+          "1": "Strongly disagree",
+          "7": "Strongly agree"
+        },
+        "canonical_ids_are_not_verified_export_keys": true,
+        "qualtrics_export_map": null
+      },
+      "TRUST": {
+        "status": "wording_and_anchors_confirmed_export_pending",
+        "expected_item_count_from_existing_plan": 9,
+        "timing": "post",
+        "items": [
+          "TRUST_1",
+          "TRUST_2",
+          "TRUST_3",
+          "TRUST_4",
+          "TRUST_5",
+          "TRUST_6",
+          "TRUST_7",
+          "TRUST_8",
+          "TRUST_9"
+        ],
+        "response_min": 1,
+        "response_max": 7,
+        "reverse_item_ids": [],
+        "source": "User-supplied task adaptation: Benbasat & Wang (2005), with Mayer et al. (1995) as theoretical basis. Expertise/ability and integrity-related judgements.",
+        "item_text": {
+          "TRUST_1": "This assistant is like a real expert in assessing candidates.",
+          "TRUST_2": "This assistant has the expertise to assess candidates accurately.",
+          "TRUST_3": "This assistant has the ability to understand the requirements relevant to the assessment.",
+          "TRUST_4": "This assistant has good knowledge of the recruitment decision domain.",
+          "TRUST_5": "This assistant puts making an accurate assessment first.",
+          "TRUST_6": "This assistant keeps a fair assessment in mind.",
+          "TRUST_7": "This assistant provides unbiased recommendations.",
+          "TRUST_8": "This assistant is honest.",
+          "TRUST_9": "I consider this assistant to possess integrity."
+        },
+        "canonical_ids_are_not_verified_export_keys": true,
+        "qualtrics_export_map": null,
+        "endpoint_labels": {
+          "1": "Strongly disagree",
+          "7": "Strongly agree"
+        }
+      },
+      "TRUST_PROPENSITY": {
+        "status": "wording_confirmed_anchors_pending",
+        "timing": "pre",
+        "items": [
+          "TRUST_PROPENSITY_1"
+        ],
+        "item_text": {
+          "TRUST_PROPENSITY_1": "To what degree do you tend to trust others?"
+        },
+        "response_min": null,
+        "response_max": null,
+        "endpoint_labels": null,
+        "reverse_item_ids": [],
+        "source": "Researcher-supplied single item; no inherited multi-item scale validation claimed.",
+        "qualtrics_export_map": null,
+        "canonical_ids_are_not_verified_export_keys": true
+      },
+      "LLM_FREQUENCY": {
+        "status": "wording_confirmed_anchors_pending",
+        "timing": "pre",
+        "items": [
+          "LLM_FREQUENCY_1"
+        ],
+        "item_text": {
+          "LLM_FREQUENCY_1": "How frequently do you use AI systems such as ChatGPT, Claude, Gemini, or Copilot?"
+        },
+        "response_min": null,
+        "response_max": null,
+        "endpoint_labels": null,
+        "reverse_item_ids": [],
+        "source": "Researcher-supplied single item; no inherited multi-item scale validation claimed.",
+        "qualtrics_export_map": null,
+        "canonical_ids_are_not_verified_export_keys": true
+      },
+      "GENEROSITY": {
+        "status": "wording_confirmed_anchors_pending",
+        "timing": "pre",
+        "items": [
+          "GENEROSITY_1"
+        ],
+        "item_text": {
+          "GENEROSITY_1": "I generally try to act generously toward other people."
+        },
+        "response_min": null,
+        "response_max": null,
+        "endpoint_labels": null,
+        "reverse_item_ids": [],
+        "source": "Researcher-supplied single item; no inherited multi-item scale validation claimed.",
+        "qualtrics_export_map": null,
+        "canonical_ids_are_not_verified_export_keys": true
+      }
+    },
+    "fixed_construct_decisions": {
+      "main_supplied_battery": [
+        "PPBE",
+        "ANT",
+        "TRUST"
+      ],
+      "excluded": [
+        "perceived risk",
+        "adoption intent",
+        "social presence"
+      ],
+      "explanation_satisfaction": "Excluded from main confirmatory battery. If retained, use Hoffman items as an explicitly secondary construct under that name; do not relabel it perceived explainability.",
+      "PPBE": "Replaces old explanation scale; provenance traceability/inspectability, not Hoffman satisfaction.",
+      "PCE_and_pretrait_status": "PCE only F1. Pre-task: LLM use frequency, general interpersonal trust, generosity. Generosity is not risk aversion. NCS6 and risk aversion are not in the agreed active battery."
+    },
+    "retired_unadministered_constructs": {
+      "RISK_AVERSION": {
+        "status": "unverified_items",
+        "expected_item_count_from_existing_plan": null,
+        "timing": "pre",
+        "items": [],
+        "response_min": null,
+        "response_max": null,
+        "reverse_item_ids": null,
+        "source": null
+      },
+      "NCS6": {
+        "status": "unverified_items",
+        "expected_item_count_from_existing_plan": 6,
+        "timing": "pre_exposure_if_retained",
+        "items": [],
+        "response_min": null,
+        "response_max": null,
+        "reverse_item_ids": null,
+        "source": null
+      }
+    },
+    "active_constructs": [
+      "LLM_FREQUENCY",
+      "TRUST_PROPENSITY",
+      "GENEROSITY",
+      "PPBE",
+      "ANT",
+      "TRUST",
+      "PCE"
+    ],
+    "anchor_confirmation": "User confirmed 1–7 Strongly disagree to Strongly agree for PPBE, ANT, TRUST and forcing-only PCE on 2026-10-30. Pre-task response options remain pending."
+  },
+  "attention_rule": {
+    "status": "awaiting_final_qualtrics_item",
+    "item_id": null,
+    "pass_value": null
+  },
+  "exclusions": {
+    "rule_version": "study2-exclusions-v1",
+    "complete_cases_primary": true,
+    "exclude_on_answer_correctness": false,
+    "exclude_on_document_use": false,
+    "exclude_on_speed": false,
+    "duplicate_rule": "One eligible complete linked session per participant; retain earliest created valid session under its original condition, breaking exact time ties by session_id. Resume snapshots of the same session are consolidated using the latest monotonic event sequence. Never select by outcomes or engagement.",
+    "required": [
+      "consent",
+      "occupational eligibility",
+      "not in Study 1 or excluded prior sample",
+      "assigned route matches condition",
+      "frozen material and delivery versions match",
+      "all six trials complete",
+      "linked post-task survey complete",
+      "prespecified instructed-response item passed once fixed"
+    ]
+  },
+  "questionnaire_updated": "2026-10-30",
+  "material_validation": {
+    "case_set_id": "ai_governance_lead_six_profiles_v6",
+    "status": "pending_second_round",
+    "validated_case_set_id": null,
+    "results_record": null
+  }
+}
