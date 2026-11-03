@@ -244,7 +244,7 @@ class SessionStore:
                 "event_sequence": sequence,
                 "server_timestamp_utc": now_utc(),
                 "application": "study1_validation",
-                "application_version": "study1-round2-app-v2" if state.get("validation_round") == "round2" else "study1-app-v4",
+                "application_version": "study1-round2-app-v3" if state.get("validation_round") == "round2" else "study1-app-v4",
                 "validation_round": state.get("validation_round", "initial"),
                 "instrument_version": state.get("instrument_version"),
                 "case_set_id": state.get("case_set_id"),

@@ -27,6 +27,9 @@ from .study1_launch import ParticipantLink, read_participant_link, validate_part
 from .study1_round2_support import check_round2_materials, recover_round2_checkpoint, round2_archive_path
 
 
+STUDY1_APP_RELEASE = "2026-11-03.3"
+
+
 def _round() -> str:
     return str(st.session_state.get("_study1_validation_round", "initial"))
 

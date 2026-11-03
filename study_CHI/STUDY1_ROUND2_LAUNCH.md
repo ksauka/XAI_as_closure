@@ -46,4 +46,13 @@ Researcher-code returns include `participant_code`, `session_id` and `done=1`; P
 
 The same ID or code restores the same session, including a completed one. A restored completion now explicitly says that a previous completed session was loaded. Incognito does not reset server records. Use the isolated local preview for repeated software testing; do not remove real responses or reuse one code across experts. Changing identity within a live tab is blocked to prevent mixing two participants' responses. Close that tab and open the intended link in a new tab.
 
-The linkage update changes application metadata, not the six materials, questions, ground truth or experimental design. Instrument v7 and the shared v6 material hashes remain unchanged. The round-2 application event version is `study1-round2-app-v2`.
+The linkage update changes application metadata, not the six materials, questions, ground truth or experimental design. Instrument v7 and the shared v6 material hashes remain unchanged. The round-2 application event version is `study1-round2-app-v3`.
+
+
+## Checking the running release
+
+The version-2 entry point now displays `Study 1 · Version 2 · second expert assessment · Build 2026-11-03.3` before any participant-ID check. The earlier entry point instead says `Earlier Study 1 entry point`. If neither marker is present, the visible page has not executed these entry-point files.
+
+An entry-point/shared-module mismatch now stops with an explicit older-code message before the cached launch function can run. This check does not reset participant records or restart the service. The researcher controls any necessary deployment restart. The repository disables automatic source watching, so a browser refresh alone does not guarantee that imported server modules are refreshed.
+
+The exact older message `The supplied Prolific ID is invalid.` is absent from the current Study 1 modules. Study 2 retains a Prolific-only check, so seeing that sentence alone is not sufficient to identify which app or release is running. Confirm the visible Study 1 version-2 marker before diagnosing participant-link behaviour.
