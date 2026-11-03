@@ -9,6 +9,8 @@
 > requirement and candidate evidence. Production checkpoints contain the
 > Prolific platform identifier for linkage, correcting the older no-raw-platform-ID
 > statement below. Duration must be piloted rather than promised as ten minutes.
+> Round 2 also accepts researcher-issued participant codes for experts recruited
+> outside Prolific, with source-specific linkage and separate identifier namespaces.
 > Fix the revised-round criteria before recruitment and analyse it separately.
 
 ## Purpose and Contribution

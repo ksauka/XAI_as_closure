@@ -35,7 +35,7 @@ def round2_archive_path(session_id: str) -> str:
 
 def recover_round2_checkpoint(*, store: SessionStore, cases: CaseRepository,
                               repo: str, token: str, session_id: str,
-                              participant_id: str, linkage_hash: str) -> dict | None:
+                              participant_id: str, linkage_hash: str, recruitment_source: str = "prolific") -> dict | None:
     """A failed lookup is not treated as permission to overwrite a checkpoint."""
     path = round2_archive_path(session_id)
     try:
@@ -52,6 +52,7 @@ def recover_round2_checkpoint(*, store: SessionStore, cases: CaseRepository,
         if (payload.get('session_id') != session_id
                 or payload.get('participant_id') != participant_id
                 or payload.get('linkage_hash') != linkage_hash
+                or payload.get('recruitment_source', 'prolific') != recruitment_source
                 or payload.get('validation_round') != 'round2'
                 or payload.get('material_manifest', {}).get('manifest_sha256') != material_manifest()['manifest_sha256']):
             raise ValueError('Checkpoint identity differs.')

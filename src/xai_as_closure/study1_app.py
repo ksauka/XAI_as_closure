@@ -23,6 +23,7 @@ from .document_renderer import render_cv_document, render_reference_document
 from .github_saver import save_to_github, test_github_connection
 from .storage import DEFAULT_DATA_ROOT, SessionStore, stable_session_id
 from .study1 import STUDY1_INSTRUMENT_VERSION, Study1Session, WorkflowError, instrument_version
+from .study1_launch import ParticipantLink, read_participant_link, validate_participant
 from .study1_round2_support import check_round2_materials, recover_round2_checkpoint, round2_archive_path
 
 
@@ -32,6 +33,29 @@ def _round() -> str:
 
 def _local_preview() -> bool:
     return os.getenv("STUDY1_LOCAL_PREVIEW") == "1"
+
+
+def _participant_id() -> str:
+    return str(st.session_state.get("_study1_participant_id", st.session_state.get("prolific_pid", "")))
+
+
+def _recruitment_source() -> str:
+    if _local_preview():
+        return "preview"
+    return str(st.session_state.get("_study1_recruitment_source", "prolific"))
+
+
+def _set_participant(link: ParticipantLink) -> None:
+    existing = st.session_state.get("_study1_session")
+    if existing is not None and (_participant_id() != link.participant_id
+            or _recruitment_source() != link.recruitment_source):
+        raise WorkflowError("This tab is linked to another participant. Open your own study link in a new tab.")
+    st.session_state["_study1_participant_id"] = link.participant_id
+    st.session_state["_study1_recruitment_source"] = link.recruitment_source
+    if link.recruitment_source == "prolific":
+        st.session_state["prolific_pid"] = link.participant_id
+    else:
+        st.session_state.pop("prolific_pid", None)
 
 
 def _secret(name: str, default: str = "") -> str:
@@ -217,8 +241,8 @@ def _sync_github() -> None:
     session_id = session.state["session_id"]
     payload = {
         "session_id": session_id,
-        "participant_id": st.session_state.get("prolific_pid", ""),
-        "prolific_pid": st.session_state.get("prolific_pid", ""),
+        "participant_id": _participant_id(),
+        "prolific_pid": _participant_id() if _recruitment_source() == "prolific" else "",
         "saved_at_utc": datetime.now(timezone.utc).isoformat(),
         **session.state,
         "material_manifest": material_manifest(),
@@ -244,10 +268,18 @@ def _sync_github() -> None:
 
 
 def _read_launch_params() -> None:
-    """Read the Prolific-issued participant id, matching Study 2's flow."""
+    """Read explicit linkage without requiring Prolific recruitment."""
     if _local_preview():
         st.session_state.setdefault("prolific_pid", os.getenv("STUDY1_PREVIEW_ID", "LOCAL_PREVIEW_STUDY1_ROUND2"))
         st.session_state["return_raw"] = ""
+        return
+    if _round() == "round2":
+        link = read_participant_link(prolific_pid=_query("PROLIFIC_PID"),
+            participant_code=_query("participant_code"), legacy_pid=_query("pid"))
+        if link is not None:
+            _set_participant(link)
+        if _query("return"):
+            st.session_state["return_raw"] = _query("return")
         return
     pid = _query("PROLIFIC_PID") or _query("pid")
     if "prolific_pid" not in st.session_state and pid:
@@ -257,7 +289,26 @@ def _read_launch_params() -> None:
 
 
 def _prolific_gate() -> None:
-    """Manual fallback identical to Study 2's, for direct/local links."""
+    """Link experts through their recruitment platform or researcher-issued code."""
+    if _round() == "round2":
+        if _participant_id():
+            return
+        st.header("Welcome to the study task")
+        st.write("Use the participant code supplied by the researcher, or select Prolific if you were recruited there.")
+        kind = st.radio("How were you invited?",
+            ["Researcher-issued participant code", "Prolific"], key="study1_link_type")
+        source = "prolific" if kind == "Prolific" else "researcher"
+        value = st.text_input("Prolific ID" if source == "prolific" else "Participant code",
+            max_chars=64, key="study1_link_value")
+        st.caption("Do not enter your name or email address. Use the same code when returning to an unfinished task.")
+        if st.button("Begin study task", type="primary"):
+            try:
+                _set_participant(validate_participant(value, source))
+            except WorkflowError as exc:
+                st.error(str(exc))
+            else:
+                st.rerun()
+        st.stop()
     if st.session_state.get("prolific_pid"):
         return
     st.header("Welcome to the study task")
@@ -333,14 +384,20 @@ def _safe_qualtrics_return(raw_return: str) -> str | None:
 
 
 def _build_final_return(
-    raw_return: str, prolific_pid: str, session_id: str
+    raw_return: str, prolific_pid: str, session_id: str, *, recruitment_source: str = "prolific"
 ) -> str | None:
     safe_return = _safe_qualtrics_return(raw_return)
     if not safe_return:
         return None
     parsed = urlparse(safe_return)
     query = dict(parse_qsl(parsed.query, keep_blank_values=True))
-    query["PROLIFIC_PID"] = prolific_pid
+    if recruitment_source == "researcher":
+        query.pop("PROLIFIC_PID", None)
+        query.pop("pid", None)
+        query["participant_code"] = prolific_pid
+    else:
+        query.pop("participant_code", None)
+        query["PROLIFIC_PID"] = prolific_pid
     query["session_id"] = session_id
     query["done"] = "1"
     return urlunparse(parsed._replace(query=urlencode(query, doseq=True)))
@@ -352,11 +409,13 @@ def _initialize() -> None:
         if st.session_state["_study1_session"].state.get("validation_round", "initial") != validation_round:
             raise WorkflowError("This saved session belongs to a different validation round.")
         return
-    prolific_id = str(st.session_state["prolific_pid"]).strip()
+    prolific_id = _participant_id().strip()
+    source = _recruitment_source()
     production = not _local_preview() and (validation_round == "round2" or bool(_query("PROLIFIC_PID") or _query("pid")))
-    if validation_round == "round2" and production and not re.fullmatch(r"[0-9a-fA-F]{24}", prolific_id):
-        raise WorkflowError("The supplied Prolific ID is invalid.")
-    linkage_hash = hashlib.sha256(prolific_id.encode("utf-8")).hexdigest()
+    hash_input = prolific_id
+    if validation_round == "round2" and production:
+        hash_input = validate_participant(prolific_id, source).hash_input
+    linkage_hash = hashlib.sha256(hash_input.encode("utf-8")).hexdigest()
     cases = CaseRepository()
     version = instrument_version(validation_round)
     identity = f"{linkage_hash}\0{cases.case_set_id}\0{version}"
@@ -381,8 +440,11 @@ def _initialize() -> None:
         stored = recover_round2_checkpoint(store=store, cases=cases,
             repo=_secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO"),
             token=_secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN"),
-            session_id=session_id, participant_id=prolific_id, linkage_hash=linkage_hash)
+            session_id=session_id, participant_id=prolific_id, linkage_hash=linkage_hash, recruitment_source=source)
     if stored:
+        stored_source = stored.get("recruitment_source", "preview" if stored.get("is_preview") else "prolific")
+        if validation_round == "round2" and stored_source != source:
+            raise WorkflowError("The saved participant-link type does not match this session.")
         if stored.get("validation_round", "initial") != validation_round:
             raise WorkflowError("The saved validation round does not match this app.")
         session = Study1Session.restore(stored, cases)
@@ -393,12 +455,15 @@ def _initialize() -> None:
         session.state["is_preview"] = _local_preview()
         store.save(session.state)
         event = "session_created"
+    session.state["recruitment_source"] = source
+    st.session_state["_study1_resumed_complete"] = bool(stored and session.complete)
     st.session_state["_study1_started"] = time.perf_counter()
     st.session_state["_study1_session"] = session
     st.session_state["_study1_store"] = store
     st.session_state["_study1_pilot"] = _local_preview() or not production
     _log(event, component="launch", payload={
-        "prolific_id_from_url": production,
+        "prolific_id_from_url": bool(_query("PROLIFIC_PID") or _query("pid")) and source == "prolific",
+        "recruitment_source": source,
         "pilot_mode": st.session_state["_study1_pilot"],
         "validation_round": validation_round, "case_set_id": cases.case_set_id,
         "instrument_version": version, "is_preview": _local_preview()})
@@ -789,6 +854,8 @@ def _post_study(session: Study1Session) -> None:
 
 
 def _complete(session: Study1Session) -> None:
+    if st.session_state.get("_study1_resumed_complete"):
+        st.info("This participant ID or code already has a completed session. Your recorded responses have been restored.")
     st.markdown(
         '<div class="completion-panel"><strong>Task complete</strong><br>'
         "All six independent candidate judgments and the final materials review "
@@ -797,8 +864,9 @@ def _complete(session: Study1Session) -> None:
     )
     return_url = _build_final_return(
         str(st.session_state.get("return_raw", "")),
-        str(st.session_state["prolific_pid"]),
+        _participant_id(),
         str(session.state["session_id"]),
+        recruitment_source=_recruitment_source(),
     )
     if return_url:
         st.link_button(
@@ -824,8 +892,12 @@ def run(validation_round: str = "initial") -> None:
         except WorkflowError as exc:
             st.error(str(exc))
             st.stop()
-    _read_launch_params()
-    _prolific_gate()
+    try:
+        _read_launch_params()
+        _prolific_gate()
+    except WorkflowError as exc:
+        st.error(f"Study link unavailable: {exc}")
+        st.stop()
     _check_private_storage()
     try:
         _initialize()

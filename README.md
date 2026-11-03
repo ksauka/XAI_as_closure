@@ -58,8 +58,10 @@ cp .env.example .env
 cp .streamlit/secrets.toml.example .streamlit/secrets.toml
 ```
 
-Both studies use `PROLIFIC_PID` (with `pid` as a legacy fallback) and the
-encoded Qualtrics `return` URL. Study 2 additionally uses `cond`, which must
+Prolific routes use `PROLIFIC_PID` (with `pid` as a legacy fallback) and the
+encoded Qualtrics `return` URL. Study 1 version 2 also accepts a researcher-issued
+`participant_code` for independently recruited experts, including manual entry
+on its welcome page. These codes use a separate linkage namespace. Study 2 additionally uses `cond`, which must
 match the condition-locked application.
 
 For local or self-hosted deployment, `STUDY1_DATA_ROOT` and `STUDY2_DATA_ROOT`
