@@ -67,3 +67,10 @@ OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python analysis/study2/build_budget_rep
 ```
 
 The original per-replicate synthetic outputs, code and metadata are also retained in the manuscript workspace reproducibility ZIP. Raw synthetic replicate folders are omitted from Git to avoid unnecessary repository growth; no participant records enter this bundle. The checked-in result metadata retain their original source hashes and run commits. Reproduction creates new run metadata without changing the archived ZIP.
+
+
+## N=240 extension
+
+`budget_2026-11-03/Study2_N240_Comparison.md` extends the same 21 scenarios to N=240, 30 per cell, with 500 datasets per scenario and 10,500 additional fits. N200 and N240 panels are not nested; the report presents their separate Monte Carlo intervals. The main sample excludes the 40-person technical pilot, giving at least 280 sessions before replacement and expert validation. No target has been selected.
+
+The extension configs are `n240_scenarios.json` and `n240_supplement_scenarios.json`. Run them through `compare_budget_precision.py`, with output directories `n240_500_q40` and `n240_supplement_500_q40`, then run `summarise_n240.py`. The report helper also needs the original checked-in `comparison_results.json`. All raw extension replicates are retained in the manuscript workspace's separate N240 reproducibility ZIP; only summaries, configs and metadata are checked into Git.
