@@ -1,13 +1,13 @@
 {
-  "freeze_id": "study2-material-freeze-v4",
+  "freeze_id": "study2-material-freeze-v5",
   "frozen_on": "2026-11-03",
   "case_set_id": "ai_governance_lead_six_profiles_v7",
   "material_set": "chi_six_profiles_v7",
   "material_manifest_sha256": "cd9a44d73727f127a691b3dcc3f95e41eafa39225ecef57600ad93f722c55550",
   "delivery_spec_version": "anthrokit-hiring-study2-v9",
-  "study2_state_schema": "study2-state-v9",
-  "study2_event_schema": "study2-event-v11",
-  "study2_application_version": "study2-app-v13",
+  "study2_state_schema": "study2-state-v10",
+  "study2_event_schema": "study2-event-v12",
+  "study2_application_version": "study2-app-v14",
   "files": {
     "study_CHI/six_profiles_case_set.json": "775f88b22726c04c06aab57a64567d6d754712aeea89f112b466d2b84f62b124",
     "study_CHI/job_description.md": "645094cba8fa458773b50e2d86f798ea411b98c25f2d938c2484db697db1b549",
@@ -15,7 +15,9 @@
     "src/xai_as_closure/study2_delivery.py": "385948fac92af0bd0bbe54291aba651c07122984c22470d43afcc9c3699081f8",
     "src/xai_as_closure/anthrokit_hiring.yaml": "5635d3b1f0a4ba107cde356ddea1ac92c0ec532be961dbd2879a70729482038f",
     "src/xai_as_closure/decision_agent.py": "188be1335b740018d897b9fa2d585f7b1a2013b224a34cd031c26e5ac8ae2377",
-    "src/xai_as_closure/logger.py": "744880337fc4a592683bac5d3b5e10c98d683b1ccc14c5ee3c9a5656112ce6a2"
+    "src/xai_as_closure/logger.py": "c370e9aed3481bae4686ec0df6d582427bebff413c529130be3e421bf05a31b4",
+    "src/xai_as_closure/study2_app.py": "b6ec7cd4dc712b0bb9d28d01005179526f5ff6de8d4bc7fb47d00937fe98f320",
+    "src/xai_as_closure/study2.py": "affb3e7c2c2888a4b373b6c46f407b17783a85578d6167626f989ead694cf6e5"
   },
   "ground_truth": {
     "C-01": "Advance",
@@ -33,9 +35,9 @@
     "C-05": "Advance candidate to human interview",
     "C-06": "Reject candidate"
   },
-  "supersedes": "study2-material-freeze-v3",
+  "supersedes": "study2-material-freeze-v4",
   "participant_materials_frozen_on": "2026-11-03",
-  "release_change": "Author-requested C-05 revision: certification and IAPP membership both end on 31 May 2026. Ground truth and AI verdicts unchanged. Focused expert assessment covers C-05/C-06 only; Study 2 retains all six cases.",
+  "release_change": "Short neutral free-text reason after every final decision, capped at 200 characters, with the existing decisive-evidence coding retained. Both confidence controls start unanswered and require explicit selection; 50% remains a valid intentional response. No time minimum, per-profile time instruction or automatic submission.",
   "validation_status": "pending_focused_assessment",
   "ready_for_confirmatory_recruitment": false
 }

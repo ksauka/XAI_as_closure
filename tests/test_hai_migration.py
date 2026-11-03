@@ -605,6 +605,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 app.run(timeout=20)
 
                 app.radio[0].set_value("Reject candidate")
+                app.select_slider[0].set_value(50)
                 next(
                     button
                     for button in app.button
@@ -701,6 +702,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
                 ).click()
                 app.run(timeout=20)
                 app.radio[0].set_value("Reject candidate")
+                app.select_slider[0].set_value(50)
                 next(
                     button
                     for button in app.button
@@ -765,6 +767,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
                     if button.label == "Begin candidate screening"
                 ).click().run(timeout=20)
                 app.radio[0].set_value("Reject candidate")
+                app.select_slider[0].set_value(50)
                 next(
                     button
                     for button in app.button

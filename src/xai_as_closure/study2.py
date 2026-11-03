@@ -13,7 +13,19 @@ from .conditions import Study2Condition, get_study2_condition
 from .decision_agent import AgentOutput, Study2DecisionAgent
 from .study2_delivery import DELIVERY_SPEC_VERSION
 
-STATE_SCHEMA_VERSION = "study2-state-v9"
+STATE_SCHEMA_VERSION = "study2-state-v10"
+EVIDENCE_PROMPT = "In a few words, what was the main reason for your final decision?"
+EVIDENCE_MAX_CHARACTERS = 200
+
+
+def _validate_evidence_response(response: str) -> str:
+    if not isinstance(response, str) or not response.strip():
+        raise Study2WorkflowError("Please enter a brief reason for your final decision.")
+    response = response.strip()
+    if len(response) > EVIDENCE_MAX_CHARACTERS:
+        raise Study2WorkflowError(f"Keep the reason within {EVIDENCE_MAX_CHARACTERS} characters.")
+    return response
+
 
 
 class Study2WorkflowError(ValueError):
@@ -100,6 +112,8 @@ class Study2Session:
             state={
                 "schema_version": STATE_SCHEMA_VERSION,
                 "delivery_spec_version": DELIVERY_SPEC_VERSION,
+                "confidence_response_policy": "explicit_selection_no_numeric_default_v1",
+                "evidence_probe_version": "short_free_text_200_v1",
                 "case_set_id": cases.case_set_id,
                 "session_id": session_id,
                 "participant_id": participant_id,
@@ -270,9 +284,7 @@ class Study2Session:
     def submit_evidence_recall(self, response: str) -> str:
         if self.phase != "recall":
             raise Study2WorkflowError("The evidence-recall response is unavailable.")
-        response = response.strip()
-        if not response:
-            raise Study2WorkflowError("Complete the evidence-recall response.")
+        response = _validate_evidence_response(response)
         reference = self._require_current_reference()
         self.current_trial()["evidence_recall"] = {
             "response": response,
@@ -406,6 +418,9 @@ class Study2Session:
             )
         if phase in {"aided", "recall"} and "agent_output" not in current_trial:
             raise Study2WorkflowError("The current trial is missing its AI assessment.")
+        for trial in trials.values():
+            if "evidence_recall" in trial:
+                _validate_evidence_response(trial["evidence_recall"].get("response"))
         trials_with_output = [
             trial for trial in trials.values() if "agent_output" in trial
         ]

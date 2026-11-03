@@ -68,6 +68,8 @@ class LaunchTests(unittest.TestCase):
                 order = list(session.state["profile_order"])
                 for trial in range(6):
                     app.radio[0].set_value("Reject candidate")
+                    self.assertIsNone(app.select_slider[0].value)
+                    app.select_slider[0].set_value(50)
                     click(app, "Lock initial decision")
                     if index % 2:
                         app.text_area[0].set_value("membership")
@@ -94,6 +96,8 @@ class LaunchTests(unittest.TestCase):
                         self.assertEqual(session.state["profile_order"], order)
                         app = resumed
                     app.radio[0].set_value("Reject candidate")
+                    self.assertIsNone(app.select_slider[0].value)
+                    app.select_slider[0].set_value(50)
                     click(app, "Lock final decision")
                     self.assertEqual(session.phase, "recall")
                     app.text_area[0].set_value(

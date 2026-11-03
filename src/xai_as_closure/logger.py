@@ -20,8 +20,8 @@ from .storage import _append_json_line, _atomic_write_json, _private_directory
 DEFAULT_LOG_DIR = (
     PROJECT_ROOT / "study_CHI" / "data" / "raw" / "study2" / "interaction_logs"
 )
-EVENT_SCHEMA_VERSION = "study2-event-v11"
-APPLICATION_VERSION = "study2-app-v13"
+EVENT_SCHEMA_VERSION = "study2-event-v12"
+APPLICATION_VERSION = "study2-app-v14"
 
 
 class EventLogger:

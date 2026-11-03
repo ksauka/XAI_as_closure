@@ -2,6 +2,8 @@
 
 Version study2-evidence-v3 (shared material v7). Code the post-decision response, not the decision or a click trace. Present coders with a pseudonymous response ID, candidate reference and response text; hide condition, final decision, confidence, trust and interaction logs. Candidate identity is necessary to judge the decisive evidence.
 
+The current collection prompt is "In a few words, what was the main reason for your final decision?", asked after every final decision with a 200-character cap. This wording change does not alter the coding rules below. A brief response that names a source without its decisive distinction is not automatically correct.
+
 ## Codes
 
 1: identifies the decisive requirement/evidence conflict. 0: a substantive response does not identify it, including explicit "None", general praise of experience, or generic references to certification without the decisive distinction. NA: missing, blank, unreadable or technically corrupted text. Do not infer evidence identification from the verdict or from a correct keyword copied without the relevant relationship.

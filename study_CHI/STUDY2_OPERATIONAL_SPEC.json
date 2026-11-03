@@ -9,7 +9,9 @@
     "hard_timeout_seconds": null,
     "automatic_submission": false,
     "pilot_input_sha256": null,
-    "rule": "Round up to whole minutes: 1.25 times the largest cell-specific 95th percentile of complete technical-pilot session durations; at least five complete sessions per cell, all eight cells represented. The pilot is separate from confirmatory data. No decision is automatically submitted."
+    "rule": "Round up to whole minutes: 1.25 times the largest cell-specific 95th percentile of complete technical-pilot session durations; at least five complete sessions per cell, all eight cells represented. The pilot is separate from confirmatory data. No decision is automatically submitted.",
+    "minimum_per_profile_seconds": null,
+    "participant_per_profile_time_instruction": null
   },
   "evidence_coding": {
     "manual_version": "study2-evidence-v3",
@@ -295,9 +297,31 @@
   },
   "questionnaire_updated": "2026-10-30",
   "material_validation": {
-    "case_set_id": "ai_governance_lead_six_profiles_v6",
-    "status": "pending_second_round",
+    "case_set_id": "ai_governance_lead_six_profiles_v7",
+    "status": "pending_focused_assessment",
     "validated_case_set_id": null,
     "results_record": null
+  },
+  "confidence": {
+    "response_min": 0,
+    "response_max": 100,
+    "initial_value": null,
+    "explicit_selection_required": true,
+    "midpoint_50_is_valid": true,
+    "timing": [
+      "unaided",
+      "aided"
+    ],
+    "control": "native select-slider with an unanswered option"
+  },
+  "evidence_probe": {
+    "version": "short_free_text_200_v1",
+    "response_type": "free_text",
+    "prompt": "In a few words, what was the main reason for your final decision?",
+    "maximum_characters": 200,
+    "timing": "after_each_final_decision",
+    "same_wording_on_all_trials": true,
+    "required": true,
+    "interpretation": "Post-decision evidence identification, coded using the existing independent-coding plan; not proof of pre-decision verification."
   }
 }

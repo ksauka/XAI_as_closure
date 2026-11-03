@@ -36,7 +36,7 @@ from .logger import (
     restored_logger,
 )
 from .recommendation_component import render_recommendation_passage
-from .study2 import Study2Session, Study2WorkflowError
+from .study2 import EVIDENCE_MAX_CHARACTERS, EVIDENCE_PROMPT, STATE_SCHEMA_VERSION, Study2Session, Study2WorkflowError
 from .study2_delivery import (
     HIGH_ANTHROPOMORPHISM,
     LOW_ANTHROPOMORPHISM,
@@ -260,7 +260,7 @@ def _initialize(locked_condition_id: str) -> None:
     log_dir = Path(data_root) if data_root else DEFAULT_LOG_DIR
     cases = CaseRepository()
     session_id = hashlib.sha256(
-        f"{participant_id.strip()}\0{cases.case_set_id}".encode()
+        f"{participant_id.strip()}\0{cases.case_set_id}\0{STATE_SCHEMA_VERSION}".encode()
     ).hexdigest()
     stored_state = load_state(session_id, log_dir)
     if production_launch and stored_state is None:
@@ -931,12 +931,12 @@ def _unaided(session: Study2Session, reference: str) -> None:
             label_visibility="collapsed",
         )
         st.subheader("Rate your confidence about your decision")
-        confidence = st.slider(
+        confidence = st.select_slider(
             "Rate your confidence about your decision",
-            0,
-            100,
-            50,
-            format="%d%%",
+            options=[None, *range(101)],
+            value=None,
+            format_func=lambda value: "No rating selected" if value is None else f"{value}%",
+            key=f"unaided_confidence_{reference}",
             label_visibility="collapsed",
         )
         submitted = st.form_submit_button("Lock initial decision", type="primary")
@@ -1071,12 +1071,12 @@ def _aided(session: Study2Session, reference: str) -> None:
             label_visibility="collapsed",
         )
         st.subheader("Rate your confidence about your decision")
-        confidence = st.slider(
+        confidence = st.select_slider(
             "Rate your confidence about your decision",
-            0,
-            100,
-            50,
-            format="%d%%",
+            options=[None, *range(101)],
+            value=None,
+            format_func=lambda value: "No rating selected" if value is None else f"{value}%",
+            key=f"aided_confidence_{reference}",
             label_visibility="collapsed",
         )
         submitted = st.form_submit_button("Lock final decision", type="primary")
@@ -1105,8 +1105,8 @@ def _aided(session: Study2Session, reference: str) -> None:
 def _recall(session: Study2Session, reference: str) -> None:
     with st.form(f"recall_{reference}"):
         response = st.text_area(
-            "What information most influenced your final assessment?",
-            max_chars=1500,
+            EVIDENCE_PROMPT,
+            max_chars=EVIDENCE_MAX_CHARACTERS,
         )
         submitted = st.form_submit_button("Submit and continue", type="primary")
     if submitted:

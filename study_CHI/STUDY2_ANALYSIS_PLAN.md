@@ -65,7 +65,7 @@ For a frozen k-item scale, reverse only declared items using min+max-value, then
 
 ## Evidence coding
 
-Use the versioned manual STUDY2_EVIDENCE_CODING.md. Responses are coded without final verdicts, treatment assignment, or trust scores. Complete responses receive 1 only when decisive evidence is identified, otherwise 0; missing responses remain missing. The code is independent of whether the final decision is correct.
+After every final decision, the same neutral free-text prompt asks: "In a few words, what was the main reason for your final decision?" Responses are required and capped at 200 characters. Use the versioned manual STUDY2_EVIDENCE_CODING.md. Responses are coded without final verdicts, treatment assignment, or trust scores. Complete responses receive 1 only when decisive evidence is identified, otherwise 0; missing responses remain missing. The code is independent of whether the final decision is correct.
 
 Select 25% within each profile, rounded up, with a minimum of 20 responses per profile or all available if fewer, using seed 20261022 on a stable sorted response-ID frame. Two coders work independently. Report raw agreement, Cohen's kappa and the 2 × 2 counts; label kappa undefined when margins are degenerate. Lock independent codes before a third reviewer adjudicates. Freeze the clarified manual before remaining coding and recode the subset if criteria change. Keep original, adjudicated and final codes. No reliability threshold is retrospectively used to discard responses.
 
