@@ -58,13 +58,15 @@ def _validate_decision_response(response: dict[str, Any]) -> None:
         raise Study2WorkflowError("Confidence must be a whole number from 0 to 100.")
 
 
-def _forcing_answer_is_correct(answer: str) -> bool:
-    """Validate the condition-invariant role-requirement re-entry task.
+def _forcing_answer_feedback(answer: str) -> str | None:
+    """Return participant feedback for the role-requirement re-entry task.
 
     Cognitive forcing operates on the job description, not on the current
     candidate or the AI recommendation. Every forcing-present participant must
     therefore enter the same two requirements: a current qualifying
-    certification and current relevant professional membership.
+    certification and current relevant professional membership. Participants
+    may identify the certification category in plain language; reproducing a
+    credential name verbatim is not part of the manipulation.
     """
     normalized = re.sub(r"[^a-z0-9]+", " ", answer.lower())
     names_aigp = (
@@ -72,7 +74,21 @@ def _forcing_answer_is_correct(answer: str) -> bool:
         or "artificial intelligence governance professional" in normalized
     )
     names_iso = "42001" in normalized and "lead implementer" in normalized
-    names_qualifying_cert = names_aigp or names_iso
+    names_generic_required_cert = (
+        re.search(
+            r"\b(?:required|qualifying|recognised|recognized|professional)\s+"
+            r"(?:ai\s+governance\s+)?cert(?:ificate|ification)?\b",
+            normalized,
+        )
+        is not None
+        or re.search(
+            r"\bcert(?:ificate|ification)?\s+(?:that\s+is\s+)?"
+            r"(?:required|qualifying|recognised|recognized|professional)\b",
+            normalized,
+        )
+        is not None
+    )
+    names_qualifying_cert = names_aigp or names_iso or names_generic_required_cert
     names_membership = (
         re.search(r"\b(member|membership|memberships)\b", normalized) is not None
     )
@@ -84,12 +100,25 @@ def _forcing_answer_is_correct(answer: str) -> bool:
         r"\b(expired|lapsed|inactive|not current|not valid)\b",
         normalized.replace("not expired", "current"),
     )
-    return bool(
-        names_qualifying_cert
-        and names_membership
-        and names_currency
-        and not negative_status
-    )
+    if negative_status:
+        return "Both mandatory requirements must be current at screening."
+    if not names_qualifying_cert and not names_membership:
+        return (
+            "Enter the current qualifying-certification requirement and the "
+            "current professional-membership requirement."
+        )
+    if not names_qualifying_cert:
+        return "Add the current qualifying-certification requirement."
+    if not names_membership:
+        return "Add the current professional-membership requirement."
+    if not names_currency:
+        return "State that both mandatory requirements must be current at screening."
+    return None
+
+
+def _forcing_answer_is_correct(answer: str) -> bool:
+    """Whether an answer identifies both current mandatory requirements."""
+    return _forcing_answer_feedback(answer) is None
 
 
 @dataclass
@@ -226,12 +255,10 @@ class Study2Session:
         requirement = str(response.get("mandatory_requirement", "")).strip()
         if not requirement:
             raise Study2WorkflowError("Enter your answer before continuing.")
-        is_correct = _forcing_answer_is_correct(requirement)
-        if not is_correct:
-            raise Study2WorkflowError(
-                "Recheck the job description and enter both mandatory "
-                "professional requirements, including their current-status rule."
-            )
+        feedback = _forcing_answer_feedback(requirement)
+        is_correct = feedback is None
+        if feedback is not None:
+            raise Study2WorkflowError(feedback)
         submitted_at = _now()
         started_at = str(forcing.get("started_at_utc", submitted_at))
         try:

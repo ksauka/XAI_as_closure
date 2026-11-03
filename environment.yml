@@ -1,9 +1,0 @@
-name: dsagent
-channels:
-  - conda-forge
-  - defaults
-dependencies:
-  - python=3.11
-  - pip>=24
-  - pip:
-      - -r requirements.txt

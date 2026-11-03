@@ -3,7 +3,7 @@
 Active study applications:
 
 - `study1_validation.py`: earlier expert-validation entry point;
-- `study1_validation_v2.py`: standalone second expert assessment, using the shared v6 materials and separate round-2 records. See `study_CHI/STUDY1_ROUND2_LAUNCH.md`;
+- `study1_validation_v2.py`: current focused C-05/C-06 local candidate, using shared v8 shortened documents and separate `round2_focused_trimmed` records. See `study_CHI/STUDY1_FOCUSED_LAUNCH.md`;
 - `study2_01_lowP_lowA_noF.py`: `P0_A0_F0`;
 - `study2_02_lowP_lowA_F.py`: `P0_A0_F1`;
 - `study2_03_lowP_highA_noF.py`: `P0_A1_F0`;
@@ -26,4 +26,4 @@ the app rejects a mismatch.
 
 `local_review.py` is a local-only review hub, not a participant entry point. Start all eight task previews with `python tools/local_study2.py`, then start the hub with `STUDY2_LOCAL_PREVIEW=1 python -m streamlit run apps/local_review.py --server.address 127.0.0.1 --server.port 8500`. See study_CHI/STUDY2_LOCAL_PREPARATION.md. Preview sessions are synthetic, isolated and never remotely saved.
 
-The current `study1_validation_v2.py` runs focused C-05/C-06 revalidation on shared v7 materials (Build 2026-11-03.4). The old six-profile v6 route is preserved in `study1_validation_v2_six_profiles_archive.py`. Study 2 retains all six profiles. See `study_CHI/STUDY1_FOCUSED_LAUNCH.md`.
+The unpublished `study1_validation_v2.py` candidate runs focused C-05/C-06 revalidation on shared v8 materials (Build 2026-11-03.7). It contains no participant timer, build caption or repeat button; resume remains. No publication is authorised during recruitment. The old six-profile round has no entry point; its code remains for historical records. Study 2 retains all six profiles. See `study_CHI/STUDY1_FOCUSED_LAUNCH.md`.

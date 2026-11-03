@@ -43,39 +43,3 @@
 **7.3 Committee and Governance Forums.** The role prepares materials for and attends the bank's AI governance committee, presenting assessment outcomes, open risks, and recommended controls to senior stakeholders.
 **7.4 Incident and Escalation Support.** Where a deployed AI system is suspected of producing a materially incorrect or unfair outcome, the role supports the incident review, including identifying whether an existing conformity assessment remains valid.
 **7.5 Framework Maintenance.** The role periodically reviews and updates the bank's internal AI governance framework and control library to reflect regulatory guidance and internal lessons learned.
-
-## Section 8. Working Arrangements
-**8.1 Location and Hybrid Working.** The role is based at the bank's head office, with a hybrid working pattern of at least three days per week on-site to support committee attendance and cross-functional work.
-**8.2 Travel.** Occasional travel to other bank sites may be required to support assessments of AI systems developed or operated outside the head office.
-**8.3 Time-Sensitive Reviews.** The role is occasionally required to turn around a conformity assessment on a compressed timeline ahead of a regulatory deadline or a scheduled system release, and to prioritise accordingly.
-
-## Section 9. Desired Additional Experience
-**9.1 Sector Exposure.** Prior experience in financial services, or another sector subject to comparable high-risk AI regulation, is desirable but not required.
-**9.2 Toolset Familiarity.** Familiarity with model documentation, risk-register, or governance-workflow tooling is an advantage.
-**9.3 Communication Skills.** Ability to explain technical AI risk concepts to non-technical senior stakeholders in written and verbal form.
-**9.4 Prior Regulatory Engagement.** Experience engaging directly with a regulator or external auditor on an AI-related or model-risk matter is a plus.
-
-## Section 10. Performance Expectations
-**10.1 First-Year Objectives.** In the first year, the role is expected to complete conformity assessments for the bank's existing inventory of high-risk AI systems and to close any material control gaps identified.
-**10.2 Ongoing Development.** The postholder is expected to maintain their professional certification and professional membership, and to stay current with evolving EU AI Act guidance and standards revisions relevant to the role.
-**10.3 Career Progression.** Strong performance in this role is a recognised path toward a senior AI governance or Head of Model Risk position within the bank.
-
-## Section 11. Equal Opportunity and Application
-**11.1 Equal Opportunity Statement.** Suvh Trust Bank is an equal opportunity employer and welcomes applications regardless of background, consistent with applicable law.
-**11.2 Application Process.** Applications are reviewed against this job description and the accompanying recruitment policy; shortlisted candidates proceed to a first-stage screening review followed by a structured interview.
-**11.3 Pre-Employment Checks.** An offer of employment is subject to standard financial-services pre-employment checks, including verification of the certification and professional membership referenced in Sections 4.1 and 4.2.
-
-## Section 12. About Suvh Trust Bank
-**12.1 Overview.** Suvh Trust Bank is a mid-sized retail and commercial bank offering personal banking, business lending, and investment advisory services, with a multi-year programme underway to expand its use of AI across underwriting and advisory functions.
-**12.2 AI Programme Context.** The bank's AI systems support loan assessment, investment recommendations, and internal risk analytics. Several of these systems are classified as high-risk under the EU AI Act, which is the direct driver for this role.
-**12.3 Governance Maturity.** The bank's AI governance function was established two years ago and is scaling its assessment capacity to meet upcoming regulatory deadlines; this role is a core part of that scale-up.
-
-## Section 13. Compensation and Benefits Overview
-**13.1 Compensation Structure.** Compensation for this role comprises a base salary benchmarked to comparable second-line risk and governance roles in financial services, plus an annual performance-related bonus.
-**13.2 Benefits.** Standard benefits include pension contribution, private healthcare, and a professional development allowance that may be used toward maintaining the certification and membership referenced in Sections 4.1 and 4.2.
-**13.3 Study and Certification Support.** Where a postholder's certification or professional membership requires periodic renewal or continuing-education credits, the bank supports the associated cost and reasonable study time.
-
-## Section 14. Key Interfaces
-**14.1 Model Validation.** The role works with the model validation team to ensure that conformity assessments are consistent with independent model-risk findings for the same AI system.
-**14.2 Data Protection Office.** The role coordinates with the Data Protection Office where a high-risk AI system's conformity assessment overlaps with a data protection impact assessment.
-**14.3 External Auditors.** The role is a primary point of contact for external auditors and regulators reviewing the bank's high-risk AI systems, and prepares evidence packs for those reviews.

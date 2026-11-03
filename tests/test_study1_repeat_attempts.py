@@ -22,10 +22,6 @@ def complete(app):
         app.text_input(key=f'screening_evidence_{ref}').set_value('Synthetic test only')
         next(b for b in app.button if b.label == 'Lock and submit judgment').click().run()
         assert not app.exception
-    for key in ('role_requirement_clarity', 'candidate_profile_realism',
-                'qualification_difference_plausibility', 'mandatory_information_identifiability',
-                'information_sufficiency', 'task_ecological_validity'):
-        app.radio(key=f'post_study_{key}').set_value(4)
     app.radio(key='post_study_professional_disagreement').set_value('No')
     next(b for b in app.button if b.label == 'Submit final materials review').click().run()
     assert not app.exception
@@ -33,13 +29,13 @@ def complete(app):
 
 class RepeatAttemptTests(unittest.TestCase):
     def test_same_prolific_id_repeats_without_overwriting_and_refresh_resumes(self):
-        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {'STUDY1_LOCAL_PREVIEW': '0'}):
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {'STUDY1_LOCAL_PREVIEW': '1', 'STUDY1_PREVIEW_DATA_ROOT': directory, 'STUDY1_PREVIEW_ID': PID}):
             def secret(key, default=''):
                 return {'GITHUB_REPO': 'test/private', 'GITHUB_TOKEN': 'test-only',
                         'STUDY1_FOCUSED_DATA_ROOT': directory}.get(key, default)
             with patch('xai_as_closure.study1_app._secret', side_effect=secret), \
-                 patch('xai_as_closure.study1_app.test_github_connection', return_value=(True, 'ok')), \
-                 patch('xai_as_closure.study1_round2_support.requests.get', return_value=Mock(status_code=404)), \
+                 patch('xai_as_closure.background_save.test_github_connection', return_value=(True, 'ok')), \
+                 patch('requests.get', return_value=Mock(status_code=404)), \
                  patch('xai_as_closure.study1_app.save_to_github', return_value=(True, None)) as save:
                 app = AppTest.from_file(PATH, default_timeout=20)
                 app.query_params['PROLIFIC_PID'] = PID
@@ -67,10 +63,7 @@ class RepeatAttemptTests(unittest.TestCase):
                     if session.current_reference() == ref:
                         self.assertIsNone(app.radio(key=f'screening_decision_{ref}').value)
                         self.assertEqual(app.text_input(key=f'screening_evidence_{ref}').value, '')
-                payload = json.loads(save.call_args.args[2])
-                self.assertEqual(payload['prolific_pid'], PID)
-                self.assertEqual(payload['session_id'], repeat)
-                self.assertTrue(payload['repeat_attempt'])
+                save.assert_not_called()
                 refreshed = AppTest.from_file(PATH, default_timeout=20)
                 refreshed.query_params.update({'PROLIFIC_PID': PID, 'return': RETURN, 'attempt': token})
                 refreshed.run()

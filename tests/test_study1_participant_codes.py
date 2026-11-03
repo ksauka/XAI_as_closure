@@ -10,10 +10,14 @@ from unittest.mock import Mock, patch
 from urllib.parse import parse_qs, urlparse
 
 from streamlit.testing.v1 import AppTest
-from xai_as_closure.cases import PROJECT_ROOT
 from xai_as_closure.study1 import WorkflowError
-from xai_as_closure.study1_app import _build_final_return
+from xai_as_closure.study1_app import STUDY1_APP_RELEASE, _build_final_return
 from xai_as_closure.study1_launch import read_participant_link, validate_participant
+
+# The archived six-profile round keeps its code for historical records but has
+# no published entry point, so tests launch it from an in-memory script.
+ROUND2_APP = ("from xai_as_closure.study1_entry import run_entry\n"
+              f"run_entry(validation_round='round2', expected_release={STUDY1_APP_RELEASE!r})\n")
 
 
 class ParticipantCodeTests(unittest.TestCase):
@@ -66,13 +70,13 @@ class ParticipantCodeTests(unittest.TestCase):
             return {'GITHUB_REPO': 'test/private', 'GITHUB_TOKEN': 'test-only',
                     'STUDY1_ROUND2_DATA_ROOT': directory}.get(key, default)
         stack.enter_context(patch('xai_as_closure.study1_app._secret', side_effect=secret))
-        stack.enter_context(patch('xai_as_closure.study1_app.test_github_connection', return_value=(True, 'ok')))
+        stack.enter_context(patch('xai_as_closure.background_save.test_github_connection', return_value=(True, 'ok')))
         save = stack.enter_context(patch('xai_as_closure.study1_app.save_to_github', return_value=(True, 'ok')))
-        lookup = stack.enter_context(patch('xai_as_closure.study1_round2_support.requests.get', return_value=Mock(status_code=404)))
+        lookup = stack.enter_context(patch('requests.get', return_value=Mock(status_code=404)))
         return stack, save, lookup
 
     def app(self):
-        return AppTest.from_file(str(PROJECT_ROOT / 'apps/study1_validation_v2_six_profiles_archive.py'), default_timeout=15)
+        return AppTest.from_string(ROUND2_APP, default_timeout=15)
 
     def test_manual_external_expert_completes_and_reopens_saved_session(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -112,6 +116,11 @@ class ParticipantCodeTests(unittest.TestCase):
                 self.assertFalse(resumed.exception)
                 self.assertEqual(resumed.session_state['_study1_session'].state['session_id'], original_id)
                 self.assertTrue(resumed.session_state['_study1_session'].complete)
+                for _ in range(3):
+                    job = resumed.session_state.filtered_state.get('_study1_backup_job')
+                    if job:
+                        job[0].result(timeout=3)
+                    resumed.run()
                 self.assertTrue(any('already has a completed session' in item.value for item in resumed.info))
                 self.assertEqual(len(list((Path(directory) / 'sessions').glob('*.json'))), 1)
 

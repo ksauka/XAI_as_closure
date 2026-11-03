@@ -6,6 +6,7 @@ import hashlib
 import os
 import re
 import time
+from functools import partial
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qsl, unquote, urlencode, urlparse, urlunparse
@@ -27,11 +28,11 @@ from .document_renderer import (
 from .document_renderer import (
     render_cv_document as show_cv_document,
 )
-from .github_saver import test_github_connection
+from .background_save import check_connection_once, new_archive_id, sync_in_background
+from .github_saver import save_to_github
 from .logger import (
     DEFAULT_LOG_DIR,
     EventLogger,
-    load_remote_checkpoint,
     load_state,
     restored_logger,
 )
@@ -112,7 +113,7 @@ def _prolific_gate() -> None:
 
 
 def _check_private_storage() -> None:
-    """Require working private-GitHub storage for production launches."""
+    """Require storage settings; reachability is only logged, never awaited."""
     production_launch = not _local_preview() and bool(
         _query("PROLIFIC_PID") or _query("pid")
     )
@@ -133,19 +134,7 @@ def _check_private_storage() -> None:
             st.stop()
         st.warning(f"Pilot mode: {message}")
         return
-    status_key = "_study2_github_storage_ready"
-    if status_key not in st.session_state:
-        success, _detail = test_github_connection(token, repo)
-        st.session_state[status_key] = success
-    if not st.session_state[status_key]:
-        message = (
-            "Private study-data storage could not be reached. Please notify the "
-            "researcher before continuing."
-        )
-        if production_launch:
-            st.error(message)
-            st.stop()
-        st.warning(f"Pilot mode: {message}")
+    check_connection_once(token, repo)
 
 
 def _safe_qualtrics_return(raw_return: str) -> str | None:
@@ -214,31 +203,30 @@ def _log(
     logger.save_state(session.state)
 
 
-def _sync_github() -> None:
-    """Use the original HAI private-GitHub session-log backup."""
+def _sync_github() -> bool:
+    """Back up the HAI session log off the participant interaction thread."""
+    if _local_preview():
+        return True
     repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
     token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
-    if not repo or not token:
-        return
     session: Study2Session = st.session_state["_study2_session"]
     logger: EventLogger = st.session_state["_study2_logger"]
-    logger.session_meta = {
-        **session.state,
-        "qualtrics_returned": bool(st.session_state.get("return_raw")),
-        "survey_linkage_id": session.state["session_id"],
-    }
-    success = logger.push_to_github(repo=repo, github_token=token)
-    if success:
-        session.state["archive_pending"] = False
-        logger.save_state(session.state)
-    elif not st.session_state.get("_study2_pilot", True):
-        st.error(
-            "Your last step could not be saved securely. Please retry before continuing."
-        )
-        st.button("Retry saving", key="retry_secure_save")
-        st.stop()
-    else:
-        st.warning("Pilot backup could not be updated; local records remain available.")
+
+    def prepare():
+        logger.session_meta = {
+            **session.state,
+            "archive_pending": False,
+            "qualtrics_returned": bool(st.session_state.get("return_raw")),
+            "survey_linkage_id": session.state["session_id"],
+        }
+        return partial(save_to_github, repo, *logger.github_save_request(), token)
+
+    saved = bool(repo and token) and sync_in_background(
+        st.session_state, "_study2", logger.turn_id, prepare
+    )
+    session.state["archive_pending"] = not saved
+    logger.save_state(session.state)
+    return saved
 
 
 def _initialize(locked_condition_id: str) -> None:
@@ -262,16 +250,10 @@ def _initialize(locked_condition_id: str) -> None:
     session_id = hashlib.sha256(
         f"{participant_id.strip()}\0{cases.case_set_id}\0{STATE_SCHEMA_VERSION}".encode()
     ).hexdigest()
+    # Only the instant local lookup runs before the first screen. After a host
+    # restart a returning participant starts a new session under a new archive_id,
+    # so their earlier remote record is kept; analysis keeps the first completed one.
     stored_state = load_state(session_id, log_dir)
-    if production_launch and stored_state is None:
-        stored_state = load_remote_checkpoint(
-            session_id,
-            participant_id,
-            locked_condition_id,
-            _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO"),
-            _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN"),
-            log_dir,
-        )
     if stored_state and stored_state.get("condition_id") not in (
         None,
         locked_condition_id,
@@ -295,6 +277,7 @@ def _initialize(locked_condition_id: str) -> None:
             seed=participant_id,
             cases=cases,
         )
+        session.state["archive_id"] = new_archive_id()
         event = "session_created"
     st.session_state["_study2_started"] = time.perf_counter()
     st.session_state["_study2_session"] = session
@@ -315,7 +298,6 @@ def _initialize(locked_condition_id: str) -> None:
             "case_set_id": cases.case_set_id,
         },
     )
-    _sync_github()
 
 
 def _header(session: Study2Session) -> None:
@@ -1136,7 +1118,11 @@ def _recall(session: Study2Session, reference: str) -> None:
         st.rerun()
 
 
+@st.fragment(run_every=2)
 def _complete(session: Study2Session) -> None:
+    if not _sync_github():
+        st.info("Saving your responses. Please keep this page open.")
+        return
     st.success("All six candidate trials are complete.")
     return_url = _build_final_return(
         str(st.session_state.get("return_raw", "")),
@@ -1166,8 +1152,7 @@ def run(locked_condition_id: str) -> None:
         st.error(f"Study link unavailable: {exc}")
         st.stop()
     session: Study2Session = st.session_state["_study2_session"]
-    if session.state.get("archive_pending") and not _local_preview():
-        _sync_github()
+    _sync_github()
     _header(session)
     _sidebar(session)
     if _document_view(session):

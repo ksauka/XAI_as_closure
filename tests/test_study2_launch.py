@@ -1,12 +1,11 @@
 """Synthetic full journeys across all condition apps; no external writes."""
 
-import base64
 import json
 import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from streamlit.testing.v1 import AppTest
 
@@ -58,8 +57,8 @@ class LaunchTests(unittest.TestCase):
                         "STUDY2_PREVIEW_ID": "LOCAL_TEST_" + condition,
                     },
                 ),
-                patch("xai_as_closure.study2_app.test_github_connection") as connection,
-                patch("xai_as_closure.logger.save_to_github") as remote,
+                patch("xai_as_closure.background_save.test_github_connection") as connection,
+                patch("xai_as_closure.study2_app.save_to_github") as remote,
             ):
                 app = AppTest.from_file(str(path)).run(timeout=20)
                 self.assertFalse(app.exception)
@@ -136,11 +135,33 @@ class LaunchTests(unittest.TestCase):
 
 
 class StorageAndValidationTests(unittest.TestCase):
-    def test_forcing_requires_membership_not_only_issuer_name(self):
-        from xai_as_closure.study2 import _forcing_answer_is_correct
+    def test_forcing_accepts_plain_language_but_still_requires_both_requirements(self):
+        from xai_as_closure.study2 import (
+            _forcing_answer_feedback,
+            _forcing_answer_is_correct,
+        )
 
         self.assertFalse(
             _forcing_answer_is_correct("A current IAPP AIGP certification")
+        )
+        self.assertEqual(
+            _forcing_answer_feedback("valid required certificate"),
+            "Add the current professional-membership requirement.",
+        )
+        self.assertTrue(
+            _forcing_answer_is_correct(
+                "valid required certificate and valid professional membership"
+            )
+        )
+        self.assertTrue(
+            _forcing_answer_is_correct(
+                "current required certification and current relevant professional membership"
+            )
+        )
+        self.assertFalse(
+            _forcing_answer_is_correct(
+                "required certification and professional membership"
+            )
         )
         self.assertFalse(
             _forcing_answer_is_correct(
@@ -149,101 +170,17 @@ class StorageAndValidationTests(unittest.TestCase):
         )
         self.assertTrue(_forcing_answer_is_correct(REQUIREMENTS))
 
-    def test_remote_restart_recovers_event_history_and_rejects_corruption(self):
-        from xai_as_closure.cases import CaseRepository
-        from xai_as_closure.logger import load_remote_checkpoint, load_state
-        from xai_as_closure.study2 import Study2Session
-
-        condition = get_study2_condition("P1_A0_F0")
-        with (
-            tempfile.TemporaryDirectory() as original,
-            tempfile.TemporaryDirectory() as restarted,
-            patch.dict(os.environ, {"STUDY2_LOCAL_PREVIEW": "0"}),
-        ):
-            logger = EventLogger(
-                condition, "synthetic", session_id="remotecheckpoint", log_dir=original
-            )
-            session = Study2Session.create(
-                session_id=logger.session_id,
-                participant_id="synthetic",
-                prolific_pid="synthetic",
-                condition=condition,
-                seed="synthetic",
-                cases=CaseRepository(),
-            )
-            logger.log("session_created")
-            session.state["turn_id"] = logger.turn_id
-            logger.session_meta = session.state
-            payload = logger.github_payload()
-            response = MagicMock(status_code=200)
-            response.json.return_value = {
-                "content": base64.b64encode(json.dumps(payload).encode()).decode()
-            }
-            with patch("xai_as_closure.logger.requests.get", return_value=response):
-                state = load_remote_checkpoint(
-                    logger.session_id,
-                    "synthetic",
-                    condition.condition_id,
-                    "owner/private",
-                    "fake",
-                    restarted,
-                )
-            self.assertEqual(state["profile_order"], session.state["profile_order"])
-            self.assertEqual(load_state(logger.session_id, restarted)["turn_id"], 1)
-            self.assertEqual(
-                len(
-                    (Path(restarted) / "remotecheckpoint.jsonl")
-                    .read_text()
-                    .splitlines()
-                ),
-                1,
-            )
-            payload["events"][0]["event_sequence"] = 5
-            response.json.return_value = {
-                "content": base64.b64encode(json.dumps(payload).encode()).decode()
-            }
-            with (
-                patch("xai_as_closure.logger.requests.get", return_value=response),
-                self.assertRaisesRegex(ValueError, "inconsistent"),
-            ):
-                load_remote_checkpoint(
-                    logger.session_id,
-                    "synthetic",
-                    condition.condition_id,
-                    "owner/private",
-                    "fake",
-                    restarted,
-                )
-            response.status_code = 503
-            import requests
-
-            response.raise_for_status.side_effect = requests.HTTPError()
-            with (
-                patch("xai_as_closure.logger.requests.get", return_value=response),
-                self.assertRaisesRegex(ValueError, "could not be recovered"),
-            ):
-                load_remote_checkpoint(
-                    logger.session_id,
-                    "synthetic",
-                    condition.condition_id,
-                    "owner/private",
-                    "fake",
-                    restarted,
-                )
-
-    def test_production_save_failure_blocks_until_retry_succeeds(self):
+    def test_production_first_screen_never_waits_for_github(self):
         with (
             tempfile.TemporaryDirectory() as directory,
             patch.dict(os.environ, {"STUDY2_LOCAL_PREVIEW": "0"}),
             patch(
-                "xai_as_closure.study2_app.test_github_connection",
+                "xai_as_closure.background_save.test_github_connection",
                 return_value=(True, "connected"),
             ),
+            patch("requests.get") as lookup,
             patch(
-                "xai_as_closure.study2_app.load_remote_checkpoint", return_value=None
-            ),
-            patch(
-                "xai_as_closure.logger.save_to_github",
+                "xai_as_closure.study2_app.save_to_github",
                 return_value=(False, "synthetic outage"),
             ) as save,
         ):
@@ -259,18 +196,25 @@ class StorageAndValidationTests(unittest.TestCase):
             }
             app.run(timeout=20)
             self.assertFalse(app.exception)
-            self.assertTrue(app.error)
-            self.assertFalse(
-                any(b.label == "Begin candidate screening" for b in app.button)
-            )
-            save.return_value = (True, None)
-            next(b for b in app.button if b.label == "Retry saving").click().run(
-                timeout=20
-            )
-            self.assertFalse(app.exception)
+            self.assertFalse(app.error)
             self.assertTrue(
                 any(b.label == "Begin candidate screening" for b in app.button)
             )
+            lookup.assert_not_called()
+            session = app.session_state.filtered_state["_study2_session"]
+            self.assertTrue(session.state["archive_pending"])
+            # A failed background save retries quietly until one succeeds.
+            save.return_value = (True, None)
+            for _ in range(4):
+                job = app.session_state.filtered_state.get("_study2_backup_job")
+                if job:
+                    job[0].result(timeout=3)
+                app.session_state["_study2_retry_after"] = 0
+                app.run(timeout=20)
+            self.assertFalse(session.state["archive_pending"])
+            path = save.call_args.args[1]
+            self.assertIn(session.state["archive_id"], path)
+            self.assertTrue(path.startswith("sessions/xai_as_closure/study2/checkpoints/"))
 
     def test_review_hub_only_shows_pce_for_forcing(self):
         with patch.dict(os.environ, {"STUDY2_LOCAL_PREVIEW": "1"}):

@@ -105,7 +105,8 @@ class RecommendationArtifact:
 def material_manifest(case_set_path: Path | None = None) -> dict[str, Any]:
     files: dict[str, str] = {}
     digest = hashlib.sha256()
-    paths = tuple(case_set_path if case_set_path is not None and path == CASE_SET_PATH else path for path in MATERIAL_FILES)
+    case_path = case_set_path if case_set_path is not None else CASE_SET_PATH
+    paths = (case_path, case_path.parent / ROLE_PATH.name, case_path.parent / POLICY_PATH.name)
     for path in paths:
         content = path.read_bytes()
         file_hash = hashlib.sha256(content).hexdigest()
@@ -156,8 +157,10 @@ class CaseRepository:
         self.path = path
         self._data = json.loads(path.read_text(encoding="utf-8"))
         self._cases = {case["reference"]: case for case in self._data["profiles"]}
-        self._role_clauses = _clauses(ROLE_PATH)
-        self._policy_clauses = _clauses(POLICY_PATH)
+        self.role_path = path.parent / ROLE_PATH.name
+        self.policy_path = path.parent / POLICY_PATH.name
+        self._role_clauses = _clauses(self.role_path)
+        self._policy_clauses = _clauses(self.policy_path)
         self._validate()
 
     @property

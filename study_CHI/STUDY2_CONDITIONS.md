@@ -27,9 +27,11 @@ controls whether, after the unaided
 decision but before the AI recommendation is requested or revealed, the
 participant must type or paste both mandatory professional requirements—the
 qualifying certification and current professional membership—from the complete
-job description. The task is identical for every candidate. It does not ask the
-participant to classify the current CV, and an incorrect response never unlocks
-the recommendation.
+job description. Plain-language descriptions of either requirement are accepted;
+participants do not have to reproduce a credential name verbatim. The task is
+identical for every candidate. It does not ask the participant to classify the
+current CV, and an incomplete or incorrect response never unlocks the
+recommendation.
 
 Before candidate screening, every condition presents the same single-screen
 recruitment brief: a concise company-and-role summary, concise recruitment
@@ -145,10 +147,11 @@ What distinguishes each manipulation on screen:
 - **Forcing (F).** Present (`F1`): after the unaided decision, the participant
   must re-encode both mandatory professional requirements from the role
   description before the recommendation unlocks. The full job description opens
-  focused at Section 4.1, and the same current-certification plus current-
-  membership validation applies on every profile. Absent (`F0`): the
+  focused at Section 4.1. Plain-language requirement descriptions are accepted,
+  but both current certification and current membership must be present on every
+  profile. Absent (`F0`): the
   recommendation is available immediately on request.
 
 ## Shared material revision, 3 November 2026
 
-The active case set is `ai_governance_lead_six_profiles_v7`. Identity is governed only by JD 4.2.1; Policy 2.3 retains whole-file assessment and currency. All six profiles cite both provisions. C-01/C-02/C-05 share the same ordered 12-source list; C-03/C-04/C-06 share the same ordered 14-source list, including JD 3.5 and JD 7.2 on all three rejects. C-05 membership now expires alongside its certification; the other CVs, intended decisions and AI verdicts are unchanged. The completed six-profile v6 assessment is retained separately. Material integrity checks do not replace the pending focused C-05/C-06 assessment.
+The active case set is `ai_governance_lead_six_profiles_v8`. Identity is governed only by JD 4.2.1; Policy 2.3 retains whole-file assessment and currency. All six profiles cite both provisions. C-01/C-02/C-05 share the same ordered 12-source list; C-03/C-04/C-06 share the same ordered 14-source list, including JD 3.5 and JD 7.2 on all three rejects. C-05 membership now expires alongside its certification; the other CVs, intended decisions and AI verdicts are unchanged. The completed six-profile v6 assessment is retained separately. Material integrity checks do not replace the pending focused C-05/C-06 assessment.

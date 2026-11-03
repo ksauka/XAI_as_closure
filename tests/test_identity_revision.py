@@ -55,7 +55,7 @@ class IdentityRevisionTests(unittest.TestCase):
 
     def test_both_studies_share_the_revised_set_and_validation_is_pending(self):
         from xai_as_closure import study1_app, study2_app
-        self.assertEqual(study1_app.CaseRepository().case_set_id, 'ai_governance_lead_six_profiles_v7')
+        self.assertEqual(study1_app.CaseRepository().case_set_id, 'ai_governance_lead_six_profiles_v8')
         self.assertEqual(study1_app.CaseRepository().path, study2_app.CaseRepository().path)
         self.assertEqual(study1_app.ROLE_PATH, study2_app.ROLE_PATH)
         self.assertEqual(study1_app.POLICY_PATH, study2_app.POLICY_PATH)

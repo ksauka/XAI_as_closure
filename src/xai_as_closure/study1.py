@@ -11,16 +11,17 @@ from .cases import CaseRepository
 STUDY1_INSTRUMENT_VERSION = "study1-instrument-v6"
 STUDY1_STATE_VERSION = "study1-state-v4"
 STUDY1_ROUND2_INSTRUMENT_VERSION = "study1-instrument-v7"
-STUDY1_FOCUSED_INSTRUMENT_VERSION = "study1-instrument-v8"
-FOCUSED_ROUND = "round2_focused"
+STUDY1_FOCUSED_INSTRUMENT_VERSION = "study1-instrument-v9"
+LEGACY_FOCUSED_ROUND = "round2_focused"
+FOCUSED_ROUND = "round2_focused_trimmed"
 
 
 def is_revalidation(validation_round: str) -> bool:
-    return validation_round in {"round2", FOCUSED_ROUND}
+    return validation_round in {"round2", LEGACY_FOCUSED_ROUND, FOCUSED_ROUND}
 
 
 def validation_references(cases: CaseRepository, validation_round: str) -> set[str]:
-    return {"C-05", "C-06"} if validation_round == FOCUSED_ROUND else set(cases.references)
+    return {"C-05", "C-06"} if validation_round in {LEGACY_FOCUSED_ROUND, FOCUSED_ROUND} else set(cases.references)
 
 
 class WorkflowError(ValueError):
@@ -32,6 +33,8 @@ def instrument_version(validation_round: str) -> str:
         return STUDY1_INSTRUMENT_VERSION
     if validation_round == "round2":
         return STUDY1_ROUND2_INSTRUMENT_VERSION
+    if validation_round == LEGACY_FOCUSED_ROUND:
+        return "study1-instrument-v8"
     if validation_round == FOCUSED_ROUND:
         return STUDY1_FOCUSED_INSTRUMENT_VERSION
     raise WorkflowError("Unknown validation round.")
@@ -75,7 +78,8 @@ def _validate_judgment_response(response: dict[str, Any]) -> None:
         raise WorkflowError("Confidence must be a whole number from 0 to 100.")
 
 
-def _validate_post_study_response(response: dict[str, Any], valid_references: set[str] | None = None) -> None:
+def _validate_post_study_response(response: dict[str, Any], valid_references: set[str] | None = None,
+                                  review_version: str = "full_v1") -> None:
     likert_fields = {
         "role_requirement_clarity",
         "candidate_profile_realism",
@@ -84,6 +88,10 @@ def _validate_post_study_response(response: dict[str, Any], valid_references: se
         "information_sufficiency",
         "task_ecological_validity",
     }
+    if review_version == "q7_q8_v1":
+        likert_fields = set()
+    elif review_version != "full_v1":
+        raise WorkflowError("Unknown final-review version.")
     required = likert_fields | {"professional_disagreement"}
     missing = sorted(
         key
@@ -161,6 +169,7 @@ class Study1Session:
                 "phase": "screening",
                 "profile_order": list(order),
                 "responses": {},
+                "post_study_review_version": "q7_q8_v1" if validation_round == FOCUSED_ROUND else "full_v1",
                 "post_study_response": None,
                 "post_study_submitted_at_utc": None,
                 "completed_at_utc": None,
@@ -221,7 +230,9 @@ class Study1Session:
     def submit_post_study(self, response: dict[str, Any]) -> None:
         if self.phase != "post_study":
             raise WorkflowError("The final materials review is not available.")
-        _validate_post_study_response(response, set(self.state["profile_order"]))
+        review_version = "q7_q8_v1" if self.state.get("validation_round") == FOCUSED_ROUND else "full_v1"
+        _validate_post_study_response(response, set(self.state["profile_order"]), review_version)
+        self.state["post_study_review_version"] = review_version
         submitted_at = _now()
         self.state["post_study_response"] = dict(response)
         self.state["post_study_submitted_at_utc"] = submitted_at
@@ -286,7 +297,8 @@ class Study1Session:
                 raise WorkflowError(
                     "A completed session must include the final review."
                 )
-            _validate_post_study_response(post_study_response, references)
+            _validate_post_study_response(post_study_response, references,
+                                          self.state.get("post_study_review_version", "full_v1"))
             if not self.state.get("post_study_submitted_at_utc"):
                 raise WorkflowError(
                     "A completed session must include review submission time."

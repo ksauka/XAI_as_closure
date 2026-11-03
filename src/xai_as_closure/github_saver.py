@@ -5,6 +5,7 @@ Requires a GitHub personal access token with repo permissions.
 """
 
 import base64
+import time
 
 import requests
 
@@ -35,40 +36,42 @@ def save_to_github(
         "Accept": "application/vnd.github.v3+json",
     }
 
-    sha = None
-
-    # Check if file already exists (need SHA for update)
-    try:
-        r = requests.get(api_url, headers=headers, timeout=10)
-        if r.status_code == 200:
-            sha = r.json()["sha"]
-        elif r.status_code not in (404,):
-            print(f"Warning: GitHub preflight returned {r.status_code}: {r.text}")
-    except (requests.RequestException, KeyError) as e:
-        print(f"Warning: Could not check file existence: {e}")
-
-    data: dict = {
-        "message": commit_message,
-        "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
-    }
-    if sha:
-        data["sha"] = sha
-
-    try:
-        response = requests.put(api_url, json=data, headers=headers, timeout=30)
-        if response.status_code in (200, 201):
-            print(f"✅ Saved to GitHub: {path}")
-            return True, None
-        else:
-            err = f"GitHub API error {response.status_code}: {response.text.strip()}"
-            print(f"❌ {err}")
-            return False, err
-    except requests.exceptions.Timeout:
-        print("❌ GitHub API timeout")
-        return False, "GitHub API timeout while saving session data."
-    except requests.RequestException as e:
-        print(f"❌ GitHub save failed: {e}")
-        return False, f"GitHub save failed: {e}"
+    last_error = "The save has not completed."
+    for attempt in range(3):
+        if attempt:
+            time.sleep(0.25 * 2 ** (attempt - 1))
+        # Every write attempt needs a successful, fresh version lookup.
+        # A failed GET is never treated as evidence that the file is absent.
+        try:
+            existing = requests.get(api_url, headers=headers, timeout=10)
+            if existing.status_code == 200:
+                sha = existing.json().get("sha")
+                if not isinstance(sha, str) or not sha:
+                    last_error = "The saved-file version could not be read."
+                    continue
+            elif existing.status_code == 404:
+                sha = None
+            else:
+                last_error = f"Version lookup returned {existing.status_code}."
+                continue
+        except (requests.RequestException, ValueError, TypeError, AttributeError):
+            last_error = "The saved-file version could not be reached."
+            continue
+        data = {
+            "message": commit_message,
+            "content": base64.b64encode(content.encode("utf-8")).decode("utf-8"),
+        }
+        if sha:
+            data["sha"] = sha
+        try:
+            response = requests.put(api_url, json=data, headers=headers, timeout=30)
+            if response.status_code in (200, 201):
+                return True, None
+            last_error = f"Save returned {response.status_code}."
+        except requests.RequestException:
+            last_error = "The save could not be confirmed."
+        # Includes conflicts and ambiguous timeouts: fetch the version again.
+    return False, last_error
 
 
 def test_github_connection(github_token: str, repo: str) -> tuple[bool, str]:

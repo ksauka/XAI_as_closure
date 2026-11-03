@@ -19,6 +19,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--port', type=int, default=8509)
     parser.add_argument('--output', type=Path)
+    parser.add_argument('--preview-id', default='LOCAL_PREVIEW_STUDY1_ROUND2')
     args = parser.parse_args()
     with socket.socket() as sock:
         try:
@@ -27,7 +28,7 @@ def main():
             raise SystemExit(f'Port {args.port} is occupied. Choose another --port.')
     work = Path(tempfile.mkdtemp(prefix='facct-study1-round2-preview-'))
     env = dict(os.environ, STUDY1_LOCAL_PREVIEW='1',
-               STUDY1_PREVIEW_ID='LOCAL_PREVIEW_STUDY1_ROUND2',
+               STUDY1_PREVIEW_ID=args.preview_id,
                STUDY1_PREVIEW_DATA_ROOT=str(work / 'synthetic_logs'),
                PYTHONPATH=str(ROOT / 'src'))
     for key in list(env):

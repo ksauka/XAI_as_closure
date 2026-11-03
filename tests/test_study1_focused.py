@@ -1,5 +1,4 @@
 """Focused revalidation, material provenance and historical-record isolation."""
-import base64
 from copy import deepcopy
 import json
 import os
@@ -12,7 +11,7 @@ from streamlit.testing.v1 import AppTest
 from xai_as_closure.cases import CaseRepository, PROJECT_ROOT
 from xai_as_closure.storage import SessionStore
 from xai_as_closure.study1 import FOCUSED_ROUND, Study1Session, WorkflowError
-from xai_as_closure.study1_round2_support import check_round2_materials, recover_round2_checkpoint, round2_archive_path, validation_cases
+from xai_as_closure.study1_round2_support import check_round2_materials, round2_archive_path, validation_cases
 
 SID='s1_'+'c'*24
 LINK='d'*64
@@ -22,9 +21,8 @@ def judgment():
     return dict(decision='Reject candidate', hard_criterion_judgment='No',confidence=65,decisive_evidence='Synthetic test only')
 
 def review():
-    return dict(role_requirement_clarity=5,candidate_profile_realism=5,qualification_difference_plausibility=5,
-                mandatory_information_identifiability=5,information_sufficiency=5,task_ecological_validity=5,
-                professional_disagreement='No',disputed_profiles=[],disputed_profiles_reason='',materials_feedback='')
+    return dict(professional_disagreement='No', disputed_profiles=[],
+                disputed_profiles_reason='', materials_feedback='')
 
 class FocusedValidationTests(unittest.TestCase):
     def session(self):
@@ -35,7 +33,7 @@ class FocusedValidationTests(unittest.TestCase):
         for seed in map(str,range(20)):
             session=Study1Session.create(session_id=SID,linkage_hash=LINK,seed=seed,cases=CaseRepository(),validation_round=FOCUSED_ROUND)
             self.assertEqual(set(session.state['profile_order']),{'C-05','C-06'})
-            self.assertEqual(session.state['instrument_version'],'study1-instrument-v8')
+            self.assertEqual(session.state['instrument_version'],'study1-instrument-v9')
             orders.add(tuple(session.state['profile_order']))
         self.assertEqual(len(orders),2)
         self.assertEqual(len(CaseRepository().references),6)
@@ -46,7 +44,7 @@ class FocusedValidationTests(unittest.TestCase):
         old=validation_cases('round2'); current=CaseRepository()
         before=json.loads(old.path.read_text())['profiles']; after=json.loads(current.path.read_text())['profiles']
         self.assertEqual(old.case_set_id,'ai_governance_lead_six_profiles_v6')
-        self.assertEqual(current.case_set_id,'ai_governance_lead_six_profiles_v7')
+        self.assertEqual(current.case_set_id,'ai_governance_lead_six_profiles_v8')
         for a,b in zip(before,after):
             self.assertEqual(a['ground_truth'],b['ground_truth'])
             self.assertEqual(a['fixed_assessment']['recommendation'],b['fixed_assessment']['recommendation'])
@@ -69,29 +67,14 @@ class FocusedValidationTests(unittest.TestCase):
         corrupt=deepcopy(session.state); corrupt['profile_order'].append('C-01')
         with self.assertRaises(WorkflowError): Study1Session.restore(corrupt,CaseRepository())
 
-    def test_remote_recovery_preserves_focused_round_and_rejects_old_round(self):
-        with tempfile.TemporaryDirectory() as first_dir,tempfile.TemporaryDirectory() as second_dir:
-            session=self.session(); store=SessionStore(first_dir)
-            store.append_event(session.state,'session_created',phase='screening')
-            payload=dict(session.state,participant_id=PID,events=store.read_events(SID))
-            response=Mock(status_code=200)
-            response.json.return_value={'content':base64.b64encode(json.dumps(payload).encode()).decode()}
-            kwargs=dict(store=SessionStore(second_dir),cases=CaseRepository(),repo='test/private',token='test-only',
-                        session_id=SID,participant_id=PID,linkage_hash=LINK,validation_round=FOCUSED_ROUND)
-            with patch('xai_as_closure.study1_round2_support.requests.get',return_value=response) as request:
-                restored=recover_round2_checkpoint(**kwargs)
-                self.assertEqual(set(restored['profile_order']),{'C-05','C-06'})
-                self.assertIn('/round2_focused/',request.call_args.args[0])
-                payload['validation_round']='round2'
-                response.json.return_value={'content':base64.b64encode(json.dumps(payload).encode()).decode()}
-                with self.assertRaises(WorkflowError): recover_round2_checkpoint(**kwargs)
-            self.assertNotEqual(round2_archive_path(SID),round2_archive_path(SID,FOCUSED_ROUND))
+    def test_focused_round_has_its_own_archive_namespace(self):
+        self.assertNotEqual(round2_archive_path(SID),round2_archive_path(SID,FOCUSED_ROUND))
 
     def test_local_app_two_case_journey_resume_review_and_completion(self):
         with tempfile.TemporaryDirectory() as directory,patch.dict(os.environ,{'STUDY1_LOCAL_PREVIEW':'1',
                 'STUDY1_PREVIEW_DATA_ROOT':directory,'STUDY1_PREVIEW_ID':'LOCAL_FOCUSED_TEST'}),\
                 patch('xai_as_closure.study1_app.save_to_github') as save,\
-                patch('xai_as_closure.study1_app.test_github_connection') as connect:
+                patch('xai_as_closure.background_save.test_github_connection') as connect:
             path=str(PROJECT_ROOT/'apps/study1_validation_v2.py')
             app=AppTest.from_file(path,default_timeout=15).run()
             self.assertFalse(app.exception)
@@ -126,13 +109,16 @@ class FocusedValidationTests(unittest.TestCase):
             def secret(key,default=''):
                 return {'GITHUB_REPO':'test/private','GITHUB_TOKEN':'test-only','STUDY1_FOCUSED_DATA_ROOT':directory}.get(key,default)
             with patch('xai_as_closure.study1_app._secret',side_effect=secret),\
-                 patch('xai_as_closure.study1_app.test_github_connection',return_value=(True,'ok')),\
-                 patch('xai_as_closure.study1_round2_support.requests.get',return_value=Mock(status_code=404)),\
+                 patch('xai_as_closure.background_save.test_github_connection',return_value=(True,'ok')),\
+                 patch('requests.get',return_value=Mock(status_code=404)),\
                  patch('xai_as_closure.study1_app.save_to_github',return_value=(True,'ok')) as save:
                 app=AppTest.from_file(str(PROJECT_ROOT/'apps/study1_validation_v2.py'),default_timeout=15)
                 app.query_params['PROLIFIC_PID']=PID; app.run()
                 self.assertFalse(app.exception)
-                self.assertIn('/round2_focused/',save.call_args.args[1])
+                job = app.session_state.filtered_state.get('_study1_backup_job')
+                if job:
+                    job[0].result(timeout=3)
+                self.assertIn('/round2_focused_trimmed/',save.call_args.args[1])
                 payload=json.loads(save.call_args.args[2])
                 self.assertEqual(payload['material_manifest'],CaseRepository().material_manifest)
                 self.assertEqual(set(payload['profile_order']),{'C-05','C-06'})

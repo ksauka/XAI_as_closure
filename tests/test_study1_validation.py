@@ -64,7 +64,7 @@ class CaseRepositoryTests(unittest.TestCase):
 
     def test_material_manifest_changes_are_detectable(self) -> None:
         manifest = material_manifest()
-        self.assertEqual(manifest["material_set"], "chi_six_profiles_v7")
+        self.assertEqual(manifest["material_set"], "chi_six_profiles_v8")
         self.assertEqual(
             set(manifest["files"]),
             {
@@ -171,6 +171,8 @@ class CaseRepositoryTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "case-set.json"
             path.write_text(json.dumps(case_set), encoding="utf-8")
+            for name in ("job_description.md", "recruitment_policy.md"):
+                (Path(directory)/name).write_bytes((CASE_SET_PATH.parent/name).read_bytes())
             with self.assertRaisesRegex(ValueError, "Trial composition"):
                 CaseRepository(path)
 

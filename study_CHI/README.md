@@ -1,16 +1,16 @@
-# CHI 2027 Study Materials
+# FAccT 2027 Study Materials
 
-This directory contains the current study materials for the CHI 2027 paper.
+This directory contains the current study materials for the FAccT 2027 paper; the folder name is retained for compatibility.
 
 ## Canonical materials
 
 - `job_description.md`: locked AI Governance Lead role, recruitment timeline, and current certification-and-membership criteria.
 - `recruitment_policy.md`: locked screening policy and two-outcome decision rule.
 - `six_candidate_profiles.md`: human-readable six-profile trial set.
-- `six_profiles_case_set.json`: structured `v6` implementation source for the six trials.
+- `six_profiles_case_set.json`: structured `v8` local-candidate implementation source for the six trials.
 - `STUDY1_VALIDATION_PROTOCOL.md`: expert stimulus-validation procedure and initial-batch history.
-- `STUDY1_ROUND2_LAUNCH.md`: setup and launch checks for the standalone version-2 app.
-- `STUDY1_ROUND2_MATERIALS.json`: hashes and instrument version for the pending revised-material assessment.
+- `STUDY1_FOCUSED_LAUNCH.md`: current two-profile candidate and release instructions. `STUDY1_ROUND2_LAUNCH.md` records the older six-profile assessment.
+- `STUDY1_FOCUSED_MATERIALS.json`: v8 shortened-document hashes and instrument v9 for the new local candidate. `STUDY1_ROUND2_MATERIALS.json` retains historical six-profile identity.
 - `STUDY2_CONDITIONS.md`: active 2 x 2 x 2 condition identifiers and invariants.
 - `STUDY2_ANALYSIS_PLAN.md`: frozen confirmatory estimands, outcome definitions, models, exclusions, and reporting rules.
 - `STUDY2_DEPLOYMENT_CHECKLIST.md`: pre-launch technical, privacy, linkage, pilot, and rollback checks for all eight applications.
@@ -22,7 +22,7 @@ This directory contains the current study materials for the CHI 2027 paper.
 
 ## Application architecture
 
-The implemented entry points are `apps/study1_validation.py` and the eight
+The current candidate entry point is `apps/study1_validation_v2.py`, alongside historical Study 1 routes and the eight
 condition-locked `apps/study2_*.py` applications listed in `apps/README.md`.
 Their domain, agent, state, linkage, and logging modules are under
 `src/xai_as_closure/`.
@@ -36,13 +36,7 @@ PYTHONPATH=src python -m xai_as_closure.release_audit
 The programme uses one Study 1 application and eight Study 2 applications:
 
 - The **Study 1 validation app** is one shared application for multiple experts.
-  It presents the role and policy, randomizes all six profiles, and records a
-  locked independent judgment, direct hard-criterion judgment, confidence,
-  and short decisive-evidence response for every candidate. A short final
-  materials review then assesses the clarity, realism, discriminability,
-  sufficiency, and disputed-profile status of the complete stimulus set. The
-  instrument targets a completion time of no more than about 10 minutes. It never
-  displays an AI recommendation or implements an experimental condition.
+  The current focused candidate presents C-05 and C-06 in random order and records a locked independent judgement, mandatory-requirements judgement, confidence and brief evidence reason for each. Its final review contains Q7 with follow-ups and optional Q8. It never displays an AI recommendation. The same shared v8 shortened documents serve Study 2, whose six-profile case set is unchanged. Earlier six-profile and longer-document validation rounds remain separate. Duration must be measured in a human full-flow pilot; no automatic time limit is imposed. This candidate is not deployed.
 - Each **Study 2 experimental app** is permanently locked to one
   between-subjects condition and delivers six randomized unaided-then-aided
   candidate trials. A Qualtrics `cond` parameter must match that app's condition.

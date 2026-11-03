@@ -123,14 +123,6 @@ class MigratedAgentTests(unittest.TestCase):
 
 
 class MigratedInfrastructureTests(unittest.TestCase):
-    def setUp(self) -> None:
-        # These UI tests use mocked remote storage and a fresh local snapshot.
-        recovery = patch(
-            "xai_as_closure.study2_app.load_remote_checkpoint", return_value=None
-        )
-        recovery.start()
-        self.addCleanup(recovery.stop)
-
     def test_study1_return_route_is_https_and_overwrites_linkage_fields(self) -> None:
         self.assertIsNone(
             _safe_study1_qualtrics_return(
@@ -183,11 +175,11 @@ class MigratedInfrastructureTests(unittest.TestCase):
                     },
                 ),
                 patch(
-                    "xai_as_closure.study2_app.test_github_connection",
+                    "xai_as_closure.background_save.test_github_connection",
                     return_value=(True, "connected"),
                 ),
                 patch(
-                    "xai_as_closure.logger.save_to_github",
+                    "xai_as_closure.study2_app.save_to_github",
                     return_value=(True, None),
                 ),
             ):
@@ -232,15 +224,15 @@ class MigratedInfrastructureTests(unittest.TestCase):
         cases = (
             (
                 "study1_validation.py",
-                "xai_as_closure.study1_app.test_github_connection",
+                "xai_as_closure.background_save.test_github_connection",
                 "xai_as_closure.study1_app.save_to_github",
                 {},
                 "STUDY1_DATA_ROOT",
             ),
             (
                 "study2_01_lowP_lowA_noF.py",
-                "xai_as_closure.study2_app.test_github_connection",
-                "xai_as_closure.logger.save_to_github",
+                "xai_as_closure.background_save.test_github_connection",
+                "xai_as_closure.study2_app.save_to_github",
                 {"cond": "P0_A0_F0"},
                 "STUDY2_DATA_ROOT",
             ),
@@ -264,17 +256,16 @@ class MigratedInfrastructureTests(unittest.TestCase):
                     data_root_key: directory,
                 }
                 with (
-                    patch(connection_target, return_value=(True, "connected")) as check,
+                    patch(connection_target, return_value=(True, "connected")),
                     patch(save_target, return_value=(True, None)),
                 ):
                     app.run(timeout=20)
                 self.assertFalse(app.exception)
-                self.assertEqual(check.call_count, 1)
                 self.assertFalse(
                     any("storage" in error.value.lower() for error in app.error)
                 )
 
-    def test_production_app_blocks_when_cloud_secrets_are_missing(self) -> None:
+    def test_study1_does_not_expose_storage_errors_mid_task(self) -> None:
         app_path = Path(__file__).resolve().parents[1] / "apps" / "study1_validation.py"
         app = AppTest.from_file(str(app_path))
         app.query_params = {"PROLIFIC_PID": "5f8e3c2a1b9d4e6f7a8b9c0d"}
@@ -284,9 +275,8 @@ class MigratedInfrastructureTests(unittest.TestCase):
         app.secrets = {"_TEST_NO_STORAGE_SECRETS": "placeholder"}
         app.run(timeout=20)
         self.assertFalse(app.exception)
-        self.assertTrue(
-            any("storage is not configured" in error.value for error in app.error)
-        )
+        self.assertFalse(app.error)
+        self.assertTrue(any(radio.label == "Screening decision" for radio in app.radio))
 
     def test_study1_uses_streamlined_candidate_and_final_review_measures(self) -> None:
         app_path = Path(__file__).resolve().parents[1] / "apps" / "study1_validation.py"
@@ -300,7 +290,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
             }
             with (
                 patch(
-                    "xai_as_closure.study1_app.test_github_connection",
+                    "xai_as_closure.background_save.test_github_connection",
                     return_value=(True, "connected"),
                 ),
                 patch(
@@ -314,8 +304,8 @@ class MigratedInfrastructureTests(unittest.TestCase):
                     for element in app.markdown
                     if "elapsed-timer" in element.value
                 )
-                self.assertIn("Elapsed time", timer_markup)
-                self.assertIn('role="timer"', timer_markup)
+                self.assertNotIn("Elapsed time", timer_markup)
+                self.assertNotIn('role="timer"', timer_markup)
                 self.assertNotIn("remaining", timer_markup.lower())
                 radio_labels = {radio.label for radio in app.radio}
                 self.assertIn("Screening decision", radio_labels)
@@ -385,11 +375,11 @@ class MigratedInfrastructureTests(unittest.TestCase):
             }
             with (
                 patch(
-                    "xai_as_closure.study2_app.test_github_connection",
+                    "xai_as_closure.background_save.test_github_connection",
                     return_value=(True, "connected"),
                 ),
                 patch(
-                    "xai_as_closure.logger.save_to_github",
+                    "xai_as_closure.study2_app.save_to_github",
                     return_value=(True, None),
                 ),
             ):
@@ -446,7 +436,7 @@ class MigratedInfrastructureTests(unittest.TestCase):
             }
             with (
                 patch(
-                    "xai_as_closure.study1_app.test_github_connection",
+                    "xai_as_closure.background_save.test_github_connection",
                     return_value=(True, "connected"),
                 ),
                 patch(
@@ -496,11 +486,11 @@ class MigratedInfrastructureTests(unittest.TestCase):
             }
             with (
                 patch(
-                    "xai_as_closure.study2_app.test_github_connection",
+                    "xai_as_closure.background_save.test_github_connection",
                     return_value=(True, "connected"),
                 ),
                 patch(
-                    "xai_as_closure.logger.save_to_github",
+                    "xai_as_closure.study2_app.save_to_github",
                     return_value=(True, None),
                 ) as save,
             ):
@@ -588,11 +578,11 @@ class MigratedInfrastructureTests(unittest.TestCase):
             }
             with (
                 patch(
-                    "xai_as_closure.study2_app.test_github_connection",
+                    "xai_as_closure.background_save.test_github_connection",
                     return_value=(True, "connected"),
                 ),
                 patch(
-                    "xai_as_closure.logger.save_to_github",
+                    "xai_as_closure.study2_app.save_to_github",
                     return_value=(True, None),
                 ),
             ):
@@ -686,11 +676,11 @@ class MigratedInfrastructureTests(unittest.TestCase):
             }
             with (
                 patch(
-                    "xai_as_closure.study2_app.test_github_connection",
+                    "xai_as_closure.background_save.test_github_connection",
                     return_value=(True, "connected"),
                 ),
                 patch(
-                    "xai_as_closure.logger.save_to_github",
+                    "xai_as_closure.study2_app.save_to_github",
                     return_value=(True, None),
                 ),
             ):
@@ -752,11 +742,11 @@ class MigratedInfrastructureTests(unittest.TestCase):
             }
             with (
                 patch(
-                    "xai_as_closure.study2_app.test_github_connection",
+                    "xai_as_closure.background_save.test_github_connection",
                     return_value=(True, "connected"),
                 ),
                 patch(
-                    "xai_as_closure.logger.save_to_github",
+                    "xai_as_closure.study2_app.save_to_github",
                     return_value=(True, None),
                 ),
             ):

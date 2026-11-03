@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import hashlib
+from functools import partial
+import logging
 import json
 import os
 import re
@@ -20,14 +22,16 @@ from streamlit.errors import StreamlitSecretNotFoundError
 from .cases import POLICY_PATH, ROLE_PATH, CaseRepository, PROJECT_ROOT, material_manifest
 from .config import read_project_storage_config
 from .document_renderer import render_cv_document, render_reference_document
-from .github_saver import save_to_github, test_github_connection
+from .background_save import check_connection_once, new_archive_id, sync_in_background
+from .github_saver import save_to_github
 from .storage import DEFAULT_DATA_ROOT, SessionStore, stable_session_id
 from .study1 import STUDY1_INSTRUMENT_VERSION, Study1Session, WorkflowError, instrument_version, is_revalidation, FOCUSED_ROUND
 from .study1_launch import ParticipantLink, read_participant_link, validate_participant
-from .study1_round2_support import check_round2_materials, recover_round2_checkpoint, round2_archive_path, validation_cases
+from .study1_round2_support import check_round2_materials, round2_archive_path, validation_cases
 
 
-STUDY1_APP_RELEASE = "2026-11-03.5"
+STUDY1_APP_RELEASE = "2026-11-03.7"
+_LOGGER = logging.getLogger(__name__)
 
 
 def _round() -> str:
@@ -227,47 +231,44 @@ def _log(
     )
 
 
-def _sync_github() -> None:
-    """Back up the session state and events to the private GitHub repo.
-
-    Streamlit Community Cloud's filesystem is ephemeral, so this mirrors
-    Study 2's after-every-trial backup rather than relying on local JSONL alone.
-    """
+def _sync_github() -> bool:
+    """Coalesce snapshots and retry saving off the participant interaction thread."""
     if _local_preview():
-        return
-    repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
-    token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
-    if not repo or not token:
-        return
+        return True
     session: Study1Session = st.session_state["_study1_session"]
     store: SessionStore = st.session_state["_study1_store"]
-    session_id = session.state["session_id"]
-    payload = {
-        "session_id": session_id,
-        "participant_id": _participant_id(),
-        "prolific_pid": _participant_id() if _recruitment_source() == "prolific" else "",
-        "saved_at_utc": datetime.now(timezone.utc).isoformat(),
-        **session.state,
-        "material_manifest": session.cases.material_manifest,
-        "events": store.read_events(session_id),
-    }
-    date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    path = round2_archive_path(session_id, _round()) if is_revalidation(_round()) else f"sessions/xai_as_closure/study1/{date_str}/{session_id}.json"
-    success, _error = save_to_github(
-        repo,
-        path,
-        json.dumps(payload, indent=2, ensure_ascii=True, default=str),
-        f"Session: {session_id} | study1",
-        github_token=token,
-    )
-    if is_revalidation(_round()):
-        session.state["archive_pending"] = not success
-        store.save(session.state)
-    if not success and not is_revalidation(_round()):
-        st.warning(
-            "The private GitHub backup could not be updated. The local "
-            "session log remains available; please notify the researcher."
-        )
+    repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
+    token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
+
+    def prepare():
+        session_id = session.state["session_id"]
+        payload = {
+            "session_id": session_id,
+            "participant_id": _participant_id(),
+            "prolific_pid": _participant_id() if _recruitment_source() == "prolific" else "",
+            "saved_at_utc": datetime.now(timezone.utc).isoformat(),
+            **session.state,
+            "archive_pending": False,
+            "material_manifest": session.cases.material_manifest,
+            "events": store.read_events(session_id),
+        }
+        archive_id = session.state.get("archive_id")
+        if is_revalidation(_round()):
+            path = round2_archive_path(session_id, _round(), archive_id)
+        else:
+            date_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+            name = f"{session_id}_{archive_id}" if archive_id else session_id
+            path = f"sessions/xai_as_closure/study1/{date_str}/{name}.json"
+        return partial(save_to_github, repo, path,
+            json.dumps(payload, indent=2, ensure_ascii=True, default=str),
+            f"Session: {session_id} | study1", github_token=token)
+
+    revision = int(session.state.get("event_sequence", 0))
+    saved = bool(repo and token) and sync_in_background(
+        st.session_state, "_study1", revision, prepare)
+    session.state["archive_pending"] = not saved
+    store.save(session.state)
+    return saved
 
 
 def _read_launch_params() -> None:
@@ -333,39 +334,15 @@ def _prolific_gate() -> None:
 
 
 def _check_private_storage() -> None:
-    """Require working private-GitHub storage for production launches."""
-    if _local_preview():
-        return
-    production_launch = is_revalidation(_round()) or bool(_query("PROLIFIC_PID") or _query("pid"))
-    if not production_launch and "_project_storage_config" not in st.session_state:
-        st.session_state["_project_storage_config"] = read_project_storage_config()
+    """Configuration faults are researcher diagnostics, never mid-task gates."""
     if _local_preview():
         return
     repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
     token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
-    if not repo or not token:
-        message = (
-            "Private study-data storage is not configured. Please notify the "
-            "researcher before continuing."
-        )
-        if production_launch:
-            st.error(message)
-            st.stop()
-        st.warning(f"Pilot mode: {message}")
-        return
-    status_key = "_study1_github_storage_ready"
-    if status_key not in st.session_state:
-        success, _detail = test_github_connection(token, repo)
-        st.session_state[status_key] = success
-    if not st.session_state[status_key]:
-        message = (
-            "Private study-data storage could not be reached. Please notify the "
-            "researcher before continuing."
-        )
-        if production_launch:
-            st.error(message)
-            st.stop()
-        st.warning(f"Pilot mode: {message}")
+    if repo and token:
+        check_connection_once(token, repo)
+    else:
+        _LOGGER.error("Study 1 private storage configuration is incomplete.")
 
 
 def _safe_qualtrics_return(raw_return: str) -> str | None:
@@ -450,12 +427,10 @@ def _initialize() -> None:
     else:
         data_root = _secret("STUDY1_DATA_ROOT")
         store = SessionStore(Path(data_root)) if data_root else SessionStore()
+    # Only the instant local lookup runs before the first screen. After a host
+    # restart a returning participant starts a new session under a new archive_id,
+    # so their earlier remote record is kept; analysis keeps the first completed one.
     stored = store.load(session_id)
-    if stored is None and is_revalidation(validation_round) and production:
-        stored = recover_round2_checkpoint(store=store, cases=cases,
-            repo=_secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO"),
-            token=_secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN"),
-            session_id=session_id, participant_id=prolific_id, linkage_hash=linkage_hash, recruitment_source=source, validation_round=validation_round)
     if stored:
         stored_source = stored.get("recruitment_source", "preview" if stored.get("is_preview") else "prolific")
         if is_revalidation(validation_round) and stored_source != source:
@@ -471,6 +446,7 @@ def _initialize() -> None:
         session.state["participant_session_id"] = participant_session_id
         session.state["attempt_id"] = attempt_id or "original"
         session.state["repeat_attempt"] = bool(attempt_id)
+        session.state["archive_id"] = new_archive_id()
         store.save(session.state)
         event = "session_created"
     session.state["recruitment_source"] = source
@@ -497,9 +473,12 @@ def _header(session: Study1Session) -> None:
     st.title("Candidate screening task")
     if is_revalidation(_round()):
         st.caption("Assess each candidate independently against the supplied requirements.")
+        if _round() == FOCUSED_ROUND:
+            st.write("Review two fictional candidate profiles for an AI Governance Lead role, using the job description and recruitment policy. For each candidate, record your screening decision, whether the mandatory requirements are met, your confidence and a brief reason. You will then answer a question about possible professional disagreement and may leave feedback. No AI recommendation is shown in this assessment.")
     else:
         st.caption("Designed to take no more than about 10 minutes.")
-    _render_elapsed_timer()
+    if _local_preview():
+        _render_elapsed_timer()
     if session.phase == "screening":
         count = len(session.state["responses"])
         total = len(session.state["profile_order"])
@@ -507,7 +486,7 @@ def _header(session: Study1Session) -> None:
     elif session.phase == "post_study":
         st.progress(0.9, text="Candidate judgments complete · final materials review")
     else:
-        st.progress(1.0, text="Task complete")
+        st.progress(1.0)
 
 
 def _document_navigation(session: Study1Session) -> bool:
@@ -518,9 +497,9 @@ def _document_navigation(session: Study1Session) -> bool:
             visit["viewed_at_monotonic"] = time.perf_counter()
             st.session_state["_study1_document_visit"] = visit
         document_type, path = (
-            ("Job description", ROLE_PATH)
+            ("Job description", session.cases.role_path)
             if view == "role"
-            else ("Recruitment policy", POLICY_PATH)
+            else ("Recruitment policy", session.cases.policy_path)
         )
         render_reference_document(
             st,
@@ -746,11 +725,10 @@ def _post_study(session: Study1Session) -> None:
         )
         st.session_state["_study1_post_study_presented"] = True
 
-    st.info(
-        f"You have completed all {len(session.state['profile_order'])} candidate judgments. Please now evaluate "
-        "the role requirements and candidate materials as a complete set."
-    )
-    st.caption("For questions 1–6: 1 = Strongly disagree · 7 = Strongly agree")
+    focused = session.state.get("validation_round") == FOCUSED_ROUND
+    if not focused:
+        st.info("Please now evaluate the role requirements and candidate materials.")
+        st.caption("For questions 1–6: 1 = Strongly disagree · 7 = Strongly agree")
 
     likert_questions = (
         (
@@ -807,10 +785,10 @@ def _post_study(session: Study1Session) -> None:
                 horizontal=True,
                 key=f"post_study_{key}",
             )
-            for key, question in likert_questions
+            for key, question in (() if focused else likert_questions)
         }
         professional_disagreement = st.radio(
-            "7. Were there any candidates for whom you believed reasonable "
+            ("" if focused else "7. ") + "Were there any candidates for whom you believed reasonable "
             "recruitment professionals could disagree about whether the candidate "
             "met the mandatory professional requirements?",
             ["Yes", "No"],
@@ -829,7 +807,7 @@ def _post_study(session: Study1Session) -> None:
             key="post_study_disputed_profiles_reason",
         )
         materials_feedback = st.text_area(
-            "8. Optional: Did any profile seem unrealistic or artificially "
+            ("" if focused else "8. ") + "Optional: Did any profile seem unrealistic or artificially "
             "constructed, or should anything in the role requirements or profiles "
             "be changed before the main study? Identify the candidate where "
             "relevant.",
@@ -888,8 +866,12 @@ def _start_another_attempt() -> None:
             del st.session_state[key]
     st.rerun()
 
-
+@st.fragment(run_every=2)
 def _complete(session: Study1Session) -> None:
+    if not _sync_github():
+        st.info("Saving your responses. Please keep this page open.")
+        return
+
     if st.session_state.get("_study1_resumed_complete"):
         st.info("This participant ID or code already has a completed session. Your recorded responses have been restored.")
     st.markdown(
@@ -910,7 +892,7 @@ def _complete(session: Study1Session) -> None:
         )
     else:
         st.info("Please return to your survey tab and continue.")
-    if st.button("Start another attempt", key="study1_repeat_attempt"):
+    if _local_preview() and st.button("Start another attempt", key="study1_repeat_attempt"):
         _start_another_attempt()
 
 
@@ -940,17 +922,15 @@ def run(validation_round: str = "initial") -> None:
     try:
         _initialize()
     except WorkflowError as exc:
-        st.error(f"Study link unavailable: {exc}")
+        if _local_preview():
+            st.error(str(exc))
+        else:
+            _LOGGER.warning("Study 1 resume could not finish: %s", exc)
+            st.info("We are reconnecting to your task. Please refresh this page in a moment.")
         st.stop()
 
     session: Study1Session = st.session_state["_study1_session"]
-    if is_revalidation(validation_round) and session.state.get("archive_pending") and not _local_preview():
-        _sync_github()
-        if session.state.get("archive_pending"):
-            st.error("Your progress is saved locally, but the study backup has not completed. Please retry before continuing.")
-            if st.button("Retry saving", type="primary"):
-                st.rerun()
-            st.stop()
+    _sync_github()
     _header(session)
     if _document_navigation(session):
         return

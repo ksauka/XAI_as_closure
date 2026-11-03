@@ -7,7 +7,7 @@ screening.
 The repository contains two linked applications:
 
 - **Study 1 — expert validation:** one shared application in which domain
-  experts evaluate six candidate profiles without AI assistance.
+  experts assess C-05 and C-06 without AI assistance in the current focused version. Earlier six-profile rounds are archived separately.
 - **Study 2 — AI-assisted screening:** eight condition-locked applications in
   an explanation × anthropomorphism × cognitive-forcing design. Each participant
   evaluates the same six profiles in randomized order.
@@ -25,28 +25,28 @@ src/xai_as_closure/    Application, agent, condition, logging, and analysis code
 study_CHI/             Job, policy, candidate, protocol, and condition materials
 docs/                  Research brief, manuscript, and bibliography
 tests/                 Unit and regression tests
-environment.yml        Conda environment definition
 requirements.txt       Runtime Python dependencies
 ```
 
 ## Requirements
 
-- Conda or Miniconda
 - Python 3.11
+- Runtime dependencies in `requirements.txt`; test tools in `requirements-dev.txt`
 
 ## Installation
 
 From the repository root:
 
 ```bash
-conda env create -f environment.yml
-conda activate dsagent
+python -m venv .venv
+source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
 ```
 
-To update an existing environment:
+For tests and analysis checks in the same environment:
 
 ```bash
-conda env update -n dsagent -f environment.yml --prune
+python -m pip install -r requirements-dev.txt
 ```
 
 ## Configuration
@@ -68,8 +68,7 @@ For local or self-hosted deployment, `STUDY1_DATA_ROOT` and `STUDY2_DATA_ROOT`
 can point to protected storage. On Streamlit Community Cloud, configure
 `GITHUB_REPO` and `GITHUB_TOKEN` separately for every deployed app because its
 local filesystem is ephemeral and secrets are not shared between apps. A
-production launch checks access to the private data repository before allowing
-the study to begin.
+Study 1 launch checks for an existing checkpoint before starting, saves quietly during the task and waits for a confirmed final save at completion. Study 2 retains its private-storage launch check.
 
 Never commit `.env`, `.streamlit/secrets.toml`, participant data, or raw logs.
 
@@ -83,9 +82,7 @@ streamlit run apps/study1_validation_v2.py
 
 Deploy this entry point as a separate Streamlit app. The previous
 `apps/study1_validation.py` entry point is retained for the earlier instrument.
-The new app uses the same v6 materials as Study 2, instrument v7, and separate
-round-2 records. See [the round-2 launch guide](study_CHI/STUDY1_ROUND2_LAUNCH.md)
-for storage, survey linkage and the remaining recruitment requirements.
+The unpublished candidate uses shared v8 trimmed reference documents, instrument v9 and separate `round2_focused_trimmed` records. It presents two profiles, with Q7 and optional Q8 as the final review. Study 2 still uses all six profiles. Historical v7/v6 materials and records remain separate. See [the focused launch guide](study_CHI/STUDY1_FOCUSED_LAUNCH.md) and [local checks](study_CHI/STUDY1_TRIM_CHECKS.md). Develop locally and deploy only from a deliberately promoted `live` branch outside recruitment; current cloud settings have not yet been switched from `main`.
 
 For an isolated local rehearsal with synthetic records and no remote writes:
 

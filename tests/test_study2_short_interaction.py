@@ -55,7 +55,7 @@ class ShortInteractionTests(unittest.TestCase):
     def test_unanswered_confidence_cannot_submit_and_intentional_midpoint_is_valid(self):
         with tempfile.TemporaryDirectory() as directory,patch.dict(os.environ,{
             'STUDY2_LOCAL_PREVIEW':'1','STUDY2_PREVIEW_DATA_ROOT':directory,'STUDY2_PREVIEW_ID':'LOCAL_SHORT_INTERACTION'}),\
-            patch('xai_as_closure.logger.save_to_github') as save:
+            patch('xai_as_closure.study2_app.save_to_github') as save:
             app=AppTest.from_file(str(PROJECT_ROOT/'apps/study2_01_lowP_lowA_noF.py')).run(timeout=15)
             click(app,'Begin candidate screening')
             session=app.session_state['_study2_session'];ref=session.current_reference()

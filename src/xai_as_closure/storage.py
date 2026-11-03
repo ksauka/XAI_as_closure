@@ -239,12 +239,12 @@ class SessionStore:
             )
             sequence = state["event_sequence"]
             event = {
-                "schema_version": "study1-event-v6" if state.get("validation_round") == "round2_focused" else ("study1-event-v5" if state.get("validation_round") == "round2" else "study1-event-v4"),
+                "schema_version": "study1-event-v7" if state.get("validation_round") == "round2_focused_trimmed" else "study1-event-v6" if state.get("validation_round") == "round2_focused" else ("study1-event-v5" if state.get("validation_round") == "round2" else "study1-event-v4"),
                 "event_id": f"{state['session_id']}:{sequence:06d}",
                 "event_sequence": sequence,
                 "server_timestamp_utc": now_utc(),
                 "application": "study1_validation",
-                "application_version": "study1-focused-app-v1" if state.get("validation_round") == "round2_focused" else ("study1-round2-app-v3" if state.get("validation_round") == "round2" else "study1-app-v4"),
+                "application_version": "study1-focused-app-v2" if state.get("validation_round") == "round2_focused_trimmed" else "study1-focused-app-v1" if state.get("validation_round") == "round2_focused" else ("study1-round2-app-v3" if state.get("validation_round") == "round2" else "study1-app-v4"),
                 "validation_round": state.get("validation_round", "initial"),
                 "instrument_version": state.get("instrument_version"),
                 "case_set_id": state.get("case_set_id"),

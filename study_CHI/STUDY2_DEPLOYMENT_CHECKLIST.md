@@ -151,7 +151,8 @@ Complete all six trials in every cell. For each cell, confirm:
 - [ ] an incomplete or incorrect response never unlocks the AI, regardless of
       the number of attempts; and
 - [ ] a response containing a current qualifying certification and current
-      relevant professional membership unlocks the AI.
+      relevant professional membership unlocks the AI, including when both are
+      expressed in plain language rather than by exact credential name.
 
 ## 6. Error-profile audit
 
@@ -239,10 +240,11 @@ If any release invariant, route, storage check, or pilot workflow fails:
 
 The researcher review hub is apps/local_review.py, outside the frozen eight-app entry-point set. Use tools/local_study2.py for isolated local previews. Never enable STUDY2_LOCAL_PREVIEW on a production host.
 
-- [ ] Validate v12 stable private checkpoints at sessions/xai_as_closure/study2/checkpoints/<session_id>.json. Do not mix old dated pilot archives with this release.
-- [ ] Complete a live server-restart recovery test with local files absent; check state, condition, profile order and full event history.
-- [ ] Simulate a storage write outage and verify that progress/return is blocked until retry succeeds.
-- [ ] Verify the configured data repository is private. Initial checkpoint write must succeed before task progression.
+- [ ] Validate private checkpoints at sessions/xai_as_closure/study2/checkpoints/<session_id>_<archive_id>.json; each session writes its own file and never overwrites another. Do not mix old dated pilot archives with this release.
+- [ ] No GitHub call runs before the first screen. A refresh resumes from the local copy; after a server restart a returning participant starts a new record and the earlier one is kept (duplicate rule in STUDY2_ANALYSIS_PLAN.md).
+- [ ] Simulate a storage write outage: the task continues, saves retry quietly in the background, and only the completion screen waits for the final save.
+- [ ] Verify the configured data repository is private. The server logs one storage check, with its duration, per app process.
+- [ ] Before each batch, open the app as a participant would (Prolific preview, or a clearly marked test Prolific-format ID) and time the first screen; then run check_streamlit_assets.py. Locally, tools/time_first_screen.py times both apps' first screen against a deliberately slow fake GitHub (it should stay under one second).
 - [ ] Test parallel participants, duplicate tabs, API-rate limits and realistic checkpoint payload sizes on the selected deployment.
 - [ ] Verify the return route resumes the original Qualtrics response; do not trust a client-supplied done=1 as proof of completion.
 

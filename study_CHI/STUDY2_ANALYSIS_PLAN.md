@@ -55,6 +55,8 @@ Include consented, occupationally eligible participants who are not in Study 1 o
 
 Exclude route/material mismatches, missing linked task or survey records, and incomplete sessions; report counts and reasons. A manipulation-check response, incorrect decision, no citation/document use, or rapid completion is never a primary exclusion. Do not exclude participants for failing the cognitive-forcing response check: log attempts and completion within the assigned workflow.
 
+Duplicate records: every session writes its own private file, so a participant who returns after a host restart can have more than one record. Group records by Prolific ID and keep the first completed attempt (earliest `completed_at_utc`); if none completed, keep the earliest started one. Exclude all later attempts and report their count. `session_flatten.select_first_completed_attempts` applies this rule.
+
 One eligible complete linked session is retained per participant: the earliest created valid session under the original assigned condition, ties broken lexically by session_id. Multiple archive snapshots of one session are consolidated using the greatest monotonic event sequence, with conflicting histories reported as data-integrity failures. Never choose a record by correctness or engagement. Trial outcome missingness is not scored as failure. Report item-level questionnaire missingness; do not impute behavioural decisions or substitute a single survey item for a scale.
 
 ## Measures and scoring

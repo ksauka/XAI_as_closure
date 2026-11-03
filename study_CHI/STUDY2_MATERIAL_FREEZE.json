@@ -1,23 +1,23 @@
 {
-  "freeze_id": "study2-material-freeze-v5",
+  "freeze_id": "study2-material-freeze-v7",
   "frozen_on": "2026-11-03",
-  "case_set_id": "ai_governance_lead_six_profiles_v7",
-  "material_set": "chi_six_profiles_v7",
-  "material_manifest_sha256": "cd9a44d73727f127a691b3dcc3f95e41eafa39225ecef57600ad93f722c55550",
+  "case_set_id": "ai_governance_lead_six_profiles_v8",
+  "material_set": "chi_six_profiles_v8",
+  "material_manifest_sha256": "52eb2a9329fc0e746ad68b427fe18e32c4706a8106cc4849d390277e0ef149e9",
   "delivery_spec_version": "anthrokit-hiring-study2-v9",
   "study2_state_schema": "study2-state-v10",
   "study2_event_schema": "study2-event-v12",
-  "study2_application_version": "study2-app-v14",
+  "study2_application_version": "study2-app-v16",
   "files": {
-    "study_CHI/six_profiles_case_set.json": "775f88b22726c04c06aab57a64567d6d754712aeea89f112b466d2b84f62b124",
-    "study_CHI/job_description.md": "645094cba8fa458773b50e2d86f798ea411b98c25f2d938c2484db697db1b549",
-    "study_CHI/recruitment_policy.md": "b0484afa6c414232f8c7b6d5e730047b2e25066cf66545f67761821ce017244b",
+    "study_CHI/six_profiles_case_set.json": "bdc0307a863c6cacd59ced83fab607bacd707e1c360ca0415f15bddbfe5c6338",
+    "study_CHI/job_description.md": "d52fc28b8479101912069fb1586b65ee134cb22c04fe620ebf4365c9d87dd47c",
+    "study_CHI/recruitment_policy.md": "0f910bb92522b7dfaf9a36ef58aa89164c749f8a052455751059486ce28cd9ff",
     "src/xai_as_closure/study2_delivery.py": "385948fac92af0bd0bbe54291aba651c07122984c22470d43afcc9c3699081f8",
     "src/xai_as_closure/anthrokit_hiring.yaml": "5635d3b1f0a4ba107cde356ddea1ac92c0ec532be961dbd2879a70729482038f",
     "src/xai_as_closure/decision_agent.py": "188be1335b740018d897b9fa2d585f7b1a2013b224a34cd031c26e5ac8ae2377",
-    "src/xai_as_closure/logger.py": "c370e9aed3481bae4686ec0df6d582427bebff413c529130be3e421bf05a31b4",
-    "src/xai_as_closure/study2_app.py": "b6ec7cd4dc712b0bb9d28d01005179526f5ff6de8d4bc7fb47d00937fe98f320",
-    "src/xai_as_closure/study2.py": "affb3e7c2c2888a4b373b6c46f407b17783a85578d6167626f989ead694cf6e5"
+    "src/xai_as_closure/logger.py": "27a205f5a6ebd2e5a8692870bd8cebc00d93a8f6ef0882c90103d8ceef4e84da",
+    "src/xai_as_closure/study2_app.py": "d6503cb6d5c8dd84c234e9defd2378dc0fc1ebf8e9e0203a7c1b16c270ab0cbe",
+    "src/xai_as_closure/study2.py": "ad86920fab7627ffb1b95b8a5532007cdbdb06fbfe68b4552a62053b361a6e73"
   },
   "ground_truth": {
     "C-01": "Advance",
@@ -35,9 +35,9 @@
     "C-05": "Advance candidate to human interview",
     "C-06": "Reject candidate"
   },
-  "supersedes": "study2-material-freeze-v4",
+  "supersedes": "study2-material-freeze-v6",
   "participant_materials_frozen_on": "2026-11-03",
-  "release_change": "Short neutral free-text reason after every final decision, capped at 200 characters, with the existing decisive-evidence coding retained. Both confidence controls start unanswered and require explicit selection; 50% remains a valid intentional response. No time minimum, per-profile time instruction or automatic submission.",
+  "release_change": "Shorter shared reference documents remain unchanged from v6. Requirement re-entry now accepts plain-language descriptions of the qualifying certification while continuing to require both current mandatory requirements; missing elements receive specific feedback. Ground truth, fixed AI outputs and the forcing sequence are unchanged. Pending focused validation and pilot timing; no publication.",
   "validation_status": "pending_focused_assessment",
   "ready_for_confirmatory_recruitment": false
 }

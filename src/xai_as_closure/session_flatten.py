@@ -85,6 +85,36 @@ def _events(archive: dict[str, Any]) -> list[dict[str, Any]]:
     return [event for event in events if isinstance(event, dict)]
 
 
+def select_first_completed_attempts(
+    sessions: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Apply the pre-registered duplicate rule: one record per Prolific ID.
+
+    Each participant's earliest completed session is kept; a participant with no
+    completed session keeps their earliest started one. All other records are
+    returned as excluded so they can be reported, never silently dropped.
+    """
+    groups: dict[str, list[dict[str, Any]]] = {}
+    kept: list[dict[str, Any]] = []
+    for archive in sessions:
+        state = _state(archive)
+        participant = str(state.get("prolific_pid") or state.get("participant_id") or "")
+        if participant:
+            groups.setdefault(participant, []).append(archive)
+        else:
+            kept.append(archive)
+    excluded: list[dict[str, Any]] = []
+    for attempts in groups.values():
+        completed = [a for a in attempts if _state(a).get("completed_at_utc")]
+        if completed:
+            first = min(completed, key=lambda a: str(_state(a)["completed_at_utc"]))
+        else:
+            first = min(attempts, key=lambda a: str(_state(a).get("created_at_utc", "")))
+        kept.append(first)
+        excluded.extend(a for a in attempts if a is not first)
+    return kept, excluded
+
+
 def _advance_label(value: Any) -> str:
     text = str(value)
     if text == "Advance candidate to human interview":
