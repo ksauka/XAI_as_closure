@@ -402,7 +402,7 @@ class Study2InfrastructureTests(unittest.TestCase):
                 payload={"condition_id": condition.condition_id},
             )
             self.assertEqual(event["schema_version"], "study2-event-v11")
-            self.assertEqual(event["application_version"], "study2-app-v12")
+            self.assertEqual(event["application_version"], "study2-app-v13")
             self.assertEqual(event["event_sequence"], 1)
             self.assertEqual(event["event_id"], "sessiontest:000001")
             self.assertTrue(event["explanation_present"])

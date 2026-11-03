@@ -1,0 +1,14 @@
+{
+  "status": "review_draft_not_study_material",
+  "reference": "C-06",
+  "source_case_set": "ai_governance_lead_six_profiles_v7",
+  "source_sha256": "775f88b22726c04c06aab57a64567d6d754712aeea89f112b466d2b84f62b124",
+  "saved_at_utc": "2026-11-02T23:00:17.750409+00:00",
+  "rationale": "",
+  "applies_to": [
+    "study1",
+    "study2"
+  ],
+  "aligned_at_utc": "2026-11-03T00:01:35.450468+00:00",
+  "alignment_note": "Restored the author-approved bare AIGP line; previous saved draft preserved in the revision archive."
+}

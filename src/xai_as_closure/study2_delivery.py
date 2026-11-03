@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-DELIVERY_SPEC_VERSION = "anthrokit-hiring-study2-v8"
+DELIVERY_SPEC_VERSION = "anthrokit-hiring-study2-v9"
 
 
 @dataclass(frozen=True)
@@ -309,9 +309,9 @@ _CLAIMS: dict[str, tuple[str, ...]] = {
     ),
     "C-05": (
         "The expired IAPP AIGP credential is treated as current and as satisfying the mandatory certification requirement.",
-        "Current IAPP membership satisfies the separate professional-membership requirement.",
+        "The expired IAPP membership is also treated as current and as satisfying the separate professional-membership requirement.",
         "Assessment, advisory, technical, and delivery experience meeting all general requirements is documented.",
-        "The certification-currentness and general experience requirements are assessed as met.",
+        "Both mandatory currency requirements and the general experience requirements are incorrectly assessed as met.",
     ),
     "C-06": (
         "The AIGP entry is treated as ambiguous despite the current IAPP membership recorded elsewhere in the candidate file.",

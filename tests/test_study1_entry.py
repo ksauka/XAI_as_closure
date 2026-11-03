@@ -9,7 +9,7 @@ from streamlit.testing.v1 import AppTest
 from xai_as_closure import study1_app
 from xai_as_closure.cases import PROJECT_ROOT
 
-RELEASE = '2026-11-03.3'
+RELEASE = '2026-11-03.4'
 
 
 class Study1EntryTests(unittest.TestCase):

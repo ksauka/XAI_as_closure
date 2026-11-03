@@ -1,19 +1,15 @@
 {
-  "status": "review_draft_not_study_material",
-  "reference": "C-05",
+  "status": "aligned_with_installed_v7",
   "applies_to": [
     "study1",
     "study2"
   ],
-  "source_case_set": "ai_governance_lead_six_profiles_v6",
-  "source_sha256": "8826b457f186031c331b6816ec5e3d5292ee8f53e52155d6078d4cbb6e1b496e",
-  "saved_at_utc": "2026-11-03T13:56:56.413559+00:00",
+  "reference": "C-05",
+  "source_case_set": "ai_governance_lead_six_profiles_v7",
+  "source_sha256": "775f88b22726c04c06aab57a64567d6d754712aeea89f112b466d2b84f62b124",
+  "saved_at_utc": "2026-11-03T14:03:33.400425+00:00",
   "rationale": "Author instruction: C-05 membership must also be expired. Change IAPP membership end from 31 December 2026 to 31 May 2026; keep the expired AIGP term. Both dates precede the 27–30 August screening window.",
-  "membership_expiry_date": "2026-05-31",
-  "ground_truth_unchanged": true,
-  "error_mechanism_changed": "Single certification-currency failure becomes dual certification-and-membership currency failure.",
   "collected_v6_unchanged": true,
-  "validation_status": "not_assessed",
-  "release_note": "Keep the live v6 freeze and v2 records intact. A new shared release and validation round are required before participant use.",
-  "proposed_structured_profile": "study_CHI/materials_review/c05_dual_expiry_2026-11-03/C-05.proposed-profile.json"
+  "validation_status": "pending_focused_assessment",
+  "release_note": "Installed as shared v7. The current v2 entry point presents C-05 and C-06 in a separate focused assessment."
 }

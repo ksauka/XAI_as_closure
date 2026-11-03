@@ -11,6 +11,16 @@ from .cases import CaseRepository
 STUDY1_INSTRUMENT_VERSION = "study1-instrument-v6"
 STUDY1_STATE_VERSION = "study1-state-v4"
 STUDY1_ROUND2_INSTRUMENT_VERSION = "study1-instrument-v7"
+STUDY1_FOCUSED_INSTRUMENT_VERSION = "study1-instrument-v8"
+FOCUSED_ROUND = "round2_focused"
+
+
+def is_revalidation(validation_round: str) -> bool:
+    return validation_round in {"round2", FOCUSED_ROUND}
+
+
+def validation_references(cases: CaseRepository, validation_round: str) -> set[str]:
+    return {"C-05", "C-06"} if validation_round == FOCUSED_ROUND else set(cases.references)
 
 
 class WorkflowError(ValueError):
@@ -22,6 +32,8 @@ def instrument_version(validation_round: str) -> str:
         return STUDY1_INSTRUMENT_VERSION
     if validation_round == "round2":
         return STUDY1_ROUND2_INSTRUMENT_VERSION
+    if validation_round == FOCUSED_ROUND:
+        return STUDY1_FOCUSED_INSTRUMENT_VERSION
     raise WorkflowError("Unknown validation round.")
 
 
@@ -63,7 +75,7 @@ def _validate_judgment_response(response: dict[str, Any]) -> None:
         raise WorkflowError("Confidence must be a whole number from 0 to 100.")
 
 
-def _validate_post_study_response(response: dict[str, Any]) -> None:
+def _validate_post_study_response(response: dict[str, Any], valid_references: set[str] | None = None) -> None:
     likert_fields = {
         "role_requirement_clarity",
         "candidate_profile_realism",
@@ -97,7 +109,8 @@ def _validate_post_study_response(response: dict[str, Any]) -> None:
     if disagreement not in {"Yes", "No"}:
         raise WorkflowError("Invalid professional-disagreement response.")
     disputed_profiles = response.get("disputed_profiles", [])
-    valid_references = {f"C-{index:02d}" for index in range(1, 7)}
+    if valid_references is None:
+        valid_references = {f"C-{index:02d}" for index in range(1, 7)}
     if not isinstance(disputed_profiles, list) or any(
         reference not in valid_references for reference in disputed_profiles
     ):
@@ -131,13 +144,15 @@ class Study1Session:
         validation_round: str = "initial",
     ) -> Study1Session:
         version = instrument_version(validation_round)
-        order = cases.randomized_order(seed)
+        selected = validation_references(cases, validation_round)
+        order = [reference for reference in cases.randomized_order(seed) if reference in selected]
         return cls(
             state={
                 "schema_version": STUDY1_STATE_VERSION,
                 "instrument_version": version,
                 "validation_round": validation_round,
                 "case_set_id": cases.case_set_id,
+                "material_manifest": cases.material_manifest,
                 "session_id": session_id,
                 "linkage_hash": linkage_hash,
                 "created_at_utc": _now(),
@@ -206,7 +221,7 @@ class Study1Session:
     def submit_post_study(self, response: dict[str, Any]) -> None:
         if self.phase != "post_study":
             raise WorkflowError("The final materials review is not available.")
-        _validate_post_study_response(response)
+        _validate_post_study_response(response, set(self.state["profile_order"]))
         submitted_at = _now()
         self.state["post_study_response"] = dict(response)
         self.state["post_study_submitted_at_utc"] = submitted_at
@@ -229,7 +244,9 @@ class Study1Session:
             raise WorkflowError("Stored session uses a different Study 1 instrument.")
         if self.state.get("case_set_id") != self.cases.case_set_id:
             raise WorkflowError("Stored session uses a different Study 1 case set.")
-        references = set(self.cases.references)
+        references = validation_references(self.cases, self.state.get("validation_round", "initial"))
+        if self.state.get("material_manifest", self.cases.material_manifest) != self.cases.material_manifest:
+            raise WorkflowError("Stored session uses different Study 1 material hashes.")
         order = self.state.get("profile_order", [])
         if len(order) != len(references) or set(order) != references:
             raise WorkflowError(
@@ -252,7 +269,7 @@ class Study1Session:
             raise WorkflowError("A complete response set cannot remain in screening.")
         if self.phase in {"post_study", "complete"} and set(responses) != references:
             raise WorkflowError(
-                "The final materials review requires all six candidate judgments."
+                "The final materials review requires all assigned candidate judgments."
             )
         post_study_response = self.state.get("post_study_response")
         if self.phase != "complete" and post_study_response is not None:
@@ -269,7 +286,7 @@ class Study1Session:
                 raise WorkflowError(
                     "A completed session must include the final review."
                 )
-            _validate_post_study_response(post_study_response)
+            _validate_post_study_response(post_study_response, references)
             if not self.state.get("post_study_submitted_at_utc"):
                 raise WorkflowError(
                     "A completed session must include review submission time."

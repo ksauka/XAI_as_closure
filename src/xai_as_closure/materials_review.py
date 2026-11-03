@@ -28,7 +28,7 @@ def render_materials_review() -> None:
     profiles = {p["reference"]: p for p in source["profiles"]}
     draft_root = CASE_SET_PATH.parent / "materials_review" / "drafts"
     st.write(f"**Role:** {cases.role}, {cases.company} · **Screening:** {cases.timeline.screening_window_label}")
-    st.info("The completed second expert assessment used the installed v6 materials. The left pane shows that assessed version; the right pane shows the shared working draft for the next Study 1 assessment and Study 2. Saving here does not replace the installed version.")
+    st.info("Both studies now load shared material v7. The left pane shows the installed profile; the right pane is a working copy for further edits. The focused expert assessment shows only C-05 and C-06; Study 2 retains all six profiles. The completed v6 assessment is preserved separately.")
     tabs = st.tabs(["C-05 · certification and membership currency", "C-06 · credential identity", "Job description", "Recruitment policy"])
     for tab, path, label in ((tabs[2], ROLE_PATH, "job_description"),
                              (tabs[3], POLICY_PATH, "recruitment_policy")):
@@ -51,9 +51,9 @@ def render_materials_review() -> None:
                 st.warning("This saved draft started from an earlier case file. Compare it with the current profile before continuing.")
             st.write(f"**Current intended decision:** {profile['ground_truth']} · **Current AI advice:** {profile['fixed_assessment']['recommendation']}")
             if reference == "C-05":
-                st.write("Assessed v6: the AIGP certification ended on 31 May 2026; IAPP membership is recorded as current through 31 December 2026. The author-requested working draft changes membership to end on 31 May 2026 as well. Both would then be expired during screening on 27–30 August 2026. This further revision has not been assessed.")
+                st.write("Installed v7: both the AIGP certification and IAPP membership end on 31 May 2026, before screening on 27–30 August 2026. Either expiry requires rejection. The previous v6 assessment showed current membership and does not validate this revised profile.")
             else:
-                st.write("Assessed v6: the bare AIGP entry and current IAPP membership have matching terms. JD 4.2.1 gives the certification-identity rule. Preserve the bare AIGP entry when reviewing this profile; it is resolved by reading the candidate file against that rule.")
+                st.write("Installed v7, unchanged from v6: the bare AIGP entry and current IAPP membership have matching terms. JD 4.2.1 gives the certification-identity rule. Preserve the bare AIGP entry when reviewing this profile; it is resolved by reading the candidate file against that rule.")
             left, right = st.columns(2, gap="large")
             with left:
                 st.subheader("Current profile")

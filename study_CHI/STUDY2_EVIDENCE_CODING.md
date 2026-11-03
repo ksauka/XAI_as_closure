@@ -1,6 +1,6 @@
 # Study 2 decisive-evidence coding manual
 
-Version study2-evidence-v2. Code the post-decision response, not the decision or a click trace. Present coders with a pseudonymous response ID, candidate reference and response text; hide condition, final decision, confidence, trust and interaction logs. Candidate identity is necessary to judge the decisive evidence.
+Version study2-evidence-v3 (shared material v7). Code the post-decision response, not the decision or a click trace. Present coders with a pseudonymous response ID, candidate reference and response text; hide condition, final decision, confidence, trust and interaction logs. Candidate identity is necessary to judge the decisive evidence.
 
 ## Codes
 
@@ -8,9 +8,9 @@ Version study2-evidence-v2. Code the post-decision response, not the decision or
 
 ## C-05: expiry
 
-Code 1 when the response recognises that the recorded AIGP certification expired before screening and hence does not satisfy the current-certification requirement. The exact date is not essential if the before-screening relationship is unambiguous. Mentioning current membership alone is insufficient. Membership does not renew the certification.
+Code 1 when the response identifies that the AIGP certification, IAPP membership, or both expired before screening and therefore fail a mandatory currency requirement. Either failure independently requires rejection; identifying one is sufficient for this binary decisive-evidence outcome. The exact date is not essential if the before-screening relationship is unambiguous. Generic references to credentials or membership are insufficient. Record certification expiry and membership expiry separately in supplementary reason notes, so identifying both is distinguishable from identifying one. Do not apply this v7 rule retrospectively to v6, where the membership was current.
 
-Positive anchor (constructed, not participant data): "The AIGP expired before the screening window; current IAPP membership does not meet the certification requirement."
+Positive anchor (constructed, not participant data): "The AIGP and IAPP membership both ended before screening, so the candidate does not meet the mandatory current-status requirements."
 Negative anchor: "They have AIGP and good experience."
 
 ## C-06: whole-file reconciliation

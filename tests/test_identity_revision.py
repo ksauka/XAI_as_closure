@@ -35,7 +35,7 @@ class IdentityRevisionTests(unittest.TestCase):
 
     def test_revision_keeps_candidate_cvs_ground_truth_and_verdicts(self):
         prior = json.loads((PROJECT_ROOT / 'study_CHI/materials_review/archive/pre_identity_revision_2026-11-03/study_CHI/six_profiles_case_set.json').read_text())
-        current = json.loads(self.cases.path.read_text())
+        current = json.loads((PROJECT_ROOT / 'study_CHI/materials_review/archive/pre_c05_dual_expiry_2026-11-03/study_CHI/six_profiles_case_set.json').read_text())
         for before, after in zip(prior['profiles'], current['profiles']):
             self.assertEqual(before['reference'], after['reference'])
             self.assertEqual(before['candidate_cv'], after['candidate_cv'])
@@ -55,12 +55,12 @@ class IdentityRevisionTests(unittest.TestCase):
 
     def test_both_studies_share_the_revised_set_and_validation_is_pending(self):
         from xai_as_closure import study1_app, study2_app
-        self.assertEqual(study1_app.CaseRepository().case_set_id, 'ai_governance_lead_six_profiles_v6')
+        self.assertEqual(study1_app.CaseRepository().case_set_id, 'ai_governance_lead_six_profiles_v7')
         self.assertEqual(study1_app.CaseRepository().path, study2_app.CaseRepository().path)
         self.assertEqual(study1_app.ROLE_PATH, study2_app.ROLE_PATH)
         self.assertEqual(study1_app.POLICY_PATH, study2_app.POLICY_PATH)
         freeze = json.loads((PROJECT_ROOT / 'study_CHI/STUDY2_MATERIAL_FREEZE.json').read_text())
-        self.assertEqual(freeze['validation_status'], 'pending_second_round')
+        self.assertEqual(freeze['validation_status'], 'pending_focused_assessment')
         self.assertFalse(freeze['ready_for_confirmatory_recruitment'])
 
 

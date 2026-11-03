@@ -1,3 +1,5 @@
+> Current update, 3 November 2026: the version-2 entry point now runs the separately identified C-05/C-06 focused assessment on shared v7 materials. See `STUDY1_FOCUSED_LAUNCH.md`. The six-profile v6 assessment described below is preserved as historical procedure and records; it is not relabelled as this focused round.
+
 # Study 1 Expert-Validation Protocol
 
 > Round-2 update, 3 November 2026: the revised-material assessment uses

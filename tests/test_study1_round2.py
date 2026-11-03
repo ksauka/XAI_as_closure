@@ -13,7 +13,7 @@ from streamlit.testing.v1 import AppTest
 from xai_as_closure.cases import CaseRepository, PROJECT_ROOT, material_manifest
 from xai_as_closure.storage import SessionStore
 from xai_as_closure.study1 import Study1Session, WorkflowError
-from xai_as_closure.study1_round2_support import check_round2_materials, recover_round2_checkpoint, round2_archive_path
+from xai_as_closure.study1_round2_support import check_round2_materials, recover_round2_checkpoint, round2_archive_path, validation_cases
 
 SID = 's1_' + 'a' * 24
 PID = 'b' * 24
@@ -23,7 +23,7 @@ LINK = 'c' * 64
 class Round2Tests(unittest.TestCase):
     def make_session(self, round='round2'):
         return Study1Session.create(session_id=SID, linkage_hash=LINK,
-            seed='round2-check', cases=CaseRepository(), validation_round=round)
+            seed='round2-check', cases=validation_cases("round2"), validation_round=round)
 
     def test_instrument_separation_and_material_lock(self):
         self.assertEqual(self.make_session().state['instrument_version'], 'study1-instrument-v7')
@@ -31,7 +31,7 @@ class Round2Tests(unittest.TestCase):
         state = self.make_session().state
         state['instrument_version'] = 'study1-instrument-v6'
         with self.assertRaises(WorkflowError):
-            Study1Session.restore(state, CaseRepository())
+            Study1Session.restore(state, validation_cases("round2"))
         check_round2_materials()
         with patch('xai_as_closure.study1_round2_support.material_manifest', return_value={'manifest_sha256': 'wrong'}):
             with self.assertRaises(WorkflowError):
@@ -43,10 +43,10 @@ class Round2Tests(unittest.TestCase):
             first = SessionStore(original)
             first.append_event(session.state, 'session_created', phase='screening')
             payload = dict(session.state, participant_id=PID, events=first.read_events(SID),
-                           material_manifest=material_manifest())
+                           material_manifest=session.cases.material_manifest)
             response = Mock(status_code=200)
             response.json.return_value = {'content': base64.b64encode(json.dumps(payload).encode()).decode()}
-            kwargs = dict(store=SessionStore(restored), cases=CaseRepository(), repo='test/private',
+            kwargs = dict(store=SessionStore(restored), cases=validation_cases("round2"), repo='test/private',
                           token='test-only', session_id=SID, participant_id=PID, linkage_hash=LINK)
             with patch('xai_as_closure.study1_round2_support.requests.get', return_value=response):
                 state = recover_round2_checkpoint(**kwargs)
@@ -59,7 +59,7 @@ class Round2Tests(unittest.TestCase):
 
     def test_failed_lookup_cannot_silently_create_fresh_session(self):
         with tempfile.TemporaryDirectory() as directory:
-            kwargs = dict(store=SessionStore(directory), cases=CaseRepository(), repo='test/private',
+            kwargs = dict(store=SessionStore(directory), cases=validation_cases("round2"), repo='test/private',
                           token='test-only', session_id=SID, participant_id=PID, linkage_hash=LINK)
             with patch('xai_as_closure.study1_round2_support.requests.get', return_value=Mock(status_code=503)):
                 with self.assertRaises(WorkflowError):
@@ -86,7 +86,7 @@ class Round2Tests(unittest.TestCase):
                 patch('xai_as_closure.study1_app.save_to_github') as save, \
                 patch('xai_as_closure.study1_app.test_github_connection') as connect, \
                 patch('xai_as_closure.study1_round2_support.requests.get') as recover:
-            app_path = str(PROJECT_ROOT / 'apps/study1_validation_v2.py')
+            app_path = str(PROJECT_ROOT / 'apps/study1_validation_v2_six_profiles_archive.py')
             app = AppTest.from_file(app_path, default_timeout=15).run()
             self.assertFalse(app.exception)
             for label in ('Open job description', 'Open recruitment policy'):
@@ -136,7 +136,7 @@ class Round2Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {
                 'STUDY1_LOCAL_PREVIEW': '0', 'STUDY1_ROUND2_DATA_ROOT': directory}):
             linkage = hashlib.sha256(PID.encode()).hexdigest()
-            cases = CaseRepository()
+            cases = validation_cases("round2")
             identity = f'{linkage}\0{cases.case_set_id}\0study1-instrument-v7\0round2'
             session_id = 's1_' + hashlib.sha256(identity.encode()).hexdigest()[:24]
             session = Study1Session.create(session_id=session_id, linkage_hash=linkage,
@@ -157,19 +157,19 @@ class Round2Tests(unittest.TestCase):
             with patch('xai_as_closure.study1_app._secret', side_effect=secret), \
                     patch('xai_as_closure.study1_app.test_github_connection', return_value=(True, 'ok')), \
                     patch('xai_as_closure.study1_app.save_to_github', return_value=(False, 'synthetic failure')) as save:
-                app = AppTest.from_file(str(PROJECT_ROOT / 'apps/study1_validation_v2.py'), default_timeout=15)
+                app = AppTest.from_file(str(PROJECT_ROOT / 'apps/study1_validation_v2_six_profiles_archive.py'), default_timeout=15)
                 app.query_params['PROLIFIC_PID'] = PID
                 app.query_params['return'] = 'https://example.qualtrics.com/jfe/form/test'
                 app.run()
                 self.assertFalse(app.exception)
                 self.assertTrue(any('backup has not completed' in e.value for e in app.error))
-                self.assertFalse(any('All six independent' in m.value for m in app.markdown))
+                self.assertFalse(any('All 6 independent' in m.value for m in app.markdown))
                 self.assertTrue(app.session_state['_study1_session'].state['archive_pending'])
                 self.assertIn('/round2/', save.call_args.args[1])
                 save.return_value = (True, 'ok')
                 next(button for button in app.button if button.label == 'Retry saving').click().run()
                 self.assertFalse(app.exception)
-                self.assertTrue(any('All six independent' in m.value for m in app.markdown))
+                self.assertTrue(any('All 6 independent' in m.value for m in app.markdown))
                 self.assertFalse(app.session_state['_study1_session'].state['archive_pending'])
 
 

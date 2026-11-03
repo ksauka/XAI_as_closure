@@ -72,9 +72,7 @@ embodiment, emotional or lived-experience claims, protected-attribute inference,
 and live LLM rewriting are excluded. `A` cannot alter explanation presence, and
 explanation assignment cannot alter the delivery register.
 
-The false advance on C-05 is a certification-currentness error. The candidate's
-AIGP term ended on 31 May 2026, before the screening window, but the fixed
-recommendation treats it as current. The shared advance citation set for
+The false advance on C-05 is a dual currency error. The AIGP certification and IAPP membership both end on 31 May 2026, before the screening window, but the fixed recommendation treats both as current. Either failure requires rejection. The shared advance citation set for
 C-01/C-02/C-05 includes `CV(4)`, `JD(4.1)`, `JD(4.2)`, `JD(4.2.1)`, `POL(2.1)`, and
 `POL(2.3)` so the evidence needed to overturn C-05 remains within the cited
 documents without giving the error trial a distinctive citation pattern.
@@ -153,4 +151,4 @@ What distinguishes each manipulation on screen:
 
 ## Shared material revision, 3 November 2026
 
-The active case set is `ai_governance_lead_six_profiles_v6`. Identity is governed only by JD 4.2.1; Policy 2.3 retains whole-file assessment and currency. All six profiles cite both provisions. C-01/C-02/C-05 share the same ordered 12-source list; C-03/C-04/C-06 share the same ordered 14-source list, including JD 3.5 and JD 7.2 on all three rejects. Candidate CVs, intended decisions and AI verdicts are unchanged. Material integrity checks do not replace the pending second expert assessment.
+The active case set is `ai_governance_lead_six_profiles_v7`. Identity is governed only by JD 4.2.1; Policy 2.3 retains whole-file assessment and currency. All six profiles cite both provisions. C-01/C-02/C-05 share the same ordered 12-source list; C-03/C-04/C-06 share the same ordered 14-source list, including JD 3.5 and JD 7.2 on all three rejects. C-05 membership now expires alongside its certification; the other CVs, intended decisions and AI verdicts are unchanged. The completed six-profile v6 assessment is retained separately. Material integrity checks do not replace the pending focused C-05/C-06 assessment.

@@ -102,17 +102,18 @@ class RecommendationArtifact:
     anthropomorphic: bool
 
 
-def material_manifest() -> dict[str, Any]:
+def material_manifest(case_set_path: Path | None = None) -> dict[str, Any]:
     files: dict[str, str] = {}
     digest = hashlib.sha256()
-    for path in MATERIAL_FILES:
+    paths = tuple(case_set_path if case_set_path is not None and path == CASE_SET_PATH else path for path in MATERIAL_FILES)
+    for path in paths:
         content = path.read_bytes()
         file_hash = hashlib.sha256(content).hexdigest()
         files[path.name] = file_hash
         digest.update(path.name.encode("ascii"))
         digest.update(content)
     return {
-        "material_set": "chi_six_profiles_v6",
+        "material_set": "chi_six_profiles_" + str(json.loads(paths[0].read_text(encoding="utf-8"))["case_set_id"]).rsplit("_", 1)[-1],
         "manifest_sha256": digest.hexdigest(),
         "files": files,
     }
@@ -158,6 +159,10 @@ class CaseRepository:
         self._role_clauses = _clauses(ROLE_PATH)
         self._policy_clauses = _clauses(POLICY_PATH)
         self._validate()
+
+    @property
+    def material_manifest(self) -> dict[str, Any]:
+        return material_manifest(self.path)
 
     @property
     def references(self) -> tuple[str, ...]:

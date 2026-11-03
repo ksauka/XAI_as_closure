@@ -25,8 +25,8 @@ def playground():
     )
     st.page_link(materials_page, label="Review and improve C-05 and C-06")
     spec = json.loads((ROOT / "study_CHI/STUDY2_OPERATIONAL_SPEC.json").read_text())
-    st.header("Study 1: second expert assessment")
-    st.link_button("Open Study 1 version 2", "http://localhost:8509/", use_container_width=True)
+    st.header("Study 1: focused expert assessment")
+    st.link_button("Open Study 1 version 2 · C-05 and C-06", "http://localhost:8509/", use_container_width=True)
     st.header("Study 2: open a condition")
     for index in range(8):
         p, a, f = index // 4, (index // 2) % 2, index % 2

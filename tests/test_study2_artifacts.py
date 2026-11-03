@@ -42,7 +42,7 @@ class Study2ArtifactTests(unittest.TestCase):
         self.assertNotIn("IAPP", certification.text)
 
     def test_delivery_version_separates_rewritten_explanation_stimuli(self) -> None:
-        self.assertEqual(DELIVERY_SPEC_VERSION, "anthrokit-hiring-study2-v8")
+        self.assertEqual(DELIVERY_SPEC_VERSION, "anthrokit-hiring-study2-v9")
 
     def test_participant_messages_never_expose_semantic_labels_or_raw_ids(self) -> None:
         for reference in self.cases.references:
@@ -70,6 +70,14 @@ class Study2ArtifactTests(unittest.TestCase):
                     "false reject",
                 ):
                     self.assertNotIn(forbidden, serialized)
+
+    def test_participant_rationale_contains_rendered_advice_not_internal_error_audit(self) -> None:
+        for reference in ("C-05", "C-06"):
+            for condition in ("P1_A0_F0", "P1_A1_F0"):
+                output = Study2DecisionAgent(condition=condition, cases=self.cases).assess(reference)
+                self.assertEqual(output.participant_payload()["rationale"], output.text)
+                self.assertNotEqual(output.participant_payload()["rationale"], output.rationale)
+                self.assertEqual(output.audit_payload()["agent_evaluation"]["rationale"], output.rationale)
 
     def test_explanation_presence_changes_card_and_source_visibility(self) -> None:
         for reference in self.cases.references:

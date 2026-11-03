@@ -12,7 +12,7 @@
     "rule": "Round up to whole minutes: 1.25 times the largest cell-specific 95th percentile of complete technical-pilot session durations; at least five complete sessions per cell, all eight cells represented. The pilot is separate from confirmatory data. No decision is automatically submitted."
   },
   "evidence_coding": {
-    "manual_version": "study2-evidence-v2",
+    "manual_version": "study2-evidence-v3",
     "independent_subset_fraction": 0.25,
     "minimum_per_profile": 20,
     "seed": 20261022,

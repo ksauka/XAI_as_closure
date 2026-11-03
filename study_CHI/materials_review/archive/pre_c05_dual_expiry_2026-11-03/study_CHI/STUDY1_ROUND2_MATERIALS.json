@@ -1,0 +1,16 @@
+{
+  "validation_round": "round2",
+  "instrument_version": "study1-instrument-v7",
+  "case_set_id": "ai_governance_lead_six_profiles_v6",
+  "frozen_on": "2026-11-03",
+  "material_manifest_sha256": "b4fa75b1a09e82dda8677573df2e855970a7ace42c32592e098996c3ea7169c4",
+  "files": {
+    "six_profiles_case_set.json": "8826b457f186031c331b6816ec5e3d5292ee8f53e52155d6078d4cbb6e1b496e",
+    "job_description.md": "645094cba8fa458773b50e2d86f798ea411b98c25f2d938c2484db697db1b549",
+    "recruitment_policy.md": "b0484afa6c414232f8c7b6d5e730047b2e25066cf66545f67761821ce017244b"
+  },
+  "status": "prepared_not_collected",
+  "entry_point": "apps/study1_validation_v2.py",
+  "prior_participants": "Exclude all earlier Study 1 batches and pilots at recruitment.",
+  "evidence_question": "What information was most important for your decision? Identify the relevant requirement and candidate evidence. Enter \"None\" if no information was decisive."
+}

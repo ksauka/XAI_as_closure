@@ -1,0 +1,20 @@
+{
+  "validation_round": "round2_focused",
+  "instrument_version": "study1-instrument-v8",
+  "case_set_id": "ai_governance_lead_six_profiles_v7",
+  "profile_references": [
+    "C-05",
+    "C-06"
+  ],
+  "material_manifest_sha256": "cd9a44d73727f127a691b3dcc3f95e41eafa39225ecef57600ad93f722c55550",
+  "files": {
+    "six_profiles_case_set.json": "775f88b22726c04c06aab57a64567d6d754712aeea89f112b466d2b84f62b124",
+    "job_description.md": "645094cba8fa458773b50e2d86f798ea411b98c25f2d938c2484db697db1b549",
+    "recruitment_policy.md": "b0484afa6c414232f8c7b6d5e730047b2e25066cf66545f67761821ce017244b"
+  },
+  "frozen_on": "2026-11-03",
+  "status": "prepared_not_collected",
+  "entry_point": "apps/study1_validation_v2.py",
+  "previous_assessment": "round2, v6, six candidates; retained without alteration",
+  "recruitment_rule": "Use fresh eligible experts; exclude previous Study 1 participants and pilots. Study 1 experts cannot join Study 2."
+}

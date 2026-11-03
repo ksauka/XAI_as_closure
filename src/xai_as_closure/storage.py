@@ -189,7 +189,7 @@ class SessionStore:
             if not isinstance(sequence, int) or isinstance(sequence, bool):
                 raise ValueError("Invalid archived event sequence.")
             if (event.get("validation_round", "initial") != state.get("validation_round", "initial")
-                    or event.get("material_manifest", {}).get("manifest_sha256") != material_manifest()["manifest_sha256"]):
+                    or event.get("material_manifest", {}).get("manifest_sha256") != state.get("material_manifest", material_manifest())["manifest_sha256"]):
                 raise ValueError("Archived event material or round differs.")
             sequences.append(sequence)
         if sequences != list(range(1, len(events) + 1)) or state.get("event_sequence") != len(events):
@@ -239,19 +239,19 @@ class SessionStore:
             )
             sequence = state["event_sequence"]
             event = {
-                "schema_version": "study1-event-v5" if state.get("validation_round") == "round2" else "study1-event-v4",
+                "schema_version": "study1-event-v6" if state.get("validation_round") == "round2_focused" else ("study1-event-v5" if state.get("validation_round") == "round2" else "study1-event-v4"),
                 "event_id": f"{state['session_id']}:{sequence:06d}",
                 "event_sequence": sequence,
                 "server_timestamp_utc": now_utc(),
                 "application": "study1_validation",
-                "application_version": "study1-round2-app-v3" if state.get("validation_round") == "round2" else "study1-app-v4",
+                "application_version": "study1-focused-app-v1" if state.get("validation_round") == "round2_focused" else ("study1-round2-app-v3" if state.get("validation_round") == "round2" else "study1-app-v4"),
                 "validation_round": state.get("validation_round", "initial"),
                 "instrument_version": state.get("instrument_version"),
                 "case_set_id": state.get("case_set_id"),
                 "is_preview": bool(state.get("is_preview", False)),
                 "recruitment_source": state.get("recruitment_source", "prolific"),
                 "git_commit": current_git_commit(),
-                "material_manifest": material_manifest(),
+                "material_manifest": state.get("material_manifest", material_manifest()),
                 "session_id": state["session_id"],
                 "linkage_hash": state["linkage_hash"],
                 "study": "study1",

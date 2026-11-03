@@ -1,0 +1,541 @@
+{
+  "case_set_id": "ai_governance_lead_six_profiles_v6",
+  "role": "AI Governance Lead",
+  "company": "Suvh Trust Bank",
+  "hard_criterion": "Holds a current IAPP AIGP or ISO/IEC 42001 Lead Implementer certification and current relevant professional membership on the date of screening (job description Sections 4.1-4.3).",
+  "recruitment_timeline": {
+    "posted_date": "2026-07-20",
+    "screening_window_start": "2026-08-27",
+    "screening_window_end": "2026-08-30",
+    "target_fill_date": "2026-09-20"
+  },
+  "outcome_set": [
+    "Advance candidate to human interview",
+    "Reject candidate"
+  ],
+  "citation_scope": "Explanation-present conditions attach neutral, claim-linked CV, job-description, and policy locators to every recommendation. The source targets are complete and symmetric within each recommendation side. Explanation-absent conditions show no citations.",
+  "source_namespaces": {
+    "pol_": "recruitment_policy.md",
+    "jd_": "job_description.md",
+    "cv_": "candidate_cv sections embedded in each profile"
+  },
+  "trial_composition": {
+    "correct_advance": 2,
+    "correct_reject": 2,
+    "false_advance": 1,
+    "false_reject": 1
+  },
+  "profiles": [
+    {
+      "case_id": "P1_correct_advance",
+      "reference": "C-01",
+      "trial_type": "correct_advance",
+      "ground_truth": "Advance",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "AI governance professional with experience owning AI risk and conformity assessment for regulated AI systems. Comfortable operating across technical, risk, and compliance teams, with a track record of building governance documentation that holds up to audit and regulatory scrutiny."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Zenith Technical University**\n\nDegree: Bachelor of Science in Machine Learning Engineering\n\nCore Competencies: Neural network architecture, computer vision, algorithmic optimization, deep learning frameworks (TensorFlow/PyTorch), and predictive model training."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "AI Governance Specialist, Halden Data Services (2021–present)",
+            "text": "Conducted and signed off formal AI risk and conformity assessments for high-risk AI systems under the EU AI Act and ISO/IEC 42001. Designed governance frameworks and control mechanisms, and advised business and technical teams on Responsible AI. Regularly presented assessment findings to senior stakeholders and maintained the audit trail supporting each sign-off. Owned the tracking of remediation actions arising from each assessment through to closure."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Risk and Compliance Analyst, Kessel Group (2018–2021)",
+            "text": "Supported AI risk assessment and compliance documentation, working across data science, risk, and legal functions on model governance and stakeholder reporting. Also contributed to internal training materials on AI risk documentation standards. Liaised regularly with the legal team on interpretation of emerging regulatory guidance."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Risk Analyst, Bramford Insurance (2015–2018)",
+            "text": "Analysed operational and third-party risk across insurance product lines, producing risk registers and quarterly reporting for the risk committee. Contributed to the design of the risk committee's quarterly reporting template."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Compliance Assistant, Bramford Insurance (2012–2015)",
+            "text": "Supported the compliance team with policy administration, filing, and routine regulatory correspondence during an internal graduate rotation programme. Cross-trained junior colleagues on the department's document-control procedures."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Retail Operations Assistant, Northfield Stores (2009–2012)",
+            "text": "Worked part-time in store operations and inventory management while completing university studies. Balanced this role with part-time coursework toward a postgraduate qualification."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "- Google Data Analytics Professional Certificate — completed 12 April 2021.\n- IAPP Artificial Intelligence Governance Professional (AIGP) — certification term 12 February 2025–28 February 2027.\n- Certified ScrumMaster (CSM) — certification term 18 November 2025–18 November 2027."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; stakeholder management across business, compliance, and technical functions."
+          },
+          {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Long-distance cycling, amateur woodworking, and volunteering as treasurer for a local community choir."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Advance candidate to human interview",
+        "rationale": "The candidate holds a current IAPP AIGP certification and current IAPP professional membership, satisfying the mandatory professional requirements, and the cited roles demonstrate the assessment and advisory experience required by JD 5.1 and 5.2. All mandatory and general requirements are met, so POL 2.1 requires advancing the candidate.",
+        "supporting_ids": [
+          "cv_certifications",
+          "cv_memberships",
+          "cv_role_1",
+          "cv_role_2",
+          "jd_4_1",
+          "jd_4_2",
+          "jd_4_2_1",
+          "jd_4_3",
+          "jd_5_1",
+          "jd_5_2",
+          "pol_2_1",
+          "pol_2_3"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "Correct advance. Holds current IAPP AIGP and current relevant professional membership; general requirements are met via Roles 1-2 against JD 5.1-5.2. All citations are correct and sufficient; POL 2.1 requires advancement once all mandatory and general requirements are met."
+    },
+    {
+      "case_id": "P2_correct_advance",
+      "reference": "C-02",
+      "trial_type": "correct_advance",
+      "ground_truth": "Advance",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "AI governance professional with experience leading AI conformity assessment and control frameworks for regulated AI. Known for translating technical risk findings into clear guidance for non-technical leadership."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Aventine Global University**\n\nDegree: Bachelor of Science in Data Analytics & Intelligence Systems\n\nCore Competencies: Corporate business intelligence, predictive modeling, large-scale data visualization (Tableau/PowerBI), SQL database design, and statistical data mining."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "AI Assurance Lead, Brightline Analytics (2021–present)",
+            "text": "Independently conducted and signed off AI risk and conformity assessments for high-risk systems under ISO/IEC 42001 and the EU AI Act. Built and maintained governance frameworks and advised leadership on Responsible AI and compliance. Chaired a cross-functional working group on high-risk AI system controls and mentored two junior analysts. Coordinated closely with external auditors during two annual assurance cycles."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Model Risk Associate, Verda Financial (2018–2021)",
+            "text": "Worked on model risk and compliance documentation across risk, data science, and legal teams, supporting AI governance reporting and stakeholder coordination for regulated systems. Also assisted with quarterly model-risk reporting to the risk committee. Helped standardise the team's evidence-collection checklist for conformity assessments."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Business Analyst, Ferrow Insurance Group (2015–2018)",
+            "text": "Gathered and documented business requirements for internal risk-reporting systems, working closely with actuarial and IT teams. Supported onboarding of new analysts into the risk-reporting function."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Risk Analyst, Ferrow Insurance Group (2012–2015)",
+            "text": "Supported the production of monthly risk dashboards and assisted with data quality checks across reporting pipelines. Took on ad hoc analysis requests from the actuarial team during peak reporting periods."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Administrative Assistant, Hallmark Retail Group (2009–2012)",
+            "text": "Provided administrative and scheduling support for a retail operations team while studying part-time toward a business degree. Balanced this role with evening study toward a professional qualification."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "- AWS Certified Cloud Practitioner — certification term 15 June 2024–15 June 2027.\n- ISO/IEC 42001 Lead Implementer certification — certification term 8 April 2025–7 April 2028.\n- Certified Business Analysis Professional (CBAP) — certification term 22 January 2025–22 January 2028."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; consulting and stakeholder management across functions."
+          },
+          {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- ISACA — professional membership current through 31 December 2026."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Enjoys sailing, amateur photography, and coaching a youth sports team on weekends."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Advance candidate to human interview",
+        "rationale": "The candidate holds a current ISO/IEC 42001 Lead Implementer certification and current ISACA professional membership, satisfying the mandatory professional requirements, and the cited roles demonstrate the assessment and advisory experience required by JD 5.1 and 5.2. All mandatory and general requirements are met, so POL 2.1 requires advancing the candidate.",
+        "supporting_ids": [
+          "cv_certifications",
+          "cv_memberships",
+          "cv_role_1",
+          "cv_role_2",
+          "jd_4_1",
+          "jd_4_2",
+          "jd_4_2_1",
+          "jd_4_3",
+          "jd_5_1",
+          "jd_5_2",
+          "pol_2_1",
+          "pol_2_3"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "Correct advance. Holds current ISO/IEC 42001 Lead Implementer certification and current relevant professional membership; general requirements are met via Roles 1-2 against JD 5.1-5.2. All citations are correct and sufficient; POL 2.1 requires advancement."
+    },
+    {
+      "case_id": "P3_correct_reject",
+      "reference": "C-03",
+      "trial_type": "correct_reject",
+      "ground_truth": "Reject",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "Data scientist experienced in building and evaluating machine-learning models for analytics products. Enjoys turning ambiguous business questions into reproducible modelling pipelines."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Bayside Polytech**\n\nDegree: Bachelor of Technology in Applied Machine Learning\n\nCore Competencies: End-to-end model deployment, MLOps, cloud computing infrastructure (AWS/GCP), pipeline automation, and API integration."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "Data Scientist, Northwind Analytics (2021–present)",
+            "text": "Built, trained, and evaluated machine-learning models for customer analytics and forecasting. Worked on feature engineering, model performance, and deployment alongside the engineering team, focusing on model accuracy and delivery. Presented model performance results to product and marketing stakeholders on a monthly cadence. Collaborated with the platform team to move several models into a shared production pipeline."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Data Analyst, Cedar Insights (2018–2021)",
+            "text": "Produced dashboards, reports, and statistical analyses for business teams across marketing and operations. Focused on data preparation, visualisation, and communicating findings to non-technical colleagues. Also maintained a small internal library of reusable reporting templates for the analytics team. Ran lightweight A/B tests to validate model changes before rollout."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Junior Data Analyst, Pemberton Retail (2015–2018)",
+            "text": "Built sales and inventory reports for regional store managers, using SQL and spreadsheet-based analysis. Helped the marketing team interpret campaign-performance dashboards during quarterly planning."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Marketing Assistant, Pemberton Retail (2012–2015)",
+            "text": "Supported campaign tracking and customer-survey analysis for the marketing team. Took part in a company-wide hackathon focused on customer-churn prediction."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Retail Sales Associate, Cranmoor Electronics (2009–2012)",
+            "text": "Worked in customer-facing sales while completing an undergraduate degree in statistics. Balanced this role with online coursework in applied statistics."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "- Google Data Analytics Professional Certificate — completed 17 July 2021.\n- Microsoft Certified: Azure AI Engineer Associate — certification term 10 June 2026–10 June 2027.\n- DeepLearning.AI Machine Learning Specialization (Coursera) — completed 5 September 2022."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "Strong in machine-learning modelling, Python, SQL, and data analysis, with experience across the full modelling lifecycle from data preparation to deployment. Focused on predictive analytics and model performance."
+          },
+          {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- Association for Computing Machinery (ACM) — professional membership current through 31 December 2026."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Interests include competitive chess, hiking, and building small personal data-visualisation projects."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Reject candidate",
+        "rationale": "The candidate holds current ACM professional membership but the Azure AI Engineer Associate certification is not named in JD 4.1, so the certification requirement is not met. The cited roles also show no assessment or advisory experience against JD 5.1 and 5.2. Failing the certification and general requirements, POL 2.1 and 2.3 require rejection.",
+        "supporting_ids": [
+          "cv_role_1",
+          "cv_role_2",
+          "cv_certifications",
+          "cv_memberships",
+          "jd_4_1",
+          "jd_4_2",
+          "jd_4_2_1",
+          "jd_4_3",
+          "jd_3_5",
+          "jd_7_2",
+          "jd_5_1",
+          "jd_5_2",
+          "pol_2_1",
+          "pol_2_3"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "Correct reject. Current ACM membership satisfies the membership requirement, but Azure AI Engineer Associate is not AIGP/ISO 42001 and Roles 1-2 show no assessment/advisory experience against JD 5.1-5.2. POL 2.1/2.3 are cited as the rejection basis."
+    },
+    {
+      "case_id": "P4_correct_reject",
+      "reference": "C-04",
+      "trial_type": "correct_reject",
+      "ground_truth": "Reject",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "Compliance officer with experience in financial regulatory compliance and reporting. Comfortable working under tight regulatory deadlines and coordinating multiple stakeholders."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Vaelen University**\n\nDegree: Bachelor of Science in Big Data Analytics & Quantitative Science\n\nCore Competencies: Advanced statistical theory, mathematical modeling, quantitative economics, stochastic processes, and large dataset analysis (R/SAS)."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "Compliance Officer, Halcyon Bank (2021–present)",
+            "text": "Handled financial regulatory compliance, anti-money-laundering checks, and regulatory reporting for a retail bank. Coordinated external audits, maintained compliance documentation, and liaised with regulators and internal finance and audit teams. Trained new compliance analysts on regulatory reporting procedures and internal escalation processes. Maintained the department's regulatory-deadline tracker across multiple concurrent filings."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Compliance Administrator, Lumen Finance (2018–2021)",
+            "text": "Supported regulatory filing, record-keeping, and internal compliance processes in a financial services setting, working closely with finance, audit, and operations colleagues on regulatory deadlines. Also supported preparation of materials for the quarterly compliance committee. Supported onboarding of new compliance administrators into filing procedures."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Compliance Analyst, Merrow Insurance (2015–2018)",
+            "text": "Monitored transaction alerts for anti-money-laundering compliance and escalated flagged cases for review. Assisted with preparation for two regulator site visits."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Auditor, Merrow Insurance (2012–2015)",
+            "text": "Assisted with internal audit fieldwork across finance and operations, documenting findings for senior auditors. Helped digitise a portion of the team's paper-based record-keeping process."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Bank Teller, Cresthill Community Bank (2009–2012)",
+            "text": "Handled routine customer transactions and cash management while completing a finance degree part-time. Balanced this role with evening study toward a finance-related qualification."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "- Certified Business Analysis Professional (CBAP) — certification term 13 February 2025–13 February 2028.\n- CFA Institute Investment Foundations Certificate — awarded 21 June 2023.\n- Certified Anti-Money Laundering Specialist (CAMS) — certification term 2 October 2024–2 October 2027."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "Financial regulatory compliance, anti-money-laundering, audit coordination, and regulatory reporting, with strong attention to documentation and regulatory detail in a financial services setting."
+          },
+          {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- Association of Certified Anti-Money Laundering Specialists (ACAMS) — professional membership current through 31 December 2026."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Enjoys long-distance running, amateur baking, and serving on the committee of a local running club."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Reject candidate",
+        "rationale": "The candidate holds current ACAMS professional membership but none of the listed certifications is named in JD 4.1, so the certification requirement is not met. The cited roles also show that the profile falls below the stated general requirements. Failing the certification and general requirements, POL 2.1 and 2.3 require rejection.",
+        "supporting_ids": [
+          "cv_role_1",
+          "cv_role_2",
+          "cv_certifications",
+          "cv_memberships",
+          "jd_4_1",
+          "jd_4_2",
+          "jd_4_2_1",
+          "jd_4_3",
+          "jd_3_5",
+          "jd_7_2",
+          "jd_5_1",
+          "jd_5_2",
+          "pol_2_1",
+          "pol_2_3"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "Correct reject. Current ACAMS membership satisfies the membership requirement, but no listed certification is AIGP/ISO 42001 and Roles 1-2 are assessed below the general requirements. POL 2.1/2.3 are cited as the rejection basis."
+    },
+    {
+      "case_id": "P5_false_advance",
+      "reference": "C-05",
+      "trial_type": "false_advance",
+      "ground_truth": "Reject",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "AI governance and delivery professional working across AI risk, advisory, and project delivery for enterprise AI."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Meridian Science University**\n\nDegree: Bachelor of Engineering in Artificial Intelligence & Machine Learning\n\nCore Competencies: Robotics integration, natural language processing (NLP), reinforcement learning, autonomous systems, and high-performance computing."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "AI Governance and Delivery Lead, Saukala Global (2021–present)",
+            "text": "Supported formal AI risk and conformity assessment activities on high-risk AI systems, advised business and technical teams on Responsible AI and the EU AI Act, and led delivery of enterprise AI initiatives across data science, engineering, and compliance stakeholders. Ran fortnightly steering meetings with business sponsors and maintained the project risk log throughout delivery. Facilitated retrospectives at the end of each project phase to capture lessons learned."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "AI Programme Consultant, Suvion Digital (2018–2021)",
+            "text": "Advised on AI governance and Responsible AI in a consulting capacity, and coordinated cross-functional AI programmes across business and technical functions. Also introduced a standard status-reporting template later adopted across the wider programme office. Coordinated vendor onboarding for two external delivery partners."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Project Coordinator, Vantree Systems (2015–2018)",
+            "text": "Coordinated scheduling, budgets, and vendor communication for enterprise software delivery projects. Supported budget tracking and variance reporting across a multi-project portfolio."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Project Analyst, Vantree Systems (2012–2015)",
+            "text": "Supported project managers with status tracking, meeting minutes, and resource scheduling across multiple concurrent projects. Helped standardise the team's project-status reporting template."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Customer Support Representative, Orlin Telecom (2009–2012)",
+            "text": "Handled customer service enquiries and escalations while completing a business administration degree part-time. Balanced this role with evening coursework in project management."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "- Google Project Management Professional Certificate — completed 10 October 2022.\n- IAPP Artificial Intelligence Governance Professional (AIGP) — certification term 16 May 2024–31 May 2026.\n- Certified ScrumMaster (CSM) — certification term 17 January 2025–17 January 2027."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment support; advisory and stakeholder management across business, compliance, and technical functions."
+          },
+          {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026."
+          },
+          {
+            "id": "cv_hobbies",
+            "heading": "Hobbies and Interests",
+            "text": "Enjoys sailing, board-game design, and mentoring early-career project coordinators through a professional association."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Advance candidate to human interview",
+        "rationale": "The assistant correctly identifies the cited AIGP credential, current IAPP membership, and roles meeting the general requirements, but incorrectly treats the credential as current. Its recorded term ended on 31 May 2026, before the 27-30 August 2026 screening window. JD 4.1-4.3 and POL 2.3 require both mandatory professional requirements to be current on the date of screening, so the advance is wrong on the single ground of certification currency and is catchable entirely within the cited evidence.",
+        "supporting_ids": [
+          "cv_certifications",
+          "cv_memberships",
+          "cv_role_1",
+          "cv_role_2",
+          "jd_4_1",
+          "jd_4_2",
+          "jd_4_2_1",
+          "jd_4_3",
+          "jd_5_1",
+          "jd_5_2",
+          "pol_2_1",
+          "pol_2_3"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "FALSE ADVANCE. Strong on all general requirements (5.1-5.4) and holds current IAPP membership; fails only certification currency. The candidate previously earned AIGP, but the recorded term ended on 31 May 2026 before the screening window. The AI cites the real credential and treats it as current. Reading CV(4) against JD 4.1-4.3 and POL 2.3 overturns the recommendation; CV(6) confirms that membership is not the failed requirement. Ground truth = Reject."
+    },
+    {
+      "case_id": "P6_false_reject",
+      "reference": "C-06",
+      "trial_type": "false_reject",
+      "ground_truth": "Advance",
+      "candidate_cv": {
+        "sections": [
+          {
+            "id": "cv_summary",
+            "heading": "Professional Summary",
+            "text": "AI governance professional with experience in AI risk assessment and Responsible AI advisory. Works well translating regulatory obligations into practical, auditable controls."
+          },
+          {
+            "id": "cv_education",
+            "heading": "Education",
+            "text": "**Horizon Institute for Advanced Studies**\n\nDegree: Bachelor of Science in Computational Data Analytics\n\nCore Competencies: Data ethics and governance, enterprise data architecture, predictive analytics, data cleansing, and algorithmic fairness validation."
+          },
+          {
+            "id": "cv_role_1",
+            "heading": "AI Governance Advisor, Aldbrook Data (2021–present)",
+            "text": "Conducted AI risk and conformity assessments for high-risk AI systems, advised teams on Responsible AI, and supported governance frameworks across data science, risk, and compliance functions under the EU AI Act. Partnered closely with legal counsel to interpret emerging EU AI Act guidance for the bank's high-risk systems. Contributed to the team's internal library of governance case studies used in training."
+          },
+          {
+            "id": "cv_role_2",
+            "heading": "Governance Analyst, Kessel Group (2018–2021)",
+            "text": "Worked on AI governance documentation, risk registers, and compliance reporting, coordinating across technical and business stakeholders on regulated AI systems. Also helped establish an internal AI-risk-register template still in use today. Supported preparation of materials for two regulator information requests."
+          },
+          {
+            "id": "cv_role_3",
+            "heading": "Risk Analyst, Corvane Insurance (2015–2018)",
+            "text": "Analysed operational risk exposure across underwriting lines and produced quarterly risk reporting. Helped onboard new analysts into the governance-documentation process."
+          },
+          {
+            "id": "cv_role_4",
+            "heading": "Junior Risk Assistant, Corvane Insurance (2012–2015)",
+            "text": "Supported the risk team with data collection and reporting for the annual risk assessment cycle. Took part in a cross-team working group on AI incident reporting."
+          },
+          {
+            "id": "cv_role_5",
+            "heading": "Office Administrator, Millbrook Legal Services (2009–2012)",
+            "text": "Provided general administrative support to a small legal practice while completing a governance-related qualification part-time. Balanced this role with part-time study toward a professional qualification."
+          },
+          {
+            "id": "cv_certifications",
+            "heading": "Certifications",
+            "text": "- Certified ScrumMaster (CSM) — certification term 6 March 2025–6 March 2027.\n- AIGP — certification term 18 June 2025–30 June 2027.\n- AWS Certified Cloud Practitioner — certification term 9 September 2024–9 September 2027."
+          },
+          {
+            "id": "cv_skills",
+            "heading": "Skills and Knowledge",
+            "text": "AI and machine-learning systems including generative AI; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment; consulting and stakeholder management across business, compliance, and technical functions."
+          },
+          {
+            "id": "cv_memberships",
+            "heading": "Professional Memberships",
+            "text": "- International Association of Privacy Professionals (IAPP) — professional membership current from 18 June 2025 through 30 June 2027."
+          }
+        ]
+      },
+      "fixed_assessment": {
+        "recommendation": "Reject candidate",
+        "rationale": "The candidate file lists a current AIGP credential and current International Association of Privacy Professionals (IAPP) membership. Read together under JD 4.2.1, those sections establish the current IAPP AIGP required by JD 4.1 as well as the membership required by JD 4.2; the cited roles meet JD 5.1 and 5.2. The assistant nonetheless treats the acronym as ambiguous, invokes the distinct ETHOS Certified AI Governance Professional, criticises the documentation and attention to detail, and rejects. The error is overturned by reconciling the cited Certifications and Professional Memberships sections against JD 4.1-4.3 and JD 4.2.1.",
+        "supporting_ids": [
+          "cv_role_1",
+          "cv_role_2",
+          "cv_certifications",
+          "cv_memberships",
+          "jd_4_1",
+          "jd_4_2",
+          "jd_4_2_1",
+          "jd_4_3",
+          "jd_3_5",
+          "jd_7_2",
+          "jd_5_1",
+          "jd_5_2",
+          "pol_2_1",
+          "pol_2_3"
+        ],
+        "caution_ids": []
+      },
+      "design_note": "FALSE REJECT. The Certifications section lists only the current acronym AIGP; the later Professional Memberships section identifies current IAPP membership. Read together under JD 4.2.1, they establish the IAPP AIGP required by JD 4.1 and the membership required by JD 4.2. Roles 1-2 meet JD 5.1-5.2. The assistant confidently invokes the distinct ETHOS AIGP, treats the certification entry as insufficient, and infers poor documentation care despite the resolving membership evidence. Catchable entirely by reconciling the cited whole-file evidence. Ground truth = Advance."
+    }
+  ]
+}

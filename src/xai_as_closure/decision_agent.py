@@ -60,7 +60,8 @@ class AgentOutput:
             "condition_id": self.condition_id,
             "explanation_present": self.explanation_present,
             "recommendation": self.recommendation,
-            "rationale": self.rationale if self.explanation_present else None,
+            # Participant fields contain the rendered advice, never the internal error audit.
+            "rationale": self.text if self.explanation_present else None,
             "text": self.text,
             "message_blocks": [
                 {

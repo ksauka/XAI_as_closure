@@ -72,7 +72,7 @@ class ParticipantCodeTests(unittest.TestCase):
         return stack, save, lookup
 
     def app(self):
-        return AppTest.from_file(str(PROJECT_ROOT / 'apps/study1_validation_v2.py'), default_timeout=15)
+        return AppTest.from_file(str(PROJECT_ROOT / 'apps/study1_validation_v2_six_profiles_archive.py'), default_timeout=15)
 
     def test_manual_external_expert_completes_and_reopens_saved_session(self):
         with tempfile.TemporaryDirectory() as directory:

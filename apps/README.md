@@ -25,3 +25,5 @@ the app rejects a mismatch.
 ## Local researcher review
 
 `local_review.py` is a local-only review hub, not a participant entry point. Start all eight task previews with `python tools/local_study2.py`, then start the hub with `STUDY2_LOCAL_PREVIEW=1 python -m streamlit run apps/local_review.py --server.address 127.0.0.1 --server.port 8500`. See study_CHI/STUDY2_LOCAL_PREPARATION.md. Preview sessions are synthetic, isolated and never remotely saved.
+
+The current `study1_validation_v2.py` runs focused C-05/C-06 revalidation on shared v7 materials (Build 2026-11-03.4). The old six-profile v6 route is preserved in `study1_validation_v2_six_profiles_archive.py`. Study 2 retains all six profiles. See `study_CHI/STUDY1_FOCUSED_LAUNCH.md`.

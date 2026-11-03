@@ -148,7 +148,7 @@ Advised on AI governance and Responsible AI in a consulting capacity, and coordi
 AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment support; advisory and stakeholder management across business, compliance, and technical functions.
 
 **Professional Memberships**
-- International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026.
+- International Association of Privacy Professionals (IAPP) — professional membership current through 31 May 2026.
 
 > **AI assistant recommendation:** Advance candidate to human interview
 > **Cited sources:** cv_certifications, cv_memberships, cv_role_1, cv_role_2, jd_4_1, jd_4_2, jd_4_2_1, jd_4_3, jd_5_1, jd_5_2, pol_2_1, pol_2_3

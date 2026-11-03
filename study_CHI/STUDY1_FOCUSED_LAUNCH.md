@@ -1,0 +1,17 @@
+# Study 1: focused C-05/C-06 assessment
+
+Author-approved revision, 3 November 2026. Main file: `apps/study1_validation_v2.py`. Build `2026-11-03.4`.
+
+The same version-2 entry point now presents only C-05 and C-06, once each in participant-specific random order. It retains the independent screening decision, mandatory-requirements judgement, confidence, decisive-evidence response and final materials review. The disagreement selector contains only the two assessed candidates. There is no AI recommendation or feedback in this assessment.
+
+Both Study 1 and Study 2 load the shared six-profile v7 source. C-05's AIGP certification and IAPP membership both end on 31 May 2026, before screening on 27–30 August 2026. Either expiry requires rejection. C-06 is unchanged. Study 2 still uses all six candidates and all eight conditions; the profile subset applies only to this expert assessment. `STUDY1_FOCUSED_MATERIALS.json` pins the v7 hashes and the assessed subset. Revalidation is pending.
+
+The internal round is `round2_focused`, with instrument v8 and event version v6. Its stable session identity differs from the completed six-profile assessment, even for the same platform identifier. Private checkpoints go to `sessions/xai_as_closure/study1/round2_focused/<session_id>.json`. Local data use `STUDY1_FOCUSED_DATA_ROOT`, or a distinct subfolder of the existing configured root. A failed remote lookup never creates a replacement silently, and failed production saving blocks further progression or completion return. Local preview makes no remote writes.
+
+Keep the existing Streamlit deployment's main file set to `apps/study1_validation_v2.py`. The Qualtrics launch and return URLs need no change for the profile subset. Check that the deployed build reads `2026-11-03.4` and identifies the focused C-05/C-06 assessment. The researcher controls any deployment restart; source changes alone do not prove which imported server version is running. Consent and eligibility remain in the surrounding survey. Pilot the shorter full flow before fixing duration and compensation.
+
+Use fresh eligible experts and exclude earlier Study 1 participants and pilots. The application separates records by round; it does not itself verify occupational eligibility or enforce cross-round recruitment exclusions. Report the focused round separately from v1 and the completed six-profile v2 assessment. Earlier v1 evidence for C-01–C-04 remains available, and the lower agreement observed for some of those profiles in v2 must remain in the research record. A focused assessment does not retrospectively validate or erase those observations.
+
+The original v6 materials and freeze are preserved under `materials_review/archive/pre_c05_dual_expiry_2026-11-03`. The original six-profile assessment is accessible through `apps/study1_validation_v2_six_profiles_archive.py`, with its original instrument, case set and storage namespace. Completed records are not migrated or overwritten. C-05's new membership defect changes the decisive-evidence coding: recognition of either expiry is sufficient to identify a valid rejection ground, with separate notes recording whether one or both were recognised. The v6 certification-only coding is not retrospectively changed.
+
+Before recruitment, document the focused sample target, eligibility, intended-reason coding and adjudication, retention criteria and any deviations. Passing software checks establishes implementation consistency, not that the materials are validated or that Study 2 is ready for confirmatory recruitment.

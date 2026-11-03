@@ -1,5 +1,5 @@
 {
-  "case_set_id": "ai_governance_lead_six_profiles_v6",
+  "case_set_id": "ai_governance_lead_six_profiles_v7",
   "role": "AI Governance Lead",
   "company": "Suvh Trust Bank",
   "hard_criterion": "Holds a current IAPP AIGP or ISO/IEC 42001 Lead Implementer certification and current relevant professional membership on the date of screening (job description Sections 4.1-4.3).",
@@ -425,7 +425,7 @@
           {
             "id": "cv_memberships",
             "heading": "Professional Memberships",
-            "text": "- International Association of Privacy Professionals (IAPP) — professional membership current through 31 December 2026."
+            "text": "- International Association of Privacy Professionals (IAPP) — professional membership current through 31 May 2026."
           },
           {
             "id": "cv_hobbies",
@@ -436,7 +436,7 @@
       },
       "fixed_assessment": {
         "recommendation": "Advance candidate to human interview",
-        "rationale": "The assistant correctly identifies the cited AIGP credential, current IAPP membership, and roles meeting the general requirements, but incorrectly treats the credential as current. Its recorded term ended on 31 May 2026, before the 27-30 August 2026 screening window. JD 4.1-4.3 and POL 2.3 require both mandatory professional requirements to be current on the date of screening, so the advance is wrong on the single ground of certification currency and is catchable entirely within the cited evidence.",
+        "rationale": "The assistant incorrectly treats the recorded AIGP certification and IAPP membership as current. Both terms end on 31 May 2026, before screening on 27–30 August 2026. JD 4.1–4.3 and POL 2.3 require both mandatory professional requirements to be current. Either expiry requires rejection; the false advance is recoverable from the cited evidence.",
         "supporting_ids": [
           "cv_certifications",
           "cv_memberships",
@@ -453,7 +453,7 @@
         ],
         "caution_ids": []
       },
-      "design_note": "FALSE ADVANCE. Strong on all general requirements (5.1-5.4) and holds current IAPP membership; fails only certification currency. The candidate previously earned AIGP, but the recorded term ended on 31 May 2026 before the screening window. The AI cites the real credential and treats it as current. Reading CV(4) against JD 4.1-4.3 and POL 2.3 overturns the recommendation; CV(6) confirms that membership is not the failed requirement. Ground truth = Reject."
+      "design_note": "FALSE ADVANCE. General requirements are met, but the AIGP certification and IAPP membership both end on 31 May 2026, before screening. Both mandatory currency requirements fail. The AI treats both as current. The intended decision remains Reject; AI advice remains Advance. This v7 profile differs from assessed v6, which recorded membership as current through 31 December 2026. Focused validation is pending."
     },
     {
       "case_id": "P6_false_reject",
