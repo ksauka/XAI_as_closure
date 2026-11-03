@@ -1,0 +1,85 @@
+{
+  "case_id": "P5_false_advance",
+  "reference": "C-05",
+  "trial_type": "false_advance",
+  "ground_truth": "Reject",
+  "candidate_cv": {
+    "sections": [
+      {
+        "id": "cv_summary",
+        "heading": "Professional Summary",
+        "text": "AI governance and delivery professional working across AI risk, advisory, and project delivery for enterprise AI."
+      },
+      {
+        "id": "cv_education",
+        "heading": "Education",
+        "text": "**Meridian Science University**\n\nDegree: Bachelor of Engineering in Artificial Intelligence & Machine Learning\n\nCore Competencies: Robotics integration, natural language processing (NLP), reinforcement learning, autonomous systems, and high-performance computing."
+      },
+      {
+        "id": "cv_role_1",
+        "heading": "AI Governance and Delivery Lead, Saukala Global (2021–present)",
+        "text": "Supported formal AI risk and conformity assessment activities on high-risk AI systems, advised business and technical teams on Responsible AI and the EU AI Act, and led delivery of enterprise AI initiatives across data science, engineering, and compliance stakeholders. Ran fortnightly steering meetings with business sponsors and maintained the project risk log throughout delivery. Facilitated retrospectives at the end of each project phase to capture lessons learned."
+      },
+      {
+        "id": "cv_role_2",
+        "heading": "AI Programme Consultant, Suvion Digital (2018–2021)",
+        "text": "Advised on AI governance and Responsible AI in a consulting capacity, and coordinated cross-functional AI programmes across business and technical functions. Also introduced a standard status-reporting template later adopted across the wider programme office. Coordinated vendor onboarding for two external delivery partners."
+      },
+      {
+        "id": "cv_role_3",
+        "heading": "Project Coordinator, Vantree Systems (2015–2018)",
+        "text": "Coordinated scheduling, budgets, and vendor communication for enterprise software delivery projects. Supported budget tracking and variance reporting across a multi-project portfolio."
+      },
+      {
+        "id": "cv_role_4",
+        "heading": "Junior Project Analyst, Vantree Systems (2012–2015)",
+        "text": "Supported project managers with status tracking, meeting minutes, and resource scheduling across multiple concurrent projects. Helped standardise the team's project-status reporting template."
+      },
+      {
+        "id": "cv_role_5",
+        "heading": "Customer Support Representative, Orlin Telecom (2009–2012)",
+        "text": "Handled customer service enquiries and escalations while completing a business administration degree part-time. Balanced this role with evening coursework in project management."
+      },
+      {
+        "id": "cv_certifications",
+        "heading": "Certifications",
+        "text": "- Google Project Management Professional Certificate — completed 10 October 2022.\n- IAPP Artificial Intelligence Governance Professional (AIGP) — certification term 16 May 2024–31 May 2026.\n- Certified ScrumMaster (CSM) — certification term 17 January 2025–17 January 2027."
+      },
+      {
+        "id": "cv_skills",
+        "heading": "Skills and Knowledge",
+        "text": "AI and machine-learning systems including generative AI; enterprise architecture; EU AI Act and ISO/IEC 42001; AI risk and conformity assessment support; advisory and stakeholder management across business, compliance, and technical functions."
+      },
+      {
+        "id": "cv_memberships",
+        "heading": "Professional Memberships",
+        "text": "- International Association of Privacy Professionals (IAPP) — professional membership current through 31 May 2026."
+      },
+      {
+        "id": "cv_hobbies",
+        "heading": "Hobbies and Interests",
+        "text": "Enjoys sailing, board-game design, and mentoring early-career project coordinators through a professional association."
+      }
+    ]
+  },
+  "fixed_assessment": {
+    "recommendation": "Advance candidate to human interview",
+    "rationale": "The assistant identifies the recorded AIGP credential, IAPP membership and roles meeting the general requirements, but incorrectly treats both mandatory professional requirements as current. The certification and membership terms end on 31 May 2026, before the 27–30 August 2026 screening window. JD 4.1–4.3 and POL 2.3 require both to be current. Either expiry requires rejection. The advance remains incorrect and both defects are recoverable from the cited candidate evidence and governing rules. This is a proposed revision, not the assessed v6 case.",
+    "supporting_ids": [
+      "cv_certifications",
+      "cv_memberships",
+      "cv_role_1",
+      "cv_role_2",
+      "jd_4_1",
+      "jd_4_2",
+      "jd_4_2_1",
+      "jd_4_3",
+      "jd_5_1",
+      "jd_5_2",
+      "pol_2_1",
+      "pol_2_3"
+    ],
+    "caution_ids": []
+  },
+  "design_note": "PROPOSED FALSE ADVANCE, not installed. Both AIGP certification and IAPP membership terms end on 31 May 2026. The candidate meets the general requirements but fails both mandatory currency requirements during screening on 27–30 August 2026. Ground truth remains Reject and fixed AI advice remains Advance. This replaces the single-certification-currency mechanism with two currency failures. The collected v6 observations concern current membership and must not be relabelled as validation of this proposal. Check participant-facing AI renderings and evidence coding against both failures before a new shared material release and validation round."
+}
