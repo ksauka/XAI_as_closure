@@ -45,3 +45,25 @@ These updates align the agreed model and derived data. They do not freeze missin
 Create the blind independent-coding sheet with `python analysis/study2/coding_subset.py trial_export.csv --output blind_subset.csv`. Only pseudonymous response ID, reference, text and blank coding fields are retained. Preserve the secure original export for linkage; never distribute treatment/outcome columns to coders.
 
 The researcher-supplied 19-item main battery, three forcing-only PCE candidate items, three pre-task questions and PPBE reverse item are recorded in [STUDY2_QUESTIONNAIRE.md](../../study_CHI/STUDY2_QUESTIONNAIRE.md). Main-scale agreement endpoints were confirmed on 30 October 2026. Pre-task response options and final Qualtrics mapping are pending; canonical keys are not asserted to be existing survey export IDs.
+
+
+## Completed N=160, 192 and 200 comparison (3 November 2026)
+
+`budget_2026-11-03/comparison_summary.md` reports 31,500 model fits: the original 15 scenarios and six separately labelled sensitivities added after the v6 expert audit, with 500 replicates per N/scenario. `comparison_summary.csv` and `comparison_results.json` contain all 63 configurations. No recruitment target, H1/H3 minimum effect or H2 acceptable-width threshold has been set.
+
+The completed implementation uses the Python marginal logistic random-intercept likelihood, with H1 and H3 in a two-sided Holm family. It does not depend on an unrun R script. H2 is a precision/coverage target outside Holm. Published sample sizes are contextual precedents, not a power justification.
+
+The historical and newer expert patterns remain hypothetical Study 2 opportunity scenarios. Neither expert round assesses the current v7 C-05 profile. Separate focused validation and a separate technical pilot must inform final planning bounds. The current project pilot rule is five complete sessions per cell, outside the main sample.
+
+The original blanket 40/80-node check failed because a nuisance-intercept standard error was unstable in a separated profile. `quadrature_follow_up.json` localises the discrepancy; treatment contrasts were stable in the checked panels. The report also presents an explicit post-run finite-profile-MLE sensitivity. It does not silently delete cases or replace the planned estimator.
+
+Reproduce from the repository root, with the recorded package versions:
+
+```sh
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python analysis/study2/compare_budget_precision.py --config analysis/study2/budget_2026-11-03/scenarios.json --output-dir analysis/study2/budget_2026-11-03/run_500_q40 --workers 3
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python analysis/study2/compare_budget_precision.py --config analysis/study2/budget_2026-11-03/supplement_scenarios.json --output-dir analysis/study2/budget_2026-11-03/supplement_500_q40 --workers 3
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python analysis/study2/diagnose_budget_numerics.py
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python analysis/study2/build_budget_report.py
+```
+
+The original per-replicate synthetic outputs, code and metadata are also retained in the manuscript workspace reproducibility ZIP. Raw synthetic replicate folders are omitted from Git to avoid unnecessary repository growth; no participant records enter this bundle. The checked-in result metadata retain their original source hashes and run commits. Reproduction creates new run metadata without changing the archived ZIP.

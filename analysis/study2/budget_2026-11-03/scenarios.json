@@ -1,0 +1,418 @@
+{
+  "sample_sizes": [
+    160,
+    192,
+    200
+  ],
+  "repetitions": 500,
+  "quadrature_nodes": 40,
+  "seed": 20261103,
+  "assumption_status": "Pre-outcome sensitivity grid. All Study 2 effects and opportunity rates are assumptions; no participant target is selected.",
+  "historical_anchor": {
+    "eligible_experts": 16,
+    "correct_decisions": [
+      16,
+      14,
+      15,
+      13,
+      9,
+      11
+    ],
+    "raw_profile_disagreement_probabilities": [
+      0.0,
+      0.125,
+      0.0625,
+      0.1875,
+      0.5625,
+      0.6875
+    ],
+    "smoothed_profile_disagreement_probabilities": [
+      0.029411764705882353,
+      0.14705882352941177,
+      0.08823529411764706,
+      0.20588235294117646,
+      0.5588235294117647,
+      0.6764705882352942
+    ],
+    "smoothing": "(opportunity count + 0.5)/(16 + 1); finite planning anchor, not a known Study 2 rate",
+    "source": "study_CHI/STUDY1_VALIDATION_RESULTS.md; initial, pre-revision expert batches",
+    "population_and_material_warning": "Different validation sample and pre-v6 governing rules; revised expert data and a separate technical pilot remain necessary."
+  },
+  "pairing": "Generate a balanced N=200 panel, then retain the first 20/24/25 participants in each shuffled cell for N=160/192/200. Common random numbers across N; no optional stopping.",
+  "effect_status": "OR=1.5 main effects and interaction OR=0.67 are inherited illustrative assumptions, with explicit smaller/larger main-effect and null sensitivities.",
+  "scenarios": [
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "legacy_sparse",
+      "correct_ai_disagreement_probability": 0.1,
+      "incorrect_ai_disagreement_probability": 0.35,
+      "rationale": "Retained from earlier illustrative grid; not an estimate from Study 2."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "legacy_central",
+      "correct_ai_disagreement_probability": 0.25,
+      "incorrect_ai_disagreement_probability": 0.6,
+      "rationale": "Retained from earlier illustrative grid; not an estimate from Study 2."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "legacy_dense",
+      "correct_ai_disagreement_probability": 0.45,
+      "incorrect_ai_disagreement_probability": 0.8,
+      "rationale": "Retained from earlier illustrative grid; not an estimate from Study 2."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_anchor",
+      "profile_disagreement_probabilities": [
+        0.029411764705882353,
+        0.14705882352941177,
+        0.08823529411764706,
+        0.20588235294117646,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Jeffreys-smoothed initial expert pattern; sensitivity only, not revised-material or Study 2 estimates."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_half_correct_ai_opportunities",
+      "profile_disagreement_probabilities": [
+        0.014705882352941176,
+        0.07352941176470588,
+        0.04411764705882353,
+        0.10294117647058823,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Half the anchor opportunities on correct-advice profiles; error-advice opportunities retained."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_double_correct_ai_opportunities",
+      "profile_disagreement_probabilities": [
+        0.058823529411764705,
+        0.29411764705882354,
+        0.17647058823529413,
+        0.4117647058823529,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Twice the anchor opportunities on correct-advice profiles; error-advice opportunities retained."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "assumed_revised_error_recoverability_85",
+      "profile_disagreement_probabilities": [
+        0.029411764705882353,
+        0.14705882352941177,
+        0.08823529411764706,
+        0.20588235294117646,
+        0.85,
+        0.85
+      ],
+      "rationale": "Assumes improved recoverability of C-05/C-06 after clarification; not a validation result."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 1.2,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_high_dependence",
+      "profile_disagreement_probabilities": [
+        0.029411764705882353,
+        0.14705882352941177,
+        0.08823529411764706,
+        0.20588235294117646,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Stronger unobserved participant dependence with anchor opportunity rates."
+    },
+    {
+      "baseline_appropriate_probability": 0.5,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_baseline_50",
+      "profile_disagreement_probabilities": [
+        0.029411764705882353,
+        0.14705882352941177,
+        0.08823529411764706,
+        0.20588235294117646,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Lower conditional appropriate-reliance baseline; opportunity pattern held fixed."
+    },
+    {
+      "baseline_appropriate_probability": 0.8,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_baseline_80",
+      "profile_disagreement_probabilities": [
+        0.029411764705882353,
+        0.14705882352941177,
+        0.08823529411764706,
+        0.20588235294117646,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Higher conditional appropriate-reliance baseline; opportunity pattern held fixed."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.25,
+      "delivery_or": 1.0,
+      "forcing_or": 1.25,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_main_or_1_25",
+      "profile_disagreement_probabilities": [
+        0.029411764705882353,
+        0.14705882352941177,
+        0.08823529411764706,
+        0.20588235294117646,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Smaller illustrative main effects; not a fitted estimate or chosen detectable effect."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 2.0,
+      "delivery_or": 1.0,
+      "forcing_or": 2.0,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_main_or_2",
+      "profile_disagreement_probabilities": [
+        0.029411764705882353,
+        0.14705882352941177,
+        0.08823529411764706,
+        0.20588235294117646,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Larger illustrative main effects included alongside smaller ones, not to certify N=200."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_informative_opportunities",
+      "profile_disagreement_probabilities": [
+        0.029411764705882353,
+        0.14705882352941177,
+        0.08823529411764706,
+        0.20588235294117646,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Opportunities associated with the participant random intercept; conditional-estimand sensitivity, not just precision.",
+      "opportunity_random_intercept_slope": 0.5
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.0,
+      "delivery_or": 1.0,
+      "forcing_or": 1.0,
+      "interaction_or": 1.0,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "historical_profile_null",
+      "profile_disagreement_probabilities": [
+        0.029411764705882353,
+        0.14705882352941177,
+        0.08823529411764706,
+        0.20588235294117646,
+        0.5588235294117647,
+        0.6764705882352942
+      ],
+      "rationale": "Null calibration of H1/H3 familywise error and H2 interval coverage."
+    },
+    {
+      "baseline_appropriate_probability": 0.65,
+      "explanation_or": 1.5,
+      "delivery_or": 1.0,
+      "forcing_or": 1.5,
+      "interaction_or": 0.67,
+      "random_intercept_sd": 0.75,
+      "profile_log_odds_offsets": [
+        0,
+        0.15,
+        -0.15,
+        0.1,
+        -0.2,
+        0.2
+      ],
+      "name": "literal_historical_rates_zero_C01",
+      "profile_disagreement_probabilities": [
+        0.0,
+        0.125,
+        0.0625,
+        0.1875,
+        0.5625,
+        0.6875
+      ],
+      "rationale": "Deliberate endpoint stress test. Observing 16/16 correct historically does not establish a true zero opportunity probability."
+    }
+  ]
+}

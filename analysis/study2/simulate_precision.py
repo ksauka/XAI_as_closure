@@ -48,15 +48,22 @@ def simulate(n, scenario, rng):
     for profile in range(1, 6):
         x[:, :, 5 + profile] = order == profile
     random_intercept = rng.normal(0, scenario["random_intercept_sd"], n)
-    q = np.where(
-        order < 4,
-        scenario["correct_ai_disagreement_probability"],
-        scenario["incorrect_ai_disagreement_probability"],
-    )
+    if "profile_disagreement_probabilities" in scenario:
+        profile_q = np.asarray(scenario["profile_disagreement_probabilities"], dtype=float)
+        if profile_q.shape != (6,) or not np.isfinite(profile_q).all() or np.any((profile_q < 0) | (profile_q > 1)):
+            raise ValueError("Provide six finite profile opportunity probabilities between zero and one.")
+        q = profile_q[order]
+    else:
+        q = np.where(
+            order < 4,
+            scenario["correct_ai_disagreement_probability"],
+            scenario["incorrect_ai_disagreement_probability"],
+        )
     # Optional informative opportunity sensitivity, not an assumption that
     # between-subject randomisation makes later opportunities pre-treatment.
     selection = scenario.get("opportunity_random_intercept_slope", 0)
-    q = expit(np.log(q / (1 - q)) + selection * random_intercept[:, None])
+    with np.errstate(divide="ignore"):
+        q = expit(np.log(q / (1 - q)) + selection * random_intercept[:, None])
     mask = rng.uniform(size=(n, 6)) < q
     beta = np.zeros(len(NAMES))
     beta[0] = np.log(
@@ -83,6 +90,20 @@ def simulate(n, scenario, rng):
 def fit_glmm(x, y, mask, nodes=20):
     keep = mask.any(axis=1)
     x, y, mask = x[keep], y[keep], mask[keep]
+    original_p = x.shape[-1]
+    columns = list(range(original_p))
+    missing_profiles = []
+    reference_profile = 1
+    if original_p == len(NAMES) and mask.any():
+        # Keep all treatment/order terms. Recode only profile contrasts when a
+        # profile has no observed opportunity, as dropping unused factor levels
+        # does in a GLMM fit. This is the same fixed-effect predictor space.
+        profile = np.where(x[:, :, 6:].sum(axis=2) == 0, 0, 1 + x[:, :, 6:].argmax(axis=2))
+        observed = sorted(set(profile[mask].tolist()))
+        reference_profile = 1 + min(observed)
+        missing_profiles = [i + 1 for i in range(6) if i not in observed]
+        columns = list(range(6)) + [5 + i for i in observed if i != reference_profile - 1]
+        x = x[:, :, columns]
     flat = x[mask]
     p = x.shape[-1]
     if len(flat) <= p or np.linalg.matrix_rank(flat) < p or len(np.unique(y[mask])) < 2:
@@ -150,10 +171,18 @@ def fit_glmm(x, y, mask, nodes=20):
         return {"status": "information_failure"}
     covariance = np.linalg.inv(information)[:p, :p]
     se = np.sqrt(np.diag(covariance))
+    beta_full = [None] * original_p
+    se_full = [None] * original_p
+    for column, estimate, error in zip(columns, theta[:-1], se):
+        beta_full[column] = float(estimate)
+        se_full[column] = float(error)
     return {
         "status": "ok",
-        "beta": theta[:-1].tolist(),
-        "se": se.tolist(),
+        "beta": beta_full,
+        "se": se_full,
+        "profile_reference": reference_profile,
+        "unobserved_profiles": missing_profiles,
+        "active_columns": columns,
         "sigma": float(np.exp(theta[-1])),
         "zero_variance_boundary": bool(at_lower),
         "nll": float(result.fun),
@@ -188,7 +217,7 @@ def run(config, repetitions, nodes, seed):
                     **fitted,
                 }
                 if fitted["status"] == "ok":
-                    b, se = np.array(fitted["beta"]), np.array(fitted["se"])
+                    b, se = np.array(fitted["beta"], dtype=float), np.array(fitted["se"], dtype=float)
                     ps = 2 * norm.sf(np.abs(b[[1, 3]] / se[[1, 3]]))
                     r1, r3 = holm_rejections(*ps)
                     row.update(

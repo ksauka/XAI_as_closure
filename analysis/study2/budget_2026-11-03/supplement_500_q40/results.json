@@ -1,0 +1,3006 @@
+{
+  "kind": "simulation_not_observed_data",
+  "config": {
+    "sample_sizes": [
+      160,
+      192,
+      200
+    ],
+    "repetitions": 500,
+    "quadrature_nodes": 40,
+    "seed": 20261104,
+    "assumption_status": "Pre-outcome sensitivity grid. All Study 2 effects and opportunity rates are assumptions; no participant target is selected.",
+    "pairing": "Generate a balanced N=200 panel, then retain the first 20/24/25 participants in each shuffled cell for N=160/192/200. Common random numbers across N; no optional stopping.",
+    "effect_status": "OR=1.5 main effects and interaction OR=0.67 are inherited illustrative assumptions, with explicit smaller/larger main-effect and null sensitivities.",
+    "scenarios": [
+      {
+        "baseline_appropriate_probability": 0.65,
+        "explanation_or": 1.5,
+        "delivery_or": 1.0,
+        "forcing_or": 1.5,
+        "interaction_or": 0.67,
+        "random_intercept_sd": 0.75,
+        "profile_log_odds_offsets": [
+          0,
+          0.15,
+          -0.15,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "name": "v6_round2_smoothed_anchor",
+        "profile_disagreement_probabilities": [
+          0.22727272727272727,
+          0.22727272727272727,
+          0.3181818181818182,
+          0.5,
+          0.22727272727272727,
+          0.8636363636363636
+        ],
+        "rationale": "Ten fresh complete author-confirmed screened experts; v6 materials. Descriptive sensitivity only, not Study 2 estimates; C-05 has since changed in v7."
+      },
+      {
+        "baseline_appropriate_probability": 0.65,
+        "explanation_or": 1.5,
+        "delivery_or": 1.0,
+        "forcing_or": 1.5,
+        "interaction_or": 0.67,
+        "random_intercept_sd": 0.75,
+        "profile_log_odds_offsets": [
+          0,
+          0.15,
+          -0.15,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "name": "v6_round2_half_correct_ai_opportunities",
+        "profile_disagreement_probabilities": [
+          0.11363636363636363,
+          0.11363636363636363,
+          0.1590909090909091,
+          0.25,
+          0.22727272727272727,
+          0.8636363636363636
+        ],
+        "rationale": "Half the smoothed first-four opportunity rates; fixed hypothetical sensitivity."
+      },
+      {
+        "baseline_appropriate_probability": 0.65,
+        "explanation_or": 1.5,
+        "delivery_or": 1.0,
+        "forcing_or": 1.5,
+        "interaction_or": 0.67,
+        "random_intercept_sd": 0.75,
+        "profile_log_odds_offsets": [
+          0,
+          0.15,
+          -0.15,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "name": "v6_round2_double_correct_ai_opportunities",
+        "profile_disagreement_probabilities": [
+          0.45454545454545453,
+          0.45454545454545453,
+          0.6363636363636364,
+          0.95,
+          0.22727272727272727,
+          0.8636363636363636
+        ],
+        "rationale": "Twice the smoothed first-four opportunity rates, capped at .95; fixed hypothetical sensitivity."
+      },
+      {
+        "baseline_appropriate_probability": 0.65,
+        "explanation_or": 1.5,
+        "delivery_or": 1.0,
+        "forcing_or": 1.5,
+        "interaction_or": 0.67,
+        "random_intercept_sd": 0.75,
+        "profile_log_odds_offsets": [
+          0,
+          0.15,
+          -0.15,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "name": "v7_C05_recoverability_50_assumption",
+        "profile_disagreement_probabilities": [
+          0.22727272727272727,
+          0.22727272727272727,
+          0.3181818181818182,
+          0.5,
+          0.5,
+          0.8636363636363636
+        ],
+        "rationale": "Assume .50 correct unaided C-05 recovery after the v7 dual-expiry change; not a validation result."
+      },
+      {
+        "baseline_appropriate_probability": 0.65,
+        "explanation_or": 1.5,
+        "delivery_or": 1.0,
+        "forcing_or": 1.5,
+        "interaction_or": 0.67,
+        "random_intercept_sd": 0.75,
+        "profile_log_odds_offsets": [
+          0,
+          0.15,
+          -0.15,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "name": "v7_C05_recoverability_85_assumption",
+        "profile_disagreement_probabilities": [
+          0.22727272727272727,
+          0.22727272727272727,
+          0.3181818181818182,
+          0.5,
+          0.85,
+          0.8636363636363636
+        ],
+        "rationale": "Assume .85 correct unaided C-05 recovery after the v7 dual-expiry change; not a validation result."
+      },
+      {
+        "baseline_appropriate_probability": 0.65,
+        "explanation_or": 1.5,
+        "delivery_or": 1.0,
+        "forcing_or": 1.5,
+        "interaction_or": 0.67,
+        "random_intercept_sd": 1.2,
+        "profile_log_odds_offsets": [
+          0,
+          0.15,
+          -0.15,
+          0.1,
+          -0.2,
+          0.2
+        ],
+        "name": "v6_round2_high_dependence",
+        "profile_disagreement_probabilities": [
+          0.22727272727272727,
+          0.22727272727272727,
+          0.3181818181818182,
+          0.5,
+          0.22727272727272727,
+          0.8636363636363636
+        ],
+        "rationale": "Same descriptive opportunity vector with stronger participant outcome dependence."
+      }
+    ],
+    "supplement_status": "Added after the original 15-scenario run and the v6 round-2 audit. These sensitivities do not replace or select the earlier scenarios.",
+    "source": {
+      "n": 10,
+      "material_version": "v6",
+      "disagreement_counts": [
+        2,
+        2,
+        3,
+        5,
+        2,
+        9
+      ],
+      "denominator": 10,
+      "smoothing": "(count+.5)/11, used only as a finite sensitivity anchor",
+      "source_audit": "audit/study1_round2_2026-11-03/descriptive_results.json in the manuscript workspace",
+      "caution": "v7 now has an additional C-05 membership-currency failure. Focused v7 expert data and the separate Study 2 technical pilot are still pending."
+    }
+  },
+  "source_hashes": {
+    "analysis/study2/simulate_precision.py": "880488e8f9af9be5cc9570597f8eeb5b7521111b672af221005b2ea5cde84579",
+    "analysis/study2/compare_budget_precision.py": "f4dda2ea75a94e1e0bb5cd674e715b8c9047b11e38b0c58ee9acd3332e2e5cc9"
+  },
+  "input_config_sha256": "e0f146e89f3f967544d73229dc88d12b881e28fae450339cb4a9c8a8e3e2a2ab",
+  "git_commit": "efabca12a5acc4a6578f5d872d8746526dab1607",
+  "python": "3.11.14",
+  "numpy": "2.3.5",
+  "scipy": "1.17.1",
+  "blas_threads": "1",
+  "workers": 3,
+  "seconds": 181.55,
+  "summaries": [
+    {
+      "scenario": "v6_round2_smoothed_anchor",
+      "n": 160,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 378.494,
+      "mean_ai_reliance_opportunities": 203.83,
+      "mean_self_reliance_opportunities": 174.664,
+      "mean_participants_without_opportunities": 3.278,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        36.386,
+        36.5,
+        50.9,
+        80.044,
+        36.426,
+        138.238
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          4.542,
+          4.58,
+          6.342,
+          9.964,
+          4.586,
+          17.32
+        ],
+        [
+          4.446,
+          4.512,
+          6.276,
+          9.986,
+          4.462,
+          17.342
+        ],
+        [
+          4.522,
+          4.564,
+          6.364,
+          10.076,
+          4.54,
+          17.218
+        ],
+        [
+          4.542,
+          4.58,
+          6.302,
+          9.766,
+          4.64,
+          17.212
+        ],
+        [
+          4.65,
+          4.58,
+          6.488,
+          9.938,
+          4.49,
+          17.284
+        ],
+        [
+          4.598,
+          4.372,
+          6.478,
+          10.16,
+          4.564,
+          17.248
+        ],
+        [
+          4.602,
+          4.552,
+          6.328,
+          10.162,
+          4.538,
+          17.222
+        ],
+        [
+          4.484,
+          4.76,
+          6.322,
+          9.992,
+          4.606,
+          17.392
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.254,
+      "h1_holm_mc_se": 0.019467100451787882,
+      "h1_holm_mc_interval95": [
+        0.21639593862016643,
+        0.2945410639530148
+      ],
+      "h1_positive_holm_rejection_rate": 0.254,
+      "h1_positive_holm_mc_se": 0.019467100451787882,
+      "h1_positive_holm_mc_interval95": [
+        0.21639593862016643,
+        0.2945410639530148
+      ],
+      "h3_holm_rejection_rate": 0.232,
+      "h3_holm_mc_se": 0.018877287940803362,
+      "h3_holm_mc_interval95": [
+        0.19567858511358002,
+        0.27152432069689725
+      ],
+      "h3_positive_holm_rejection_rate": 0.232,
+      "h3_positive_holm_mc_se": 0.018877287940803362,
+      "h3_positive_holm_mc_interval95": [
+        0.19567858511358002,
+        0.27152432069689725
+      ],
+      "either_h1_h3_rejection_rate": 0.408,
+      "either_h1_h3_mc_interval95": [
+        0.3645772402887464,
+        0.4525170653175473
+      ],
+      "h2_median_log_ci_width": 2.095350037622372,
+      "h2_log_ci_width_q10_q90": [
+        1.79532963493169,
+        2.430305954312263
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.8510148505574135,
+      "h2_median_or_interval_endpoints": [
+        0.23679728058757485,
+        1.9354187802398763
+      ],
+      "h2_coverage_successful_fits": 0.952,
+      "h2_coverage_mc_interval95": [
+        0.9294192037426702,
+        0.9690068312064947
+      ],
+      "h2_mean_bias": 0.0016045694261944234,
+      "zero_variance_boundaries": 36,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_smoothed_anchor",
+      "n": 192,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 454.366,
+      "mean_ai_reliance_opportunities": 244.962,
+      "mean_self_reliance_opportunities": 209.404,
+      "mean_participants_without_opportunities": 3.936,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        43.788,
+        43.674,
+        61.186,
+        96.314,
+        43.614,
+        165.79
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          5.404,
+          5.468,
+          7.644,
+          11.93,
+          5.428,
+          20.774
+        ],
+        [
+          5.358,
+          5.388,
+          7.538,
+          12.034,
+          5.38,
+          20.752
+        ],
+        [
+          5.422,
+          5.516,
+          7.662,
+          12.104,
+          5.432,
+          20.642
+        ],
+        [
+          5.47,
+          5.46,
+          7.62,
+          11.804,
+          5.498,
+          20.676
+        ],
+        [
+          5.604,
+          5.542,
+          7.768,
+          11.968,
+          5.438,
+          20.75
+        ],
+        [
+          5.586,
+          5.188,
+          7.76,
+          12.172,
+          5.486,
+          20.712
+        ],
+        [
+          5.542,
+          5.476,
+          7.548,
+          12.232,
+          5.47,
+          20.624
+        ],
+        [
+          5.402,
+          5.636,
+          7.646,
+          12.07,
+          5.482,
+          20.86
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.29,
+      "h1_holm_mc_se": 0.020292855885754472,
+      "h1_holm_mc_interval95": [
+        0.2505695730497735,
+        0.33193430848146377
+      ],
+      "h1_positive_holm_rejection_rate": 0.288,
+      "h1_positive_holm_mc_se": 0.020251222185339826,
+      "h1_positive_holm_mc_interval95": [
+        0.24866274725184676,
+        0.32986514313074267
+      ],
+      "h3_holm_rejection_rate": 0.316,
+      "h3_holm_mc_se": 0.020791536739741004,
+      "h3_holm_mc_interval95": [
+        0.27544147198515606,
+        0.3587507603440034
+      ],
+      "h3_positive_holm_rejection_rate": 0.316,
+      "h3_positive_holm_mc_se": 0.020791536739741004,
+      "h3_positive_holm_mc_interval95": [
+        0.27544147198515606,
+        0.3587507603440034
+      ],
+      "either_h1_h3_rejection_rate": 0.488,
+      "either_h1_h3_mc_interval95": [
+        0.4433694629331013,
+        0.5327732030581831
+      ],
+      "h2_median_log_ci_width": 1.901268066984328,
+      "h2_log_ci_width_q10_q90": [
+        1.6442593352930355,
+        2.135696628626634
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.5873496056763856,
+      "h2_median_or_interval_endpoints": [
+        0.2683239069672393,
+        1.7980551643943383
+      ],
+      "h2_coverage_successful_fits": 0.948,
+      "h2_coverage_mc_interval95": [
+        0.9247336289693778,
+        0.9657543019172321
+      ],
+      "h2_mean_bias": 0.0187338223149386,
+      "zero_variance_boundaries": 20,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_smoothed_anchor",
+      "n": 200,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 473.398,
+      "mean_ai_reliance_opportunities": 255.102,
+      "mean_self_reliance_opportunities": 218.296,
+      "mean_participants_without_opportunities": 4.058,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        45.568,
+        45.462,
+        63.782,
+        100.29,
+        45.492,
+        172.804
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          5.614,
+          5.694,
+          7.964,
+          12.454,
+          5.67,
+          21.648
+        ],
+        [
+          5.592,
+          5.634,
+          7.858,
+          12.52,
+          5.62,
+          21.62
+        ],
+        [
+          5.628,
+          5.748,
+          8.01,
+          12.636,
+          5.688,
+          21.518
+        ],
+        [
+          5.698,
+          5.72,
+          7.964,
+          12.292,
+          5.73,
+          21.564
+        ],
+        [
+          5.848,
+          5.752,
+          8.072,
+          12.488,
+          5.666,
+          21.652
+        ],
+        [
+          5.818,
+          5.376,
+          8.082,
+          12.648,
+          5.72,
+          21.59
+        ],
+        [
+          5.758,
+          5.716,
+          7.896,
+          12.728,
+          5.684,
+          21.494
+        ],
+        [
+          5.612,
+          5.822,
+          7.936,
+          12.524,
+          5.714,
+          21.718
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.314,
+      "h1_holm_mc_se": 0.020755914819636352,
+      "h1_holm_mc_interval95": [
+        0.2735228986922597,
+        0.35669327841887366
+      ],
+      "h1_positive_holm_rejection_rate": 0.314,
+      "h1_positive_holm_mc_se": 0.020755914819636352,
+      "h1_positive_holm_mc_interval95": [
+        0.2735228986922597,
+        0.35669327841887366
+      ],
+      "h3_holm_rejection_rate": 0.316,
+      "h3_holm_mc_se": 0.020791536739741004,
+      "h3_holm_mc_interval95": [
+        0.27544147198515606,
+        0.3587507603440034
+      ],
+      "h3_positive_holm_rejection_rate": 0.316,
+      "h3_positive_holm_mc_se": 0.020791536739741004,
+      "h3_positive_holm_mc_interval95": [
+        0.27544147198515606,
+        0.3587507603440034
+      ],
+      "either_h1_h3_rejection_rate": 0.498,
+      "either_h1_h3_mc_interval95": [
+        0.45329780691899596,
+        0.5427259705561505
+      ],
+      "h2_median_log_ci_width": 1.867053262771772,
+      "h2_log_ci_width_q10_q90": [
+        1.6362460782186872,
+        2.10105737793976
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.5434632367842713,
+      "h2_median_or_interval_endpoints": [
+        0.2721780120303901,
+        1.7582945423629268
+      ],
+      "h2_coverage_successful_fits": 0.944,
+      "h2_coverage_mc_interval95": [
+        0.9200786993956399,
+        0.9624695555249778
+      ],
+      "h2_mean_bias": 0.010481402236264864,
+      "zero_variance_boundaries": 17,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_half_correct_ai_opportunities",
+      "n": 160,
+      "attempted": 500,
+      "successful": 498,
+      "failure_counts": {
+        "information_failure": 2
+      },
+      "mean_diagnostic_trials": 276.31,
+      "mean_ai_reliance_opportunities": 102.182,
+      "mean_self_reliance_opportunities": 174.128,
+      "mean_participants_without_opportunities": 8.344,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        18.304,
+        18.028,
+        25.442,
+        40.408,
+        36.104,
+        138.024
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          2.264,
+          2.27,
+          3.192,
+          5.06,
+          4.382,
+          17.248
+        ],
+        [
+          2.414,
+          2.21,
+          3.046,
+          5.156,
+          4.524,
+          17.288
+        ],
+        [
+          2.296,
+          2.234,
+          3.258,
+          5.082,
+          4.494,
+          17.232
+        ],
+        [
+          2.28,
+          2.366,
+          3.168,
+          5.086,
+          4.39,
+          17.27
+        ],
+        [
+          2.316,
+          2.202,
+          3.128,
+          4.96,
+          4.608,
+          17.256
+        ],
+        [
+          2.328,
+          2.24,
+          3.082,
+          4.988,
+          4.588,
+          17.272
+        ],
+        [
+          2.246,
+          2.17,
+          3.338,
+          4.978,
+          4.458,
+          17.226
+        ],
+        [
+          2.16,
+          2.336,
+          3.23,
+          5.098,
+          4.66,
+          17.232
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.222,
+      "h1_holm_mc_se": 0.018585801031970616,
+      "h1_holm_mc_interval95": [
+        0.18630734598641568,
+        0.2610168116937048
+      ],
+      "h1_positive_holm_rejection_rate": 0.222,
+      "h1_positive_holm_mc_se": 0.018585801031970616,
+      "h1_positive_holm_mc_interval95": [
+        0.18630734598641568,
+        0.2610168116937048
+      ],
+      "h3_holm_rejection_rate": 0.18,
+      "h3_holm_mc_se": 0.017181385275931625,
+      "h3_holm_mc_interval95": [
+        0.14730058249929018,
+        0.21653636943708093
+      ],
+      "h3_positive_holm_rejection_rate": 0.18,
+      "h3_positive_holm_mc_se": 0.017181385275931625,
+      "h3_positive_holm_mc_interval95": [
+        0.14730058249929018,
+        0.21653636943708093
+      ],
+      "either_h1_h3_rejection_rate": 0.344,
+      "either_h1_h3_mc_interval95": [
+        0.30239090045129413,
+        0.38746652039594054
+      ],
+      "h2_median_log_ci_width": 2.3753181693118597,
+      "h2_log_ci_width_q10_q90": [
+        2.0842236290748595,
+        2.865733593825132
+      ],
+      "h2_median_ci_multiplicative_half_span": 3.279395427936834,
+      "h2_median_or_interval_endpoints": [
+        0.19274648215079332,
+        2.159536595086502
+      ],
+      "h2_coverage_successful_fits": 0.9558232931726908,
+      "h2_coverage_mc_interval95": [
+        0.9338775534409705,
+        0.9721108503812086
+      ],
+      "h2_mean_bias": -0.03539333812133447,
+      "zero_variance_boundaries": 72,
+      "profile_reference_counts": {
+        "1": 498,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_half_correct_ai_opportunities",
+      "n": 192,
+      "attempted": 500,
+      "successful": 499,
+      "failure_counts": {
+        "information_failure": 1
+      },
+      "mean_diagnostic_trials": 331.44,
+      "mean_ai_reliance_opportunities": 122.364,
+      "mean_self_reliance_opportunities": 209.076,
+      "mean_participants_without_opportunities": 9.988,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        21.912,
+        21.594,
+        30.622,
+        48.236,
+        43.46,
+        165.616
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          2.692,
+          2.706,
+          3.856,
+          6.05,
+          5.282,
+          20.632
+        ],
+        [
+          2.904,
+          2.636,
+          3.712,
+          6.162,
+          5.51,
+          20.772
+        ],
+        [
+          2.758,
+          2.656,
+          3.91,
+          6.064,
+          5.398,
+          20.668
+        ],
+        [
+          2.66,
+          2.806,
+          3.796,
+          6.068,
+          5.238,
+          20.69
+        ],
+        [
+          2.796,
+          2.7,
+          3.758,
+          5.92,
+          5.59,
+          20.712
+        ],
+        [
+          2.78,
+          2.664,
+          3.75,
+          5.932,
+          5.458,
+          20.726
+        ],
+        [
+          2.684,
+          2.622,
+          3.966,
+          5.934,
+          5.426,
+          20.682
+        ],
+        [
+          2.638,
+          2.804,
+          3.874,
+          6.106,
+          5.558,
+          20.734
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.274,
+      "h1_holm_mc_se": 0.01994612744369192,
+      "h1_holm_mc_interval95": [
+        0.23534166201192522,
+        0.315354454511171
+      ],
+      "h1_positive_holm_rejection_rate": 0.274,
+      "h1_positive_holm_mc_se": 0.01994612744369192,
+      "h1_positive_holm_mc_interval95": [
+        0.23534166201192522,
+        0.315354454511171
+      ],
+      "h3_holm_rejection_rate": 0.232,
+      "h3_holm_mc_se": 0.018877287940803362,
+      "h3_holm_mc_interval95": [
+        0.19567858511358002,
+        0.27152432069689725
+      ],
+      "h3_positive_holm_rejection_rate": 0.232,
+      "h3_positive_holm_mc_se": 0.018877287940803362,
+      "h3_positive_holm_mc_interval95": [
+        0.19567858511358002,
+        0.27152432069689725
+      ],
+      "either_h1_h3_rejection_rate": 0.414,
+      "either_h1_h3_mc_interval95": [
+        0.37044686980532154,
+        0.45857600267202864
+      ],
+      "h2_median_log_ci_width": 2.181141762899089,
+      "h2_log_ci_width_q10_q90": [
+        1.9024061137334614,
+        2.6000615326854217
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.9759725152155267,
+      "h2_median_or_interval_endpoints": [
+        0.2138762108742142,
+        1.9207656250609022
+      ],
+      "h2_coverage_successful_fits": 0.9458917835671342,
+      "h2_coverage_mc_interval95": [
+        0.9222489824059686,
+        0.9640432175516772
+      ],
+      "h2_mean_bias": -0.03259612350120989,
+      "zero_variance_boundaries": 55,
+      "profile_reference_counts": {
+        "1": 499,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_half_correct_ai_opportunities",
+      "n": 200,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 345.306,
+      "mean_ai_reliance_opportunities": 127.586,
+      "mean_self_reliance_opportunities": 217.72,
+      "mean_participants_without_opportunities": 10.46,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        22.886,
+        22.528,
+        31.834,
+        50.338,
+        45.23,
+        172.49
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          2.822,
+          2.814,
+          4.012,
+          6.322,
+          5.514,
+          21.484
+        ],
+        [
+          2.996,
+          2.768,
+          3.86,
+          6.462,
+          5.706,
+          21.628
+        ],
+        [
+          2.892,
+          2.768,
+          4.056,
+          6.326,
+          5.62,
+          21.528
+        ],
+        [
+          2.796,
+          2.922,
+          3.922,
+          6.352,
+          5.444,
+          21.568
+        ],
+        [
+          2.908,
+          2.822,
+          3.908,
+          6.16,
+          5.826,
+          21.562
+        ],
+        [
+          2.896,
+          2.786,
+          3.916,
+          6.168,
+          5.67,
+          21.568
+        ],
+        [
+          2.792,
+          2.74,
+          4.13,
+          6.182,
+          5.658,
+          21.542
+        ],
+        [
+          2.784,
+          2.908,
+          4.03,
+          6.366,
+          5.792,
+          21.61
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.288,
+      "h1_holm_mc_se": 0.020251222185339826,
+      "h1_holm_mc_interval95": [
+        0.24866274725184676,
+        0.32986514313074267
+      ],
+      "h1_positive_holm_rejection_rate": 0.288,
+      "h1_positive_holm_mc_se": 0.020251222185339826,
+      "h1_positive_holm_mc_interval95": [
+        0.24866274725184676,
+        0.32986514313074267
+      ],
+      "h3_holm_rejection_rate": 0.262,
+      "h3_holm_mc_se": 0.01966499427917537,
+      "h3_holm_mc_interval95": [
+        0.22396194545212783,
+        0.3028786160691025
+      ],
+      "h3_positive_holm_rejection_rate": 0.262,
+      "h3_positive_holm_mc_se": 0.01966499427917537,
+      "h3_positive_holm_mc_interval95": [
+        0.22396194545212783,
+        0.3028786160691025
+      ],
+      "either_h1_h3_rejection_rate": 0.44,
+      "either_h1_h3_mc_interval95": [
+        0.39595741120380074,
+        0.48475606103093494
+      ],
+      "h2_median_log_ci_width": 2.14504882325064,
+      "h2_log_ci_width_q10_q90": [
+        1.874096245524656,
+        2.5157516142348517
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.9227484150531056,
+      "h2_median_or_interval_endpoints": [
+        0.22380324584069,
+        1.8670372136688311
+      ],
+      "h2_coverage_successful_fits": 0.94,
+      "h2_coverage_mc_interval95": [
+        0.9154514462923999,
+        0.9591558182372231
+      ],
+      "h2_mean_bias": -0.03642846827906112,
+      "zero_variance_boundaries": 49,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_double_correct_ai_opportunities",
+      "n": 160,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 573.818,
+      "mean_ai_reliance_opportunities": 399.036,
+      "mean_self_reliance_opportunities": 174.782,
+      "mean_participants_without_opportunities": 0.122,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        72.462,
+        72.712,
+        101.73,
+        152.132,
+        36.53,
+        138.252
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          9.134,
+          8.896,
+          12.764,
+          18.952,
+          4.762,
+          17.23
+        ],
+        [
+          8.918,
+          8.83,
+          12.586,
+          18.986,
+          4.408,
+          17.25
+        ],
+        [
+          9.084,
+          9.12,
+          12.68,
+          19.018,
+          4.53,
+          17.314
+        ],
+        [
+          8.976,
+          9.18,
+          12.576,
+          19.132,
+          4.622,
+          17.384
+        ],
+        [
+          9.068,
+          9.174,
+          12.868,
+          18.994,
+          4.578,
+          17.252
+        ],
+        [
+          9.042,
+          9.128,
+          12.71,
+          19.0,
+          4.568,
+          17.228
+        ],
+        [
+          9.042,
+          9.144,
+          12.802,
+          19.036,
+          4.456,
+          17.3
+        ],
+        [
+          9.198,
+          9.24,
+          12.744,
+          19.014,
+          4.606,
+          17.294
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.344,
+      "h1_holm_mc_se": 0.02124448163641561,
+      "h1_holm_mc_interval95": [
+        0.30239090045129413,
+        0.38746652039594054
+      ],
+      "h1_positive_holm_rejection_rate": 0.344,
+      "h1_positive_holm_mc_se": 0.02124448163641561,
+      "h1_positive_holm_mc_interval95": [
+        0.30239090045129413,
+        0.38746652039594054
+      ],
+      "h3_holm_rejection_rate": 0.366,
+      "h3_holm_mc_se": 0.021542701780417423,
+      "h3_holm_mc_interval95": [
+        0.32367808937253933,
+        0.40991672613517405
+      ],
+      "h3_positive_holm_rejection_rate": 0.366,
+      "h3_positive_holm_mc_se": 0.021542701780417423,
+      "h3_positive_holm_mc_interval95": [
+        0.32367808937253933,
+        0.40991672613517405
+      ],
+      "either_h1_h3_rejection_rate": 0.534,
+      "either_h1_h3_mc_interval95": [
+        0.48918438329329617,
+        0.5784113729613445
+      ],
+      "h2_median_log_ci_width": 1.7395736150034782,
+      "h2_log_ci_width_q10_q90": [
+        1.5536866184467581,
+        1.9782343036195467
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.386402036276225,
+      "h2_median_or_interval_endpoints": [
+        0.2725023778036531,
+        1.5967270362744563
+      ],
+      "h2_coverage_successful_fits": 0.93,
+      "h2_coverage_mc_interval95": [
+        0.9039889084073668,
+        0.9507613552796211
+      ],
+      "h2_mean_bias": -0.02464164249057052,
+      "zero_variance_boundaries": 5,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_double_correct_ai_opportunities",
+      "n": 192,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 688.834,
+      "mean_ai_reliance_opportunities": 479.128,
+      "mean_self_reliance_opportunities": 209.706,
+      "mean_participants_without_opportunities": 0.134,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        87.05,
+        87.394,
+        122.166,
+        182.518,
+        43.782,
+        165.924
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          10.95,
+          10.734,
+          15.378,
+          22.764,
+          5.652,
+          20.694
+        ],
+        [
+          10.754,
+          10.626,
+          15.14,
+          22.816,
+          5.322,
+          20.706
+        ],
+        [
+          10.914,
+          10.926,
+          15.23,
+          22.822,
+          5.508,
+          20.752
+        ],
+        [
+          10.766,
+          11.052,
+          15.128,
+          22.924,
+          5.494,
+          20.872
+        ],
+        [
+          10.962,
+          10.952,
+          15.318,
+          22.75,
+          5.472,
+          20.724
+        ],
+        [
+          10.834,
+          11.078,
+          15.268,
+          22.814,
+          5.478,
+          20.688
+        ],
+        [
+          10.864,
+          10.976,
+          15.414,
+          22.834,
+          5.37,
+          20.764
+        ],
+        [
+          11.006,
+          11.05,
+          15.29,
+          22.794,
+          5.486,
+          20.724
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.444,
+      "h1_holm_mc_se": 0.022219990999098087,
+      "h1_holm_mc_interval95": [
+        0.3998928778702577,
+        0.488773011560025
+      ],
+      "h1_positive_holm_rejection_rate": 0.444,
+      "h1_positive_holm_mc_se": 0.022219990999098087,
+      "h1_positive_holm_mc_interval95": [
+        0.3998928778702577,
+        0.488773011560025
+      ],
+      "h3_holm_rejection_rate": 0.432,
+      "h3_holm_mc_se": 0.022152923057691506,
+      "h3_holm_mc_interval95": [
+        0.3880950490657598,
+        0.4767136012233087
+      ],
+      "h3_positive_holm_rejection_rate": 0.432,
+      "h3_positive_holm_mc_se": 0.022152923057691506,
+      "h3_positive_holm_mc_interval95": [
+        0.3880950490657598,
+        0.4767136012233087
+      ],
+      "either_h1_h3_rejection_rate": 0.628,
+      "either_h1_h3_mc_interval95": [
+        0.5839770022582277,
+        0.6704997436050206
+      ],
+      "h2_median_log_ci_width": 1.5877496999822298,
+      "h2_log_ci_width_q10_q90": [
+        1.4418338328681832,
+        1.7882087446624917
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.2119508196709625,
+      "h2_median_or_interval_endpoints": [
+        0.2973323502023566,
+        1.4670131632002628
+      ],
+      "h2_coverage_successful_fits": 0.938,
+      "h2_coverage_mc_interval95": [
+        0.9131474025208987,
+        0.9574889387036145
+      ],
+      "h2_mean_bias": -0.018073728847577016,
+      "zero_variance_boundaries": 2,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_double_correct_ai_opportunities",
+      "n": 200,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 717.696,
+      "mean_ai_reliance_opportunities": 499.254,
+      "mean_self_reliance_opportunities": 218.442,
+      "mean_participants_without_opportunities": 0.138,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        90.744,
+        90.976,
+        127.44,
+        190.094,
+        45.55,
+        172.892
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          11.424,
+          11.182,
+          16.024,
+          23.724,
+          5.876,
+          21.55
+        ],
+        [
+          11.21,
+          11.064,
+          15.812,
+          23.762,
+          5.534,
+          21.57
+        ],
+        [
+          11.396,
+          11.368,
+          15.862,
+          23.776,
+          5.736,
+          21.628
+        ],
+        [
+          11.2,
+          11.494,
+          15.796,
+          23.854,
+          5.724,
+          21.768
+        ],
+        [
+          11.426,
+          11.37,
+          15.994,
+          23.696,
+          5.694,
+          21.6
+        ],
+        [
+          11.284,
+          11.524,
+          15.966,
+          23.762,
+          5.716,
+          21.564
+        ],
+        [
+          11.336,
+          11.41,
+          16.082,
+          23.774,
+          5.564,
+          21.646
+        ],
+        [
+          11.468,
+          11.564,
+          15.904,
+          23.746,
+          5.706,
+          21.566
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.448,
+      "h1_holm_mc_se": 0.02223942445298439,
+      "h1_holm_mc_interval95": [
+        0.4038311905218627,
+        0.4927871198675923
+      ],
+      "h1_positive_holm_rejection_rate": 0.448,
+      "h1_positive_holm_mc_se": 0.02223942445298439,
+      "h1_positive_holm_mc_interval95": [
+        0.4038311905218627,
+        0.4927871198675923
+      ],
+      "h3_holm_rejection_rate": 0.456,
+      "h3_holm_mc_se": 0.022273930950777416,
+      "h3_holm_mc_interval95": [
+        0.4117163240724598,
+        0.5008068383940263
+      ],
+      "h3_positive_holm_rejection_rate": 0.456,
+      "h3_positive_holm_mc_se": 0.022273930950777416,
+      "h3_positive_holm_mc_interval95": [
+        0.4117163240724598,
+        0.5008068383940263
+      ],
+      "either_h1_h3_rejection_rate": 0.642,
+      "either_h1_h3_mc_interval95": [
+        0.598235884409411,
+        0.684073847928081
+      ],
+      "h2_median_log_ci_width": 1.5634834366512682,
+      "h2_log_ci_width_q10_q90": [
+        1.412254507122264,
+        1.7365034769232415
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.185275086480031,
+      "h2_median_or_interval_endpoints": [
+        0.30351033604138394,
+        1.4392833412054142
+      ],
+      "h2_coverage_successful_fits": 0.94,
+      "h2_coverage_mc_interval95": [
+        0.9154514462923999,
+        0.9591558182372231
+      ],
+      "h2_mean_bias": -0.013135895953004618,
+      "zero_variance_boundaries": 1,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v7_C05_recoverability_50_assumption",
+      "n": 160,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 422.472,
+      "mean_ai_reliance_opportunities": 204.506,
+      "mean_self_reliance_opportunities": 217.966,
+      "mean_participants_without_opportunities": 2.314,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        36.536,
+        36.534,
+        51.338,
+        80.098,
+        79.92,
+        138.046
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          4.542,
+          4.566,
+          6.322,
+          10.024,
+          9.934,
+          17.28
+        ],
+        [
+          4.614,
+          4.648,
+          6.558,
+          10.128,
+          9.994,
+          17.294
+        ],
+        [
+          4.526,
+          4.576,
+          6.346,
+          10.002,
+          10.112,
+          17.214
+        ],
+        [
+          4.68,
+          4.568,
+          6.528,
+          10.028,
+          9.988,
+          17.256
+        ],
+        [
+          4.584,
+          4.49,
+          6.53,
+          9.972,
+          10.0,
+          17.266
+        ],
+        [
+          4.488,
+          4.528,
+          6.402,
+          9.938,
+          9.792,
+          17.302
+        ],
+        [
+          4.464,
+          4.674,
+          6.284,
+          10.054,
+          9.952,
+          17.18
+        ],
+        [
+          4.638,
+          4.484,
+          6.368,
+          9.952,
+          10.148,
+          17.254
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.284,
+      "h1_holm_mc_se": 0.020166506886419373,
+      "h1_holm_mc_interval95": [
+        0.24485192538238448,
+        0.3257239997147238
+      ],
+      "h1_positive_holm_rejection_rate": 0.284,
+      "h1_positive_holm_mc_se": 0.020166506886419373,
+      "h1_positive_holm_mc_interval95": [
+        0.24485192538238448,
+        0.3257239997147238
+      ],
+      "h3_holm_rejection_rate": 0.262,
+      "h3_holm_mc_se": 0.01966499427917537,
+      "h3_holm_mc_interval95": [
+        0.22396194545212783,
+        0.3028786160691025
+      ],
+      "h3_positive_holm_rejection_rate": 0.262,
+      "h3_positive_holm_mc_se": 0.01966499427917537,
+      "h3_positive_holm_mc_interval95": [
+        0.22396194545212783,
+        0.3028786160691025
+      ],
+      "either_h1_h3_rejection_rate": 0.43,
+      "either_h1_h3_mc_interval95": [
+        0.386131250747713,
+        0.47470119686158885
+      ],
+      "h2_median_log_ci_width": 1.9706618239914862,
+      "h2_log_ci_width_q10_q90": [
+        1.7092783714993718,
+        2.290302670316874
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.6786981511260026,
+      "h2_median_or_interval_endpoints": [
+        0.2572065907553479,
+        1.7989615416828064
+      ],
+      "h2_coverage_successful_fits": 0.948,
+      "h2_coverage_mc_interval95": [
+        0.9247336289693778,
+        0.9657543019172321
+      ],
+      "h2_mean_bias": -0.0017718955784739414,
+      "zero_variance_boundaries": 25,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v7_C05_recoverability_50_assumption",
+      "n": 192,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 506.87,
+      "mean_ai_reliance_opportunities": 245.128,
+      "mean_self_reliance_opportunities": 261.742,
+      "mean_participants_without_opportunities": 2.712,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        43.902,
+        43.72,
+        61.518,
+        95.988,
+        96.006,
+        165.736
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          5.414,
+          5.584,
+          7.536,
+          12.018,
+          11.896,
+          20.716
+        ],
+        [
+          5.5,
+          5.5,
+          7.916,
+          12.116,
+          11.976,
+          20.756
+        ],
+        [
+          5.446,
+          5.462,
+          7.616,
+          12.008,
+          12.226,
+          20.702
+        ],
+        [
+          5.64,
+          5.396,
+          7.758,
+          12.076,
+          12.014,
+          20.708
+        ],
+        [
+          5.476,
+          5.398,
+          7.85,
+          11.942,
+          11.994,
+          20.738
+        ],
+        [
+          5.48,
+          5.466,
+          7.672,
+          11.882,
+          11.782,
+          20.75
+        ],
+        [
+          5.344,
+          5.506,
+          7.558,
+          11.988,
+          11.988,
+          20.658
+        ],
+        [
+          5.602,
+          5.408,
+          7.612,
+          11.958,
+          12.13,
+          20.708
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.328,
+      "h1_holm_mc_se": 0.02099599961897504,
+      "h1_holm_mc_interval95": [
+        0.286971020243942,
+        0.37107763073119204
+      ],
+      "h1_positive_holm_rejection_rate": 0.328,
+      "h1_positive_holm_mc_se": 0.02099599961897504,
+      "h1_positive_holm_mc_interval95": [
+        0.286971020243942,
+        0.37107763073119204
+      ],
+      "h3_holm_rejection_rate": 0.328,
+      "h3_holm_mc_se": 0.02099599961897504,
+      "h3_holm_mc_interval95": [
+        0.286971020243942,
+        0.37107763073119204
+      ],
+      "h3_positive_holm_rejection_rate": 0.328,
+      "h3_positive_holm_mc_se": 0.02099599961897504,
+      "h3_positive_holm_mc_interval95": [
+        0.286971020243942,
+        0.37107763073119204
+      ],
+      "either_h1_h3_rejection_rate": 0.51,
+      "either_h1_h3_mc_interval95": [
+        0.46523484757571587,
+        0.5546462643969765
+      ],
+      "h2_median_log_ci_width": 1.8009939298088464,
+      "h2_log_ci_width_q10_q90": [
+        1.5902529249414583,
+        2.061405850015512
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.4608257513614777,
+      "h2_median_or_interval_endpoints": [
+        0.2709585804766398,
+        1.643170458822826
+      ],
+      "h2_coverage_successful_fits": 0.948,
+      "h2_coverage_mc_interval95": [
+        0.9247336289693778,
+        0.9657543019172321
+      ],
+      "h2_mean_bias": -0.007977825090922047,
+      "zero_variance_boundaries": 16,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v7_C05_recoverability_50_assumption",
+      "n": 200,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 527.72,
+      "mean_ai_reliance_opportunities": 255.18,
+      "mean_self_reliance_opportunities": 272.54,
+      "mean_participants_without_opportunities": 2.84,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        45.718,
+        45.466,
+        64.01,
+        99.986,
+        99.934,
+        172.606
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          5.638,
+          5.836,
+          7.874,
+          12.484,
+          12.384,
+          21.582
+        ],
+        [
+          5.692,
+          5.732,
+          8.21,
+          12.6,
+          12.476,
+          21.614
+        ],
+        [
+          5.688,
+          5.67,
+          7.948,
+          12.496,
+          12.742,
+          21.578
+        ],
+        [
+          5.864,
+          5.586,
+          8.066,
+          12.546,
+          12.524,
+          21.554
+        ],
+        [
+          5.71,
+          5.604,
+          8.16,
+          12.468,
+          12.494,
+          21.608
+        ],
+        [
+          5.722,
+          5.686,
+          7.966,
+          12.394,
+          12.224,
+          21.62
+        ],
+        [
+          5.56,
+          5.736,
+          7.866,
+          12.538,
+          12.458,
+          21.48
+        ],
+        [
+          5.844,
+          5.616,
+          7.92,
+          12.46,
+          12.632,
+          21.57
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.354,
+      "h1_holm_mc_se": 0.021386163751360363,
+      "h1_holm_mc_interval95": [
+        0.3120549279725162,
+        0.3976830826221235
+      ],
+      "h1_positive_holm_rejection_rate": 0.354,
+      "h1_positive_holm_mc_se": 0.021386163751360363,
+      "h1_positive_holm_mc_interval95": [
+        0.3120549279725162,
+        0.3976830826221235
+      ],
+      "h3_holm_rejection_rate": 0.348,
+      "h3_holm_mc_se": 0.02130239423163509,
+      "h3_holm_mc_interval95": [
+        0.30625409000411974,
+        0.39155555736598097
+      ],
+      "h3_positive_holm_rejection_rate": 0.348,
+      "h3_positive_holm_mc_se": 0.02130239423163509,
+      "h3_positive_holm_mc_interval95": [
+        0.30625409000411974,
+        0.39155555736598097
+      ],
+      "either_h1_h3_rejection_rate": 0.536,
+      "either_h1_h3_mc_interval95": [
+        0.49118473197361495,
+        0.5803872417924403
+      ],
+      "h2_median_log_ci_width": 1.757275917022645,
+      "h2_log_ci_width_q10_q90": [
+        1.5557918947181875,
+        2.011571481248009
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.407618196275818,
+      "h2_median_or_interval_endpoints": [
+        0.2735191091239467,
+        1.6371681525475874
+      ],
+      "h2_coverage_successful_fits": 0.95,
+      "h2_coverage_mc_interval95": [
+        0.927072378349521,
+        0.9673848198506699
+      ],
+      "h2_mean_bias": -0.006363788235217082,
+      "zero_variance_boundaries": 14,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v7_C05_recoverability_85_assumption",
+      "n": 160,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 478.292,
+      "mean_ai_reliance_opportunities": 203.658,
+      "mean_self_reliance_opportunities": 274.634,
+      "mean_participants_without_opportunities": 0.648,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        36.654,
+        35.754,
+        51.06,
+        80.19,
+        136.372,
+        138.262
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          4.604,
+          4.436,
+          6.378,
+          10.018,
+          17.018,
+          17.316
+        ],
+        [
+          4.626,
+          4.494,
+          6.316,
+          9.97,
+          17.036,
+          17.332
+        ],
+        [
+          4.45,
+          4.4,
+          6.336,
+          10.144,
+          17.068,
+          17.23
+        ],
+        [
+          4.576,
+          4.368,
+          6.554,
+          10.01,
+          17.166,
+          17.278
+        ],
+        [
+          4.566,
+          4.652,
+          6.404,
+          10.06,
+          17.018,
+          17.192
+        ],
+        [
+          4.596,
+          4.52,
+          6.304,
+          9.89,
+          17.04,
+          17.31
+        ],
+        [
+          4.592,
+          4.448,
+          6.486,
+          9.938,
+          16.94,
+          17.274
+        ],
+        [
+          4.644,
+          4.436,
+          6.282,
+          10.16,
+          17.086,
+          17.33
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.328,
+      "h1_holm_mc_se": 0.02099599961897504,
+      "h1_holm_mc_interval95": [
+        0.286971020243942,
+        0.37107763073119204
+      ],
+      "h1_positive_holm_rejection_rate": 0.328,
+      "h1_positive_holm_mc_se": 0.02099599961897504,
+      "h1_positive_holm_mc_interval95": [
+        0.286971020243942,
+        0.37107763073119204
+      ],
+      "h3_holm_rejection_rate": 0.31,
+      "h3_holm_mc_se": 0.02068332661831747,
+      "h3_holm_mc_interval95": [
+        0.2696883787915055,
+        0.3525757010986133
+      ],
+      "h3_positive_holm_rejection_rate": 0.31,
+      "h3_positive_holm_mc_se": 0.02068332661831747,
+      "h3_positive_holm_mc_interval95": [
+        0.2696883787915055,
+        0.3525757010986133
+      ],
+      "either_h1_h3_rejection_rate": 0.48,
+      "either_h1_h3_mc_interval95": [
+        0.435439358899702,
+        0.5247984212320487
+      ],
+      "h2_median_log_ci_width": 1.8703152092772481,
+      "h2_log_ci_width_q10_q90": [
+        1.6514033726975477,
+        2.135904238427554
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.5476149420325753,
+      "h2_median_or_interval_endpoints": [
+        0.26245655231140014,
+        1.715558085300898
+      ],
+      "h2_coverage_successful_fits": 0.97,
+      "h2_coverage_mc_interval95": [
+        0.951001774291181,
+        0.9831140157961268
+      ],
+      "h2_mean_bias": 0.005560200274034713,
+      "zero_variance_boundaries": 13,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v7_C05_recoverability_85_assumption",
+      "n": 192,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 573.49,
+      "mean_ai_reliance_opportunities": 244.188,
+      "mean_self_reliance_opportunities": 329.302,
+      "mean_participants_without_opportunities": 0.768,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        43.754,
+        42.982,
+        61.204,
+        96.248,
+        163.414,
+        165.888
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          5.51,
+          5.332,
+          7.616,
+          12.036,
+          20.382,
+          20.76
+        ],
+        [
+          5.528,
+          5.364,
+          7.598,
+          11.976,
+          20.426,
+          20.814
+        ],
+        [
+          5.39,
+          5.366,
+          7.548,
+          12.162,
+          20.438,
+          20.678
+        ],
+        [
+          5.404,
+          5.284,
+          7.904,
+          12.078,
+          20.538,
+          20.752
+        ],
+        [
+          5.46,
+          5.488,
+          7.688,
+          12.084,
+          20.334,
+          20.65
+        ],
+        [
+          5.498,
+          5.428,
+          7.568,
+          11.892,
+          20.446,
+          20.7
+        ],
+        [
+          5.446,
+          5.344,
+          7.746,
+          11.862,
+          20.31,
+          20.728
+        ],
+        [
+          5.518,
+          5.376,
+          7.536,
+          12.158,
+          20.54,
+          20.806
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.38,
+      "h1_holm_mc_se": 0.021707141681944216,
+      "h1_holm_mc_interval95": [
+        0.3372739622921367,
+        0.4241539109559725
+      ],
+      "h1_positive_holm_rejection_rate": 0.38,
+      "h1_positive_holm_mc_se": 0.021707141681944216,
+      "h1_positive_holm_mc_interval95": [
+        0.3372739622921367,
+        0.4241539109559725
+      ],
+      "h3_holm_rejection_rate": 0.37,
+      "h3_holm_mc_se": 0.021591665058535898,
+      "h3_holm_mc_interval95": [
+        0.32755875718147925,
+        0.41398834821109876
+      ],
+      "h3_positive_holm_rejection_rate": 0.37,
+      "h3_positive_holm_mc_se": 0.021591665058535898,
+      "h3_positive_holm_mc_interval95": [
+        0.32755875718147925,
+        0.41398834821109876
+      ],
+      "either_h1_h3_rejection_rate": 0.56,
+      "either_h1_h3_mc_interval95": [
+        0.5152439389690651,
+        0.6040425887961991
+      ],
+      "h2_median_log_ci_width": 1.7063135295482255,
+      "h2_log_ci_width_q10_q90": [
+        1.5132150783024345,
+        1.9186092346363104
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.347044236450447,
+      "h2_median_or_interval_endpoints": [
+        0.2919067774096934,
+        1.607863072029395
+      ],
+      "h2_coverage_successful_fits": 0.956,
+      "h2_coverage_mc_interval95": [
+        0.9341389996764051,
+        0.9722232327144282
+      ],
+      "h2_mean_bias": 0.009138833199905667,
+      "zero_variance_boundaries": 8,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v7_C05_recoverability_85_assumption",
+      "n": 200,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 597.286,
+      "mean_ai_reliance_opportunities": 254.324,
+      "mean_self_reliance_opportunities": 342.962,
+      "mean_participants_without_opportunities": 0.8,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        45.562,
+        44.802,
+        63.686,
+        100.274,
+        170.18,
+        172.782
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          5.764,
+          5.558,
+          7.972,
+          12.576,
+          21.192,
+          21.646
+        ],
+        [
+          5.748,
+          5.588,
+          7.906,
+          12.45,
+          21.27,
+          21.684
+        ],
+        [
+          5.6,
+          5.558,
+          7.828,
+          12.674,
+          21.284,
+          21.53
+        ],
+        [
+          5.66,
+          5.532,
+          8.232,
+          12.608,
+          21.376,
+          21.594
+        ],
+        [
+          5.694,
+          5.7,
+          8.022,
+          12.584,
+          21.198,
+          21.52
+        ],
+        [
+          5.706,
+          5.672,
+          7.904,
+          12.392,
+          21.312,
+          21.582
+        ],
+        [
+          5.672,
+          5.578,
+          8.026,
+          12.368,
+          21.158,
+          21.578
+        ],
+        [
+          5.718,
+          5.616,
+          7.796,
+          12.622,
+          21.39,
+          21.648
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.412,
+      "h1_holm_mc_se": 0.02201163328787757,
+      "h1_holm_mc_interval95": [
+        0.3684895939697724,
+        0.456557087987936
+      ],
+      "h1_positive_holm_rejection_rate": 0.412,
+      "h1_positive_holm_mc_se": 0.02201163328787757,
+      "h1_positive_holm_mc_interval95": [
+        0.3684895939697724,
+        0.456557087987936
+      ],
+      "h3_holm_rejection_rate": 0.38,
+      "h3_holm_mc_se": 0.021707141681944216,
+      "h3_holm_mc_interval95": [
+        0.3372739622921367,
+        0.4241539109559725
+      ],
+      "h3_positive_holm_rejection_rate": 0.38,
+      "h3_positive_holm_mc_se": 0.021707141681944216,
+      "h3_positive_holm_mc_interval95": [
+        0.3372739622921367,
+        0.4241539109559725
+      ],
+      "either_h1_h3_rejection_rate": 0.578,
+      "either_h1_h3_mc_interval95": [
+        0.5333556139429795,
+        0.6217167368169023
+      ],
+      "h2_median_log_ci_width": 1.667993106675076,
+      "h2_log_ci_width_q10_q90": [
+        1.4823214907687177,
+        1.8866622540714102
+      ],
+      "h2_median_ci_multiplicative_half_span": 2.3025024502992695,
+      "h2_median_or_interval_endpoints": [
+        0.2953034316591672,
+        1.568750190890797
+      ],
+      "h2_coverage_successful_fits": 0.964,
+      "h2_coverage_mc_interval95": [
+        0.9436998237982089,
+        0.9785271434139067
+      ],
+      "h2_mean_bias": 0.010680954653861981,
+      "zero_variance_boundaries": 7,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_high_dependence",
+      "n": 160,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 377.314,
+      "mean_ai_reliance_opportunities": 203.116,
+      "mean_self_reliance_opportunities": 174.198,
+      "mean_participants_without_opportunities": 3.38,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        35.954,
+        36.266,
+        51.156,
+        79.74,
+        36.236,
+        137.962
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          4.358,
+          4.354,
+          6.276,
+          9.926,
+          4.498,
+          17.17
+        ],
+        [
+          4.568,
+          4.484,
+          6.334,
+          9.902,
+          4.502,
+          17.274
+        ],
+        [
+          4.538,
+          4.456,
+          6.508,
+          10.046,
+          4.584,
+          17.22
+        ],
+        [
+          4.596,
+          4.558,
+          6.376,
+          9.98,
+          4.54,
+          17.204
+        ],
+        [
+          4.412,
+          4.678,
+          6.52,
+          9.972,
+          4.586,
+          17.21
+        ],
+        [
+          4.484,
+          4.67,
+          6.334,
+          9.974,
+          4.486,
+          17.222
+        ],
+        [
+          4.536,
+          4.58,
+          6.472,
+          9.97,
+          4.5,
+          17.304
+        ],
+        [
+          4.462,
+          4.486,
+          6.336,
+          9.97,
+          4.54,
+          17.358
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.174,
+      "h1_holm_mc_se": 0.016954291492126704,
+      "h1_holm_mc_interval95": [
+        0.14177996798943104,
+        0.21013083400902074
+      ],
+      "h1_positive_holm_rejection_rate": 0.174,
+      "h1_positive_holm_mc_se": 0.016954291492126704,
+      "h1_positive_holm_mc_interval95": [
+        0.14177996798943104,
+        0.21013083400902074
+      ],
+      "h3_holm_rejection_rate": 0.174,
+      "h3_holm_mc_se": 0.016954291492126704,
+      "h3_holm_mc_interval95": [
+        0.14177996798943104,
+        0.21013083400902074
+      ],
+      "h3_positive_holm_rejection_rate": 0.174,
+      "h3_positive_holm_mc_se": 0.016954291492126704,
+      "h3_positive_holm_mc_interval95": [
+        0.14177996798943104,
+        0.21013083400902074
+      ],
+      "either_h1_h3_rejection_rate": 0.29,
+      "either_h1_h3_mc_interval95": [
+        0.2505695730497735,
+        0.33193430848146377
+      ],
+      "h2_median_log_ci_width": 2.54562860123882,
+      "h2_log_ci_width_q10_q90": [
+        2.1779298051318103,
+        2.9992462245394607
+      ],
+      "h2_median_ci_multiplicative_half_span": 3.570887986654175,
+      "h2_median_or_interval_endpoints": [
+        0.19263433983719266,
+        2.4014064349081394
+      ],
+      "h2_coverage_successful_fits": 0.936,
+      "h2_coverage_mc_interval95": [
+        0.9108493724491366,
+        0.9558157890532868
+      ],
+      "h2_mean_bias": 0.0018485523310553366,
+      "zero_variance_boundaries": 1,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_high_dependence",
+      "n": 192,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 452.67,
+      "mean_ai_reliance_opportunities": 243.778,
+      "mean_self_reliance_opportunities": 208.892,
+      "mean_participants_without_opportunities": 4.044,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        43.236,
+        43.47,
+        61.246,
+        95.826,
+        43.478,
+        165.414
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          5.214,
+          5.27,
+          7.57,
+          11.954,
+          5.406,
+          20.6
+        ],
+        [
+          5.464,
+          5.39,
+          7.632,
+          11.906,
+          5.428,
+          20.72
+        ],
+        [
+          5.434,
+          5.3,
+          7.746,
+          12.068,
+          5.48,
+          20.66
+        ],
+        [
+          5.542,
+          5.428,
+          7.684,
+          12.024,
+          5.434,
+          20.634
+        ],
+        [
+          5.358,
+          5.582,
+          7.754,
+          11.988,
+          5.464,
+          20.662
+        ],
+        [
+          5.374,
+          5.606,
+          7.606,
+          11.94,
+          5.374,
+          20.62
+        ],
+        [
+          5.506,
+          5.47,
+          7.664,
+          11.992,
+          5.426,
+          20.716
+        ],
+        [
+          5.344,
+          5.424,
+          7.59,
+          11.954,
+          5.466,
+          20.802
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.22,
+      "h1_holm_mc_se": 0.018525657883055057,
+      "h1_holm_mc_interval95": [
+        0.18443670806164195,
+        0.2589117328373836
+      ],
+      "h1_positive_holm_rejection_rate": 0.22,
+      "h1_positive_holm_mc_se": 0.018525657883055057,
+      "h1_positive_holm_mc_interval95": [
+        0.18443670806164195,
+        0.2589117328373836
+      ],
+      "h3_holm_rejection_rate": 0.234,
+      "h3_holm_mc_se": 0.018933779337469845,
+      "h3_holm_mc_interval95": [
+        0.19755636482427041,
+        0.2736223217642218
+      ],
+      "h3_positive_holm_rejection_rate": 0.232,
+      "h3_positive_holm_mc_se": 0.018877287940803362,
+      "h3_positive_holm_mc_interval95": [
+        0.19567858511358002,
+        0.27152432069689725
+      ],
+      "either_h1_h3_rejection_rate": 0.372,
+      "either_h1_h3_mc_interval95": [
+        0.3295002563949794,
+        0.4160229977417723
+      ],
+      "h2_median_log_ci_width": 2.2775836654181694,
+      "h2_log_ci_width_q10_q90": [
+        1.9928568919509393,
+        2.689997310865151
+      ],
+      "h2_median_ci_multiplicative_half_span": 3.1229929870245052,
+      "h2_median_or_interval_endpoints": [
+        0.21707425299197186,
+        2.098041272809608
+      ],
+      "h2_coverage_successful_fits": 0.942,
+      "h2_coverage_mc_interval95": [
+        0.9177617791061647,
+        0.9608161312028122
+      ],
+      "h2_mean_bias": 0.015694839375915738,
+      "zero_variance_boundaries": 0,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    },
+    {
+      "scenario": "v6_round2_high_dependence",
+      "n": 200,
+      "attempted": 500,
+      "successful": 500,
+      "failure_counts": {},
+      "mean_diagnostic_trials": 471.434,
+      "mean_ai_reliance_opportunities": 253.844,
+      "mean_self_reliance_opportunities": 217.59,
+      "mean_participants_without_opportunities": 4.212,
+      "mean_cells_without_ai_opportunities": 0.0,
+      "mean_cells_without_self_opportunities": 0.0,
+      "mean_profile_opportunities": [
+        44.99,
+        45.282,
+        63.748,
+        99.824,
+        45.284,
+        172.306
+      ],
+      "mean_cell_profile_opportunities": [
+        [
+          5.45,
+          5.492,
+          7.884,
+          12.492,
+          5.63,
+          21.436
+        ],
+        [
+          5.686,
+          5.63,
+          7.972,
+          12.398,
+          5.656,
+          21.558
+        ],
+        [
+          5.624,
+          5.526,
+          8.022,
+          12.528,
+          5.684,
+          21.522
+        ],
+        [
+          5.734,
+          5.654,
+          8.038,
+          12.5,
+          5.658,
+          21.516
+        ],
+        [
+          5.598,
+          5.804,
+          8.04,
+          12.524,
+          5.698,
+          21.512
+        ],
+        [
+          5.614,
+          5.828,
+          7.912,
+          12.444,
+          5.608,
+          21.484
+        ],
+        [
+          5.754,
+          5.71,
+          7.94,
+          12.494,
+          5.62,
+          21.614
+        ],
+        [
+          5.53,
+          5.638,
+          7.94,
+          12.444,
+          5.73,
+          21.664
+        ]
+      ],
+      "panels_missing_at_least_one_profile": 0,
+      "h1_holm_rejection_rate": 0.236,
+      "h1_holm_mc_se": 0.018989681408596616,
+      "h1_holm_mc_interval95": [
+        0.1994352969849772,
+        0.2757191802332755
+      ],
+      "h1_positive_holm_rejection_rate": 0.236,
+      "h1_positive_holm_mc_se": 0.018989681408596616,
+      "h1_positive_holm_mc_interval95": [
+        0.1994352969849772,
+        0.2757191802332755
+      ],
+      "h3_holm_rejection_rate": 0.25,
+      "h3_holm_mc_se": 0.019364916731037084,
+      "h3_holm_mc_interval95": [
+        0.2126192633142715,
+        0.29036600680586877
+      ],
+      "h3_positive_holm_rejection_rate": 0.248,
+      "h3_positive_holm_mc_se": 0.019313000802568203,
+      "h3_positive_holm_mc_interval95": [
+        0.2107325368389893,
+        0.28827687939637797
+      ],
+      "either_h1_h3_rejection_rate": 0.394,
+      "either_h1_h3_mc_interval95": [
+        0.35090726162963204,
+        0.4383537803630051
+      ],
+      "h2_median_log_ci_width": 2.247097424432283,
+      "h2_log_ci_width_q10_q90": [
+        1.9548605804484118,
+        2.626186805266346
+      ],
+      "h2_median_ci_multiplicative_half_span": 3.0757498100970504,
+      "h2_median_or_interval_endpoints": [
+        0.22222999315052777,
+        2.100257828743417
+      ],
+      "h2_coverage_successful_fits": 0.948,
+      "h2_coverage_mc_interval95": [
+        0.9247336289693778,
+        0.9657543019172321
+      ],
+      "h2_mean_bias": 0.02263087526955894,
+      "zero_variance_boundaries": 0,
+      "profile_reference_counts": {
+        "1": 500,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0
+      }
+    }
+  ],
+  "paired_comparisons": [
+    {
+      "scenario": "v6_round2_smoothed_anchor",
+      "low_n": 160,
+      "high_n": 192,
+      "h1_positive_power_gain": 0.034,
+      "h1_paired_mc_interval95": [
+        0.002020124364041337,
+        0.06597987563595867
+      ],
+      "h3_positive_power_gain": 0.084,
+      "h3_paired_mc_interval95": [
+        0.05348608286243545,
+        0.11451391713756456
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.1019858038454355
+    },
+    {
+      "scenario": "v6_round2_smoothed_anchor",
+      "low_n": 192,
+      "high_n": 200,
+      "h1_positive_power_gain": 0.026,
+      "h1_paired_mc_interval95": [
+        0.008163609376868827,
+        0.043836390623131175
+      ],
+      "h3_positive_power_gain": 0.0,
+      "h3_paired_mc_interval95": [
+        -0.019223232437097077,
+        0.019223232437097077
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.02070591151581
+    },
+    {
+      "scenario": "v6_round2_half_correct_ai_opportunities",
+      "low_n": 160,
+      "high_n": 192,
+      "h1_positive_power_gain": 0.052,
+      "h1_paired_mc_interval95": [
+        0.022466624511656794,
+        0.0815333754883432
+      ],
+      "h3_positive_power_gain": 0.052,
+      "h3_paired_mc_interval95": [
+        0.022466624511656794,
+        0.0815333754883432
+      ],
+      "paired_successful": 497,
+      "median_h2_width_ratio_low_over_high": 1.0960770795502972
+    },
+    {
+      "scenario": "v6_round2_half_correct_ai_opportunities",
+      "low_n": 192,
+      "high_n": 200,
+      "h1_positive_power_gain": 0.014,
+      "h1_paired_mc_interval95": [
+        -0.007812934259333474,
+        0.035812934259333476
+      ],
+      "h3_positive_power_gain": 0.03,
+      "h3_paired_mc_interval95": [
+        0.007612979712460409,
+        0.05238702028753959
+      ],
+      "paired_successful": 499,
+      "median_h2_width_ratio_low_over_high": 1.0227263627809897
+    },
+    {
+      "scenario": "v6_round2_double_correct_ai_opportunities",
+      "low_n": 160,
+      "high_n": 192,
+      "h1_positive_power_gain": 0.1,
+      "h1_paired_mc_interval95": [
+        0.06693641275355613,
+        0.13306358724644388
+      ],
+      "h3_positive_power_gain": 0.066,
+      "h3_paired_mc_interval95": [
+        0.03539790600115364,
+        0.09660209399884637
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.0988602915751824
+    },
+    {
+      "scenario": "v6_round2_double_correct_ai_opportunities",
+      "low_n": 192,
+      "high_n": 200,
+      "h1_positive_power_gain": 0.004,
+      "h1_paired_mc_interval95": [
+        -0.020186157388440953,
+        0.028186157388440953
+      ],
+      "h3_positive_power_gain": 0.024,
+      "h3_paired_mc_interval95": [
+        -0.0013426078441956986,
+        0.049342607844195696
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.0220568468313087
+    },
+    {
+      "scenario": "v7_C05_recoverability_50_assumption",
+      "low_n": 160,
+      "high_n": 192,
+      "h1_positive_power_gain": 0.044,
+      "h1_paired_mc_interval95": [
+        0.016523551261661537,
+        0.07147644873833846
+      ],
+      "h3_positive_power_gain": 0.066,
+      "h3_paired_mc_interval95": [
+        0.03392397587844009,
+        0.09807602412155991
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.0966698593785882
+    },
+    {
+      "scenario": "v7_C05_recoverability_50_assumption",
+      "low_n": 192,
+      "high_n": 200,
+      "h1_positive_power_gain": 0.026,
+      "h1_paired_mc_interval95": [
+        0.0022409608636762696,
+        0.04975903913632373
+      ],
+      "h3_positive_power_gain": 0.02,
+      "h3_paired_mc_interval95": [
+        -0.002127602255172747,
+        0.042127602255172744
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.0217468270020136
+    },
+    {
+      "scenario": "v7_C05_recoverability_85_assumption",
+      "low_n": 160,
+      "high_n": 192,
+      "h1_positive_power_gain": 0.052,
+      "h1_paired_mc_interval95": [
+        0.01809764364039769,
+        0.0859023563596023
+      ],
+      "h3_positive_power_gain": 0.06,
+      "h3_paired_mc_interval95": [
+        0.0261995292392651,
+        0.09380047076073489
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.0980927189536671
+    },
+    {
+      "scenario": "v7_C05_recoverability_85_assumption",
+      "low_n": 192,
+      "high_n": 200,
+      "h1_positive_power_gain": 0.032,
+      "h1_paired_mc_interval95": [
+        0.006123501210960586,
+        0.057876498789039416
+      ],
+      "h3_positive_power_gain": 0.01,
+      "h3_paired_mc_interval95": [
+        -0.013852176686108346,
+        0.03385217668610835
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.0210861101507613
+    },
+    {
+      "scenario": "v6_round2_high_dependence",
+      "low_n": 160,
+      "high_n": 192,
+      "h1_positive_power_gain": 0.046,
+      "h1_paired_mc_interval95": [
+        0.016651237700765063,
+        0.07534876229923493
+      ],
+      "h3_positive_power_gain": 0.058,
+      "h3_paired_mc_interval95": [
+        0.031008067055355668,
+        0.08499193294464434
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.0992813079981842
+    },
+    {
+      "scenario": "v6_round2_high_dependence",
+      "low_n": 192,
+      "high_n": 200,
+      "h1_positive_power_gain": 0.016,
+      "h1_paired_mc_interval95": [
+        -0.0014920852643070422,
+        0.03349208526430704
+      ],
+      "h3_positive_power_gain": 0.016,
+      "h3_paired_mc_interval95": [
+        -0.0031719019517860506,
+        0.03517190195178605
+      ],
+      "paired_successful": 500,
+      "median_h2_width_ratio_low_over_high": 1.0207213820650447
+    }
+  ],
+  "replicate_artifacts": [
+    {
+      "path": "replicates/v6_round2_smoothed_anchor.json",
+      "sha256": "4c3000c6c9e9e6d9ca57315678891ab01043955cca09942501a3872adbb79c91"
+    },
+    {
+      "path": "replicates/v6_round2_half_correct_ai_opportunities.json",
+      "sha256": "75869dc53850ef39451769be4ebe3fb298eaa0cf43bb80c7a23248d2f691d6ce"
+    },
+    {
+      "path": "replicates/v6_round2_double_correct_ai_opportunities.json",
+      "sha256": "a765b611a5165a25027c160332df42b7eae07ac24ad8e4b7908c487f6dae1e0f"
+    },
+    {
+      "path": "replicates/v7_C05_recoverability_50_assumption.json",
+      "sha256": "a173e656802b30d5f7ae0a0a34ad2c3c7c31975ee7edb240c566558cbaa39b97"
+    },
+    {
+      "path": "replicates/v7_C05_recoverability_85_assumption.json",
+      "sha256": "1a694e407addcfe4b0c6a1a5906d0b92dec28c60c5e526d63dbc31c4949f3841"
+    },
+    {
+      "path": "replicates/v6_round2_high_dependence.json",
+      "sha256": "4aff073158b1f1e471ce646c891485505a552a5065542b6a1a1f236e90c51b71"
+    }
+  ],
+  "limitations": [
+    "All effect and opportunity rates are assumptions, not Study 2 estimates.",
+    "Historical expert data and material version are not interchangeable with revised Study 2.",
+    "H2 is evaluated by precision and coverage, not rejection power.",
+    "No recruitment target or acceptable-precision threshold is selected.",
+    "Main-effect rejection rates count failed fits as non-rejections; coverage is conditional on successful fits.",
+    "Unobserved profiles trigger an explicitly recorded contrast-reference change, not removal of treatment terms.",
+    "Informative opportunity selection is a conditional-estimand sensitivity, not just a sampling-precision scenario."
+  ]
+}
