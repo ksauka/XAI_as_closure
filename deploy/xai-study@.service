@@ -1,0 +1,18 @@
+[Unit]
+Description=XAI as Closure participant app %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=XAI_STUDY_VENV=%h/.local/share/xai-as-closure/venv
+# Participant records stay outside the code checkout.
+Environment=STUDY1_FOCUSED_DATA_ROOT=%h/.local/share/xai-as-closure/data/study1_focused
+Environment=STUDY2_DATA_ROOT=%h/.local/share/xai-as-closure/data/study2
+ExecStart=%h/.local/share/xai-as-closure/app/deploy/run_app.sh %i
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+
+[Install]
+WantedBy=default.target

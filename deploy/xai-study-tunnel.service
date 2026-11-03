@@ -1,0 +1,14 @@
+[Unit]
+Description=Cloudflare tunnel for the XAI as Closure participant apps (*.aitheoryelaboration.org)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/env cloudflared tunnel --no-autoupdate run --token-file %h/.config/xai-as-closure/tunnel.token
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

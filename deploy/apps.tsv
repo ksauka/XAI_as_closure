@@ -1,0 +1,10 @@
+# slug	port	entry point	(public hostname: <slug>.aitheoryelaboration.org)
+study1	8601	apps/study1_validation_v2.py
+study2-01	8611	apps/study2_01_lowP_lowA_noF.py
+study2-02	8612	apps/study2_02_lowP_lowA_F.py
+study2-03	8613	apps/study2_03_lowP_highA_noF.py
+study2-04	8614	apps/study2_04_lowP_highA_F.py
+study2-05	8615	apps/study2_05_highP_lowA_noF.py
+study2-06	8616	apps/study2_06_highP_lowA_F.py
+study2-07	8617	apps/study2_07_highP_highA_noF.py
+study2-08	8618	apps/study2_08_highP_highA_F.py
