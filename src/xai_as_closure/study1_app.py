@@ -27,7 +27,7 @@ from .study1_launch import ParticipantLink, read_participant_link, validate_part
 from .study1_round2_support import check_round2_materials, recover_round2_checkpoint, round2_archive_path, validation_cases
 
 
-STUDY1_APP_RELEASE = "2026-11-03.4"
+STUDY1_APP_RELEASE = "2026-11-03.5"
 
 
 def _round() -> str:
@@ -424,7 +424,14 @@ def _initialize() -> None:
     identity = f"{linkage_hash}\0{cases.case_set_id}\0{version}"
     if is_revalidation(validation_round):
         identity += "\0" + validation_round
-    session_id = stable_session_id(hashlib.sha256(identity.encode()).hexdigest())
+    participant_session_id = stable_session_id(hashlib.sha256(identity.encode()).hexdigest())
+    attempt_id = _query("attempt")
+    if attempt_id and not re.fullmatch(r"[0-9a-f]{32}", attempt_id):
+        raise WorkflowError("The attempt link is invalid. Open your original study link to continue.")
+    session_id = (
+        stable_session_id(hashlib.sha256(f"{identity}\0attempt\0{attempt_id}".encode()).hexdigest())
+        if attempt_id else participant_session_id
+    )
     if _local_preview():
         data_root = os.getenv("STUDY1_PREVIEW_DATA_ROOT")
         if not data_root:
@@ -461,6 +468,9 @@ def _initialize() -> None:
         session = Study1Session.create(session_id=session_id, linkage_hash=linkage_hash,
             seed=linkage_hash, cases=cases, validation_round=validation_round)
         session.state["is_preview"] = _local_preview()
+        session.state["participant_session_id"] = participant_session_id
+        session.state["attempt_id"] = attempt_id or "original"
+        session.state["repeat_attempt"] = bool(attempt_id)
         store.save(session.state)
         event = "session_created"
     session.state["recruitment_source"] = source
@@ -474,7 +484,9 @@ def _initialize() -> None:
         "recruitment_source": source,
         "pilot_mode": st.session_state["_study1_pilot"],
         "validation_round": validation_round, "case_set_id": cases.case_set_id,
-        "instrument_version": version, "is_preview": _local_preview()})
+        "instrument_version": version, "is_preview": _local_preview(),
+        "participant_session_id": participant_session_id,
+        "attempt_id": attempt_id or "original", "repeat_attempt": bool(attempt_id)})
 
 
 def _header(session: Study1Session) -> None:
@@ -862,6 +874,21 @@ def _post_study(session: Study1Session) -> None:
     st.rerun()
 
 
+
+def _start_another_attempt() -> None:
+    """Keep the participant link, but create an independently saved attempt."""
+    st.query_params["attempt"] = uuid4().hex
+    transient_keys = {
+        "_study1_session", "_study1_store", "_study1_started",
+        "_study1_resumed_complete", "_study1_post_study_presented",
+        "_study1_document", "_study1_document_visit",
+    }
+    for key in list(st.session_state):
+        if key in transient_keys or key.startswith(("_presented_", "screening_", "post_study_")):
+            del st.session_state[key]
+    st.rerun()
+
+
 def _complete(session: Study1Session) -> None:
     if st.session_state.get("_study1_resumed_complete"):
         st.info("This participant ID or code already has a completed session. Your recorded responses have been restored.")
@@ -883,6 +910,8 @@ def _complete(session: Study1Session) -> None:
         )
     else:
         st.info("Please return to your survey tab and continue.")
+    if st.button("Start another attempt", key="study1_repeat_attempt"):
+        _start_another_attempt()
 
 
 def run(validation_round: str = "initial") -> None:
