@@ -35,6 +35,11 @@ def load_project_openai_config(env_path: Path | str = PROJECT_ENV_PATH) -> None:
         os.environ.setdefault(key, value)
 
 
+def parse_test_ids(raw: str) -> frozenset[str]:
+    """Researcher test IDs from the comma-separated STUDY_TEST_IDS secret."""
+    return frozenset(part.strip() for part in raw.split(",") if part.strip())
+
+
 def read_project_storage_config(
     env_path: Path | str = PROJECT_ENV_PATH,
 ) -> dict[str, str]:

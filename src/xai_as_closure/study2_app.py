@@ -17,7 +17,7 @@ from streamlit.errors import StreamlitSecretNotFoundError
 
 from .cases import POLICY_PATH, ROLE_PATH, CaseRepository
 from .conditions import get_study2_condition
-from .config import read_project_storage_config
+from .config import parse_test_ids, read_project_storage_config
 from .decision_agent import Study2DecisionAgent
 from .document_renderer import (
     citation_document_frame_html,
@@ -247,13 +247,32 @@ def _initialize(locked_condition_id: str) -> None:
     data_root = _secret("STUDY2_DATA_ROOT")
     log_dir = Path(data_root) if data_root else DEFAULT_LOG_DIR
     cases = CaseRepository()
-    session_id = hashlib.sha256(
-        f"{participant_id.strip()}\0{cases.case_set_id}\0{STATE_SCHEMA_VERSION}".encode()
-    ).hexdigest()
+    identity = f"{participant_id.strip()}\0{cases.case_set_id}\0{STATE_SCHEMA_VERSION}"
+    tester = participant_id.strip() in parse_test_ids(_secret("STUDY_TEST_IDS"))
+    # Only researcher test IDs may carry an attempt; participants keep one session.
+    attempt_id = _query("attempt") if tester else ""
+    if attempt_id and re.fullmatch(r"[0-9a-f]{32}", attempt_id) is None:
+        raise Study2WorkflowError("The attempt link is invalid.")
+
+    def attempt_session_id(attempt: str) -> str:
+        suffix = f"\0attempt\0{attempt}" if attempt else ""
+        return hashlib.sha256(f"{identity}{suffix}".encode()).hexdigest()
+
+    session_id = attempt_session_id(attempt_id)
     # Only the instant local lookup runs before the first screen. After a host
     # restart a returning participant starts a new session under a new archive_id,
     # so their earlier remote record is kept; analysis keeps the first completed one.
     stored_state = load_state(session_id, log_dir)
+    if tester and not attempt_id and stored_state and (
+        stored_state.get("phase") == "complete"
+        or stored_state.get("condition_id") not in (None, locked_condition_id)
+    ):
+        # A researcher test ID starts a fresh attempt after finishing or when
+        # switching condition; the URL keeps it so a refresh still resumes.
+        attempt_id = uuid4().hex
+        st.query_params["attempt"] = attempt_id
+        session_id = attempt_session_id(attempt_id)
+        stored_state = load_state(session_id, log_dir)
     if stored_state and stored_state.get("condition_id") not in (
         None,
         locked_condition_id,
@@ -278,6 +297,7 @@ def _initialize(locked_condition_id: str) -> None:
             cases=cases,
         )
         session.state["archive_id"] = new_archive_id()
+        session.state["test_participant"] = tester
         event = "session_created"
     st.session_state["_study2_started"] = time.perf_counter()
     st.session_state["_study2_session"] = session

@@ -20,7 +20,7 @@ import streamlit as st
 from streamlit.errors import StreamlitSecretNotFoundError
 
 from .cases import POLICY_PATH, ROLE_PATH, CaseRepository, PROJECT_ROOT, material_manifest
-from .config import read_project_storage_config
+from .config import parse_test_ids, read_project_storage_config
 from .document_renderer import render_cv_document, render_reference_document
 from .background_save import check_connection_once, new_archive_id, sync_in_background
 from .github_saver import save_to_github
@@ -30,7 +30,7 @@ from .study1_launch import ParticipantLink, read_participant_link, validate_part
 from .study1_round2_support import check_round2_materials, round2_archive_path, validation_cases
 
 
-STUDY1_APP_RELEASE = "2026-11-03.7"
+STUDY1_APP_RELEASE = "2026-11-03.8"
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -405,10 +405,12 @@ def _initialize() -> None:
     attempt_id = _query("attempt")
     if attempt_id and not re.fullmatch(r"[0-9a-f]{32}", attempt_id):
         raise WorkflowError("The attempt link is invalid. Open your original study link to continue.")
-    session_id = (
-        stable_session_id(hashlib.sha256(f"{identity}\0attempt\0{attempt_id}".encode()).hexdigest())
-        if attempt_id else participant_session_id
-    )
+
+    def attempt_session_id(attempt: str) -> str:
+        return stable_session_id(hashlib.sha256(f"{identity}\0attempt\0{attempt}".encode()).hexdigest())
+
+    session_id = attempt_session_id(attempt_id) if attempt_id else participant_session_id
+    tester = prolific_id in parse_test_ids(_secret("STUDY_TEST_IDS"))
     if _local_preview():
         data_root = os.getenv("STUDY1_PREVIEW_DATA_ROOT")
         if not data_root:
@@ -431,6 +433,13 @@ def _initialize() -> None:
     # restart a returning participant starts a new session under a new archive_id,
     # so their earlier remote record is kept; analysis keeps the first completed one.
     stored = store.load(session_id)
+    if tester and not attempt_id and stored and stored.get("phase") == "complete":
+        # A researcher test ID starts a fresh attempt after finishing; the attempt
+        # stays in the URL so a refresh during the test still resumes it.
+        attempt_id = uuid4().hex
+        st.query_params["attempt"] = attempt_id
+        session_id = attempt_session_id(attempt_id)
+        stored = store.load(session_id)
     if stored:
         stored_source = stored.get("recruitment_source", "preview" if stored.get("is_preview") else "prolific")
         if is_revalidation(validation_round) and stored_source != source:
@@ -447,6 +456,7 @@ def _initialize() -> None:
         session.state["attempt_id"] = attempt_id or "original"
         session.state["repeat_attempt"] = bool(attempt_id)
         session.state["archive_id"] = new_archive_id()
+        session.state["test_participant"] = tester
         store.save(session.state)
         event = "session_created"
     session.state["recruitment_source"] = source
@@ -462,7 +472,8 @@ def _initialize() -> None:
         "validation_round": validation_round, "case_set_id": cases.case_set_id,
         "instrument_version": version, "is_preview": _local_preview(),
         "participant_session_id": participant_session_id,
-        "attempt_id": attempt_id or "original", "repeat_attempt": bool(attempt_id)})
+        "attempt_id": attempt_id or "original", "repeat_attempt": bool(attempt_id),
+        "test_participant": tester})
 
 
 def _header(session: Study1Session) -> None:

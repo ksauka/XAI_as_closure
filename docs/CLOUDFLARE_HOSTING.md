@@ -58,6 +58,16 @@ bash ~/.local/share/xai-as-closure/app/deploy/release.sh
 
 A restart reconnects any open tab, which resumes from the local copy.
 
+## Researcher test IDs
+
+`STUDY_TEST_IDS` in `.streamlit/secrets.toml` (comma-separated) lists IDs that may
+repeat the task, for example a researcher's own Prolific ID used through Prolific
+preview. After finishing, or when switching Study 2 condition, such an ID starts a
+fresh attempt; a refresh mid-test still resumes. Their records carry
+`test_participant: true` and are always excluded from analysis. Edit the copy in
+`~/.local/share/xai-as-closure/app/.streamlit/` too (or rerun `deploy/install.sh`),
+then `systemctl --user restart 'xai-study@*'`.
+
 ## Checks before each batch
 
 ```bash

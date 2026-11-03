@@ -93,17 +93,21 @@ def select_first_completed_attempts(
     Each participant's earliest completed session is kept; a participant with no
     completed session keeps their earliest started one. All other records are
     returned as excluded so they can be reported, never silently dropped.
+    Records flagged ``test_participant`` (researcher test IDs) are always excluded.
     """
     groups: dict[str, list[dict[str, Any]]] = {}
     kept: list[dict[str, Any]] = []
+    excluded: list[dict[str, Any]] = []
     for archive in sessions:
         state = _state(archive)
+        if state.get("test_participant"):
+            excluded.append(archive)
+            continue
         participant = str(state.get("prolific_pid") or state.get("participant_id") or "")
         if participant:
             groups.setdefault(participant, []).append(archive)
         else:
             kept.append(archive)
-    excluded: list[dict[str, Any]] = []
     for attempts in groups.values():
         completed = [a for a in attempts if _state(a).get("completed_at_utc")]
         if completed:

@@ -207,7 +207,7 @@ class Study2WorkflowTests(unittest.TestCase):
     def test_forcing_requires_a_substantive_typed_requirement(self) -> None:
         session = self.session("P0_A0_F1")
         session.submit_unaided(self.decision())
-        with self.assertRaisesRegex(Study2WorkflowError, "Recheck"):
+        with self.assertRaisesRegex(Study2WorkflowError, "professional-membership"):
             session.submit_forcing({"mandatory_requirement": "AIGP"})
         self.assertEqual(session.phase, "forcing")
         self.assertNotIn("agent_output", session.current_trial())
@@ -216,7 +216,7 @@ class Study2WorkflowTests(unittest.TestCase):
         session = self.session("P0_A0_F1")
         session.submit_unaided(self.decision())
         for _ in range(3):
-            with self.assertRaisesRegex(Study2WorkflowError, "both mandatory"):
+            with self.assertRaisesRegex(Study2WorkflowError, "qualifying-certification"):
                 session.submit_forcing(
                     {"mandatory_requirement": "This candidate looks suitable."}
                 )
@@ -402,7 +402,7 @@ class Study2InfrastructureTests(unittest.TestCase):
                 payload={"condition_id": condition.condition_id},
             )
             self.assertEqual(event["schema_version"], "study2-event-v12")
-            self.assertEqual(event["application_version"], "study2-app-v16")
+            self.assertEqual(event["application_version"], "study2-app-v17")
             self.assertEqual(event["event_sequence"], 1)
             self.assertEqual(event["event_id"], "sessiontest:000001")
             self.assertTrue(event["explanation_present"])

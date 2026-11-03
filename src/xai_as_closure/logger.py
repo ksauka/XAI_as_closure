@@ -19,7 +19,7 @@ DEFAULT_LOG_DIR = (
     PROJECT_ROOT / "study_CHI" / "data" / "raw" / "study2" / "interaction_logs"
 )
 EVENT_SCHEMA_VERSION = "study2-event-v12"
-APPLICATION_VERSION = "study2-app-v16"
+APPLICATION_VERSION = "study2-app-v17"
 
 
 class EventLogger:
