@@ -10,6 +10,12 @@ units="$HOME/.config/systemd/user"
 python="${XAI_STUDY_PYTHON:-$HOME/miniconda3/bin/python}"
 repo_url="$(git -C "$source_root" remote get-url origin)"
 
+if ! systemctl --user show-environment >/dev/null 2>&1; then
+  echo "The user service manager is unreachable (\"Failed to connect to bus\")." >&2
+  echo "Restart WSL from Windows with 'wsl --shutdown', reopen a terminal, then run this again." >&2
+  exit 1
+fi
+
 mkdir -p "$base/data" "$config" "$units"
 chmod 700 "$base" "$base/data" "$config"
 
