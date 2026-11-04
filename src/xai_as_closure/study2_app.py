@@ -540,17 +540,8 @@ def _introduction(session: Study2Session) -> None:
     if step not in {"instructions", "role", "policy"}:
         return
 
-    st.header("AI-assisted screening task")
-    st.info(
-        "This is a fictional research scenario. Do not use this assistant "
-        "for real employment decisions."
-    )
-    st.markdown(
-        "You will screen six candidates for the fictional AI Governance Lead "
-        "role. For each candidate, you will first make an unaided decision. "
-        "The AI will then provide an advisory assessment before you make your "
-        "final decision."
-    )
+    # The task title, fictional-scenario notice and overview are in the banner
+    # shown on every screen (theme.show_study_banner).
     st.markdown("### Recruitment brief")
     with st.container(border=True):
         st.markdown("#### Company and role")
