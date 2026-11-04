@@ -96,7 +96,8 @@ def forcing_answer_coding(answer: str) -> dict[str, bool]:
     negative = mentions("negative") or negated_currency
     currency = mentions("currency") and not negated_currency
     return {
-        "mentions_requirement": certification or membership,
+        # Any reference to a requirement or its current-status rule unlocks.
+        "mentions_requirement": certification or membership or currency or negative,
         "names_certification": certification,
         "names_specific_certification": specific,
         "names_membership": membership,
@@ -110,8 +111,8 @@ def _forcing_answer_feedback(answer: str) -> str | None:
     """Participant feedback for the requirement re-entry step, or None to continue.
 
     The step asks participants to revisit the job description, so any answer that
-    refers to a mandatory requirement is accepted. Its completeness is recorded
-    rather than enforced.
+    refers to a mandatory requirement or its current-status rule is accepted. Its
+    completeness is recorded rather than enforced.
     """
     if forcing_answer_coding(answer)["mentions_requirement"]:
         return None

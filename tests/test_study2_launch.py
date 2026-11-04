@@ -143,7 +143,8 @@ class StorageAndValidationTests(unittest.TestCase):
         )
 
         for related in ("AIGP", "membership", "valid required certificate",
-                        "current required certifivcate and valied membrship"):
+                        "current required certifivcate and valied membrship",
+                        "ther required skill and is valied", "membership lapsed"):
             self.assertIsNone(_forcing_answer_feedback(related), related)
         for unrelated in ("This candidate looks suitable.", "I remember the CV"):
             self.assertIsNotNone(_forcing_answer_feedback(unrelated), unrelated)
