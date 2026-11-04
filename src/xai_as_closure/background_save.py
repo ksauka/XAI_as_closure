@@ -17,7 +17,9 @@ from .github_saver import test_github_connection
 SaveCall = Callable[[], tuple[bool, str | None]]
 ARCHIVE_ID_PATTERN = re.compile(r"^\d{8}T\d{6}Z_[0-9a-f]{8}$")
 
-RETRY_DELAY_SECONDS = 2.0
+# Failed backups wait before retrying: frequent retries from many open pages exhausted the
+# hourly GitHub API quota on 4 Nov 2026. Local copies remain the record in the meantime.
+RETRY_DELAY_SECONDS = 30.0
 _WORKERS = ThreadPoolExecutor(max_workers=4, thread_name_prefix="study-save")
 _LOGGER = logging.getLogger(__name__)
 _CHECKED_REPOS: set[str] = set()

@@ -6,7 +6,8 @@ set -euo pipefail
 base="$HOME/.local/share/xai-as-closure"
 git -C "$base/app" pull --quiet --ff-only origin main
 "$base/venv/bin/pip" install --quiet -r "$base/app/requirements.txt"
-install -m 0644 "$base/app/deploy/xai-study@.service" "$base/app/deploy/xai-study-tunnel.service" "$HOME/.config/systemd/user/"
+install -m 0644 "$base/app/deploy/xai-study@.service" "$base/app/deploy/xai-study-tunnel.service" "$base/app/deploy/xai-study-sync.service" "$base/app/deploy/xai-study-sync.timer" "$HOME/.config/systemd/user/"
 systemctl --user daemon-reload
 systemctl --user restart 'xai-study@*.service'
+systemctl --user enable --now xai-study-sync.timer
 echo "Released $(git -C "$base/app" log --oneline -1)"

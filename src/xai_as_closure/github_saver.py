@@ -9,6 +9,9 @@ import time
 
 import requests
 
+# GitHub answers 403 or 429 when the hourly API quota is exhausted.
+RATE_LIMITED = (403, 429)
+
 
 def save_to_github(
     repo: str,
@@ -51,6 +54,9 @@ def save_to_github(
                     continue
             elif existing.status_code == 404:
                 sha = None
+            elif existing.status_code in RATE_LIMITED:
+                # Retrying cannot succeed before the quota resets; it only burns more calls.
+                return False, f"Version lookup returned {existing.status_code}."
             else:
                 last_error = f"Version lookup returned {existing.status_code}."
                 continue
@@ -68,6 +74,8 @@ def save_to_github(
             if response.status_code in (200, 201):
                 return True, None
             last_error = f"Save returned {response.status_code}."
+            if response.status_code in RATE_LIMITED:
+                return False, last_error
         except requests.RequestException:
             last_error = "The save could not be confirmed."
         # Includes conflicts and ambiguous timeouts: fetch the version again.

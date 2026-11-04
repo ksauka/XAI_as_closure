@@ -19,7 +19,7 @@ DEFAULT_LOG_DIR = (
     PROJECT_ROOT / "study_CHI" / "data" / "raw" / "study2" / "interaction_logs"
 )
 EVENT_SCHEMA_VERSION = "study2-event-v12"
-APPLICATION_VERSION = "study2-app-v19"
+APPLICATION_VERSION = "study2-app-v20"
 
 
 class EventLogger:
@@ -153,6 +153,11 @@ class EventLogger:
             json.dumps(payload, indent=2, ensure_ascii=True, default=str),
             f"Session: {self.participant_id} | {self.condition.condition_id}",
         )
+
+
+def checkpoint_meta(state: dict[str, Any]) -> dict[str, Any]:
+    """Session metadata stored with every private-GitHub checkpoint."""
+    return {**state, "archive_pending": False, "survey_linkage_id": state["session_id"]}
 
 
 def load_state(

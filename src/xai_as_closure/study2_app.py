@@ -33,6 +33,7 @@ from .github_saver import save_to_github
 from .logger import (
     DEFAULT_LOG_DIR,
     EventLogger,
+    checkpoint_meta,
     load_state,
     restored_logger,
 )
@@ -212,13 +213,11 @@ def _sync_github() -> bool:
     session: Study2Session = st.session_state["_study2_session"]
     logger: EventLogger = st.session_state["_study2_logger"]
 
+    # Kept in the local state so the server-side uploader rebuilds the same payload.
+    session.state["qualtrics_returned"] = bool(st.session_state.get("return_raw"))
+
     def prepare():
-        logger.session_meta = {
-            **session.state,
-            "archive_pending": False,
-            "qualtrics_returned": bool(st.session_state.get("return_raw")),
-            "survey_linkage_id": session.state["session_id"],
-        }
+        logger.session_meta = checkpoint_meta(session.state)
         return partial(save_to_github, repo, *logger.github_save_request(), token)
 
     saved = bool(repo and token) and sync_in_background(
@@ -1130,9 +1129,10 @@ def _recall(session: Study2Session, reference: str) -> None:
 
 @st.fragment(run_every=2)
 def _complete(session: Study2Session) -> None:
-    if not _sync_github():
-        st.info("Saving your responses. Please keep this page open.")
-        return
+    # The local copy is written (or raises) inside _sync_github, so completion never waits
+    # for GitHub; the remote backup continues while the page is open and is otherwise
+    # uploaded by `python -m xai_as_closure.sync_pending` on the server.
+    _sync_github()
     st.success("All six candidate trials are complete.")
     return_url = _build_final_return(
         str(st.session_state.get("return_raw", "")),

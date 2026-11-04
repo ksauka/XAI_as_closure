@@ -7,7 +7,7 @@
   "delivery_spec_version": "anthrokit-hiring-study2-v9",
   "study2_state_schema": "study2-state-v10",
   "study2_event_schema": "study2-event-v12",
-  "study2_application_version": "study2-app-v19",
+  "study2_application_version": "study2-app-v20",
   "files": {
     "study_CHI/six_profiles_case_set.json": "bdc0307a863c6cacd59ced83fab607bacd707e1c360ca0415f15bddbfe5c6338",
     "study_CHI/job_description.md": "d52fc28b8479101912069fb1586b65ee134cb22c04fe620ebf4365c9d87dd47c",
@@ -15,8 +15,8 @@
     "src/xai_as_closure/study2_delivery.py": "385948fac92af0bd0bbe54291aba651c07122984c22470d43afcc9c3699081f8",
     "src/xai_as_closure/anthrokit_hiring.yaml": "5635d3b1f0a4ba107cde356ddea1ac92c0ec532be961dbd2879a70729482038f",
     "src/xai_as_closure/decision_agent.py": "188be1335b740018d897b9fa2d585f7b1a2013b224a34cd031c26e5ac8ae2377",
-    "src/xai_as_closure/logger.py": "4a792e4a795b256fa436af62b46b18c82ba2bbbbe842fab897992bf1be708ee1",
-    "src/xai_as_closure/study2_app.py": "f699ba2e6e764738fadb41e2a93f114d8286f9aeb0c63af4dce4e2f5fb413327",
+    "src/xai_as_closure/logger.py": "96bcbd129bc792d956d872be92eb50dff076a9ddbf435b93670d33cb04361ea2",
+    "src/xai_as_closure/study2_app.py": "f55d091d9b5ea995a8bb38b43228d1d2bcfee8f012bcd7394ad643b817bcf172",
     "src/xai_as_closure/study2.py": "fc4d56557de0d974c68f627bb9172b4971996766a418b87c583625c9b55707fb"
   },
   "ground_truth": {

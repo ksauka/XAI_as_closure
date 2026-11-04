@@ -30,12 +30,14 @@ if [[ ! -x "$base/venv/bin/streamlit" ]]; then
 fi
 install -m 600 "$source_root/.streamlit/secrets.toml" "$base/app/.streamlit/secrets.toml"
 
-install -m 0644 "$base/app/deploy/xai-study@.service" "$base/app/deploy/xai-study-tunnel.service" "$units/"
+install -m 0644 "$base/app/deploy/xai-study@.service" "$base/app/deploy/xai-study-tunnel.service" "$base/app/deploy/xai-study-sync.service" "$base/app/deploy/xai-study-sync.timer" "$units/"
 loginctl enable-linger "$USER" >/dev/null 2>&1 || true
 systemctl --user daemon-reload
 for slug in $(awk '!/^#/ {print $1}' "$base/app/deploy/apps.tsv"); do
   systemctl --user enable --now "xai-study@$slug.service"
 done
+
+systemctl --user enable --now xai-study-sync.timer
 
 if [[ -s "$config/tunnel.token" ]]; then
   systemctl --user enable --now xai-study-tunnel.service

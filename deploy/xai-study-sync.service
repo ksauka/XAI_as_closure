@@ -1,0 +1,11 @@
+[Unit]
+Description=Upload Study 2 sessions whose GitHub backup did not finish while the page was open
+After=network-online.target
+
+[Service]
+Type=oneshot
+Environment=STUDY2_DATA_ROOT=%h/.local/share/xai-as-closure/data/study2
+Environment=PYTHONPATH=%h/.local/share/xai-as-closure/app/src
+WorkingDirectory=%h/.local/share/xai-as-closure/app
+ExecStart=%h/.local/share/xai-as-closure/venv/bin/python -m xai_as_closure.sync_pending
+NoNewPrivileges=true
