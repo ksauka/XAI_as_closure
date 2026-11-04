@@ -322,7 +322,6 @@ def _initialize(locked_condition_id: str) -> None:
 
 def _header(session: Study2Session) -> None:
     show_study_banner(st)
-    st.caption("STUDY 2 · AI-ASSISTED CANDIDATE SCREENING")
     if session.complete:
         st.progress(1.0, text="All six candidate trials complete")
         return
@@ -1046,7 +1045,7 @@ def _forcing(session: Study2Session, reference: str) -> None:
                         "attempt_count"
                     ),
                     "submitted_text": mandatory_requirement.strip(),
-                    "is_correct": False,
+                    "accepted": False,
                 },
             )
             _sync_github()

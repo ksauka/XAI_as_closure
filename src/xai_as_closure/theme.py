@@ -173,12 +173,16 @@ def apply_anthrokit_theme(st) -> None:
 
 
 def show_study_banner(st) -> None:
-    """Display a neutral header styled like the Anthrokit introduction card."""
+    """Display the same neutral task header in every Study 2 condition."""
     st.markdown(
         """
         <div class="study-banner">
-            <h1>AI Governance Lead Screening</h1>
-            <p>Study 2 | Evidence-grounded AI decision support</p>
+            <h1>AI-assisted screening task</h1>
+            <p>This is a fictional research scenario. Do not use this assistant for
+            real employment decisions.</p>
+            <p>You will screen six candidates for the fictional AI Governance Lead role.
+            For each candidate, you will first make an unaided decision. The AI will then
+            provide an advisory assessment before you make your final decision.</p>
         </div>
         """,
         unsafe_allow_html=True,

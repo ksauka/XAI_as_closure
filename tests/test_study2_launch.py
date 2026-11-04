@@ -71,7 +71,7 @@ class LaunchTests(unittest.TestCase):
                     app.select_slider[0].set_value(50)
                     click(app, "Lock initial decision")
                     if index % 2:
-                        app.text_area[0].set_value("membership")
+                        app.text_area[0].set_value("Looks fine to me")
                         click(app, "Confirm requirements and continue")
                         self.assertEqual(session.phase, "forcing")
                         self.assertTrue(app.error)
@@ -135,40 +135,30 @@ class LaunchTests(unittest.TestCase):
 
 
 class StorageAndValidationTests(unittest.TestCase):
-    def test_forcing_accepts_plain_language_but_still_requires_both_requirements(self):
+    def test_forcing_accepts_related_answers_and_codes_completeness(self):
         from xai_as_closure.study2 import (
             _forcing_answer_feedback,
             _forcing_answer_is_correct,
+            forcing_answer_coding,
         )
 
-        self.assertFalse(
-            _forcing_answer_is_correct("A current IAPP AIGP certification")
-        )
-        self.assertEqual(
-            _forcing_answer_feedback("valid required certificate"),
-            "Add the current professional-membership requirement.",
-        )
-        self.assertTrue(
-            _forcing_answer_is_correct(
-                "valid required certificate and valid professional membership"
-            )
-        )
-        self.assertTrue(
-            _forcing_answer_is_correct(
-                "current required certification and current relevant professional membership"
-            )
-        )
-        self.assertFalse(
-            _forcing_answer_is_correct(
-                "required certification and professional membership"
-            )
-        )
-        self.assertFalse(
-            _forcing_answer_is_correct(
-                "A current AIGP certification and expired professional membership"
-            )
-        )
-        self.assertTrue(_forcing_answer_is_correct(REQUIREMENTS))
+        for related in ("AIGP", "membership", "valid required certificate",
+                        "current required certifivcate and valied membrship"):
+            self.assertIsNone(_forcing_answer_feedback(related), related)
+        for unrelated in ("This candidate looks suitable.", "I remember the CV"):
+            self.assertIsNotNone(_forcing_answer_feedback(unrelated), unrelated)
+        for complete in (REQUIREMENTS,
+                         "valid required certificate and valid professional membership",
+                         "current required certifivcate and valied membrship",
+                         "certificate not expired, member of a professional body"):
+            self.assertTrue(_forcing_answer_is_correct(complete), complete)
+        for incomplete in ("A current IAPP AIGP certification",
+                           "required certification and professional membership",
+                           "A current AIGP certification and expired professional membership"):
+            self.assertFalse(_forcing_answer_is_correct(incomplete), incomplete)
+        coding = forcing_answer_coding("AIGP cert but membership lapsed")
+        self.assertTrue(coding["describes_requirement_as_expired"])
+        self.assertTrue(coding["names_specific_certification"])
 
     def test_production_first_screen_never_waits_for_github(self):
         with (

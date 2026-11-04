@@ -6,6 +6,7 @@ import re
 from copy import deepcopy
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from difflib import get_close_matches
 from typing import Any
 
 from .cases import CaseRepository
@@ -58,67 +59,74 @@ def _validate_decision_response(response: dict[str, Any]) -> None:
         raise Study2WorkflowError("Confidence must be a whole number from 0 to 100.")
 
 
-def _forcing_answer_feedback(answer: str) -> str | None:
-    """Return participant feedback for the role-requirement re-entry task.
+_FORCING_TERMS = {
+    "certification": ("cert", "certs", "certificate", "certificates", "certification",
+                      "certifications", "certified", "credential", "credentials",
+                      "accreditation", "qualification"),
+    "membership": ("member", "members", "membership", "memberships"),
+    "currency": ("current", "currently", "valid", "active", "unexpired", "uptodate"),
+    "negative": ("expired", "lapsed", "inactive", "outdated"),
+}
+_SPECIFIC_CERTIFICATIONS = ("aigp", "iapp", "42001")
+# 0.88 accepts typos such as "certifivcate", "valied" and "membrship" but not
+# unrelated near-words such as "remember".
+_FUZZY_CUTOFF = 0.88
 
-    Cognitive forcing operates on the job description, not on the current
-    candidate or the AI recommendation. Every forcing-present participant must
-    therefore enter the same two requirements: a current qualifying
-    certification and current relevant professional membership. Participants
-    may identify the certification category in plain language; reproducing a
-    credential name verbatim is not part of the manipulation.
+
+def forcing_answer_coding(answer: str) -> dict[str, bool]:
+    """Code which parts of the mandatory requirements an answer mentions.
+
+    Matching tolerates spelling errors and paraphrase. The coding is recorded for
+    analysis; only ``mentions_requirement`` gates progress.
     """
-    normalized = re.sub(r"[^a-z0-9]+", " ", answer.lower())
-    names_aigp = (
-        "aigp" in normalized
-        or "artificial intelligence governance professional" in normalized
-    )
-    names_iso = "42001" in normalized and "lead implementer" in normalized
-    names_generic_required_cert = (
-        re.search(
-            r"\b(?:required|qualifying|recognised|recognized|professional)\s+"
-            r"(?:ai\s+governance\s+)?cert(?:ificate|ification)?\b",
-            normalized,
-        )
-        is not None
-        or re.search(
-            r"\bcert(?:ificate|ification)?\s+(?:that\s+is\s+)?"
-            r"(?:required|qualifying|recognised|recognized|professional)\b",
-            normalized,
-        )
-        is not None
-    )
-    names_qualifying_cert = names_aigp or names_iso or names_generic_required_cert
-    names_membership = (
-        re.search(r"\b(member|membership|memberships)\b", normalized) is not None
-    )
-    names_currency = any(
-        term in normalized
-        for term in ("current", "valid", "active", "in date", "not expired")
-    )
-    negative_status = re.search(
-        r"\b(expired|lapsed|inactive|not current|not valid)\b",
-        normalized.replace("not expired", "current"),
-    )
-    if negative_status:
-        return "Both mandatory requirements must be current at screening."
-    if not names_qualifying_cert and not names_membership:
-        return (
-            "Enter the current qualifying-certification requirement and the "
-            "current professional-membership requirement."
-        )
-    if not names_qualifying_cert:
-        return "Add the current qualifying-certification requirement."
-    if not names_membership:
-        return "Add the current professional-membership requirement."
-    if not names_currency:
-        return "State that both mandatory requirements must be current at screening."
-    return None
+    text = " ".join(re.findall(r"[a-z0-9]+", answer.lower()))
+    text = re.sub(r"\bnot (?:expired|lapsed)\b", "current", text)
+    text = re.sub(r"\bup to date\b", "uptodate", text)
+    negated_currency = re.search(r"\bnot (?:current|valid|active)\b", text) is not None
+    words = text.split()
+
+    def mentions(concept: str) -> bool:
+        return any(get_close_matches(word, _FORCING_TERMS[concept], n=1, cutoff=_FUZZY_CUTOFF)
+                   for word in words if len(word) >= 4)
+
+    specific = (any(name in words for name in _SPECIFIC_CERTIFICATIONS)
+                or "governance professional" in text)
+    certification = mentions("certification") or specific
+    membership = mentions("membership")
+    negative = mentions("negative") or negated_currency
+    currency = mentions("currency") and not negated_currency
+    return {
+        "mentions_requirement": certification or membership,
+        "names_certification": certification,
+        "names_specific_certification": specific,
+        "names_membership": membership,
+        "names_current_status": currency,
+        "describes_requirement_as_expired": negative,
+        "complete_answer": certification and membership and currency and not negative,
+    }
+
+
+def _forcing_answer_feedback(answer: str) -> str | None:
+    """Participant feedback for the requirement re-entry step, or None to continue.
+
+    The step asks participants to revisit the job description, so any answer that
+    refers to a mandatory requirement is accepted. Its completeness is recorded
+    rather than enforced.
+    """
+    if forcing_answer_coding(answer)["mentions_requirement"]:
+        return None
+    return ("Look at the job description and enter its mandatory requirements in "
+            "your own words: the certification and the professional membership.")
+
+
+def _forcing_unlocked(forcing: dict[str, Any]) -> bool | None:
+    """Sessions saved before the lenient check marked completion with is_correct."""
+    return forcing.get("accepted", forcing.get("is_correct"))
 
 
 def _forcing_answer_is_correct(answer: str) -> bool:
-    """Whether an answer identifies both current mandatory requirements."""
-    return _forcing_answer_feedback(answer) is None
+    """Whether an answer names both requirements as current (recorded, not gated)."""
+    return forcing_answer_coding(answer)["complete_answer"]
 
 
 @dataclass
@@ -256,9 +264,9 @@ class Study2Session:
         if not requirement:
             raise Study2WorkflowError("Enter your answer before continuing.")
         feedback = _forcing_answer_feedback(requirement)
-        is_correct = feedback is None
         if feedback is not None:
             raise Study2WorkflowError(feedback)
+        coding = forcing_answer_coding(requirement)
         submitted_at = _now()
         started_at = str(forcing.get("started_at_utc", submitted_at))
         try:
@@ -274,7 +282,9 @@ class Study2Session:
         forcing.update(
             {
                 "mandatory_requirement": requirement,
-                "is_correct": is_correct,
+                "accepted": True,
+                "is_correct": coding["complete_answer"],
+                "answer_coding": coding,
                 "submitted_at_utc": submitted_at,
                 "elapsed_seconds": round(elapsed, 3),
             }
@@ -414,7 +424,7 @@ class Study2Session:
                 not str(
                     trial.get("forcing", {}).get("mandatory_requirement", "")
                 ).strip()
-                or trial.get("forcing", {}).get("is_correct") is not True
+                or _forcing_unlocked(trial.get("forcing", {})) is not True
             ):
                 raise Study2WorkflowError(
                     f"Completed trial {reference} is missing cognitive forcing."
@@ -434,7 +444,7 @@ class Study2Session:
             forcing = current_trial.get("forcing", {})
             if (
                 not str(forcing.get("mandatory_requirement", "")).strip()
-                or forcing.get("is_correct") is not True
+                or _forcing_unlocked(forcing) is not True
             ):
                 raise Study2WorkflowError(
                     "The current trial is missing its requirement-reencoding response."

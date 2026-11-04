@@ -204,19 +204,22 @@ class Study2WorkflowTests(unittest.TestCase):
             session.current_trial()["aided"]["recommendation_dwell_seconds"], 0
         )
 
-    def test_forcing_requires_a_substantive_typed_requirement(self) -> None:
+    def test_forcing_accepts_a_partial_answer_and_records_its_coding(self) -> None:
         session = self.session("P0_A0_F1")
         session.submit_unaided(self.decision())
-        with self.assertRaisesRegex(Study2WorkflowError, "professional-membership"):
-            session.submit_forcing({"mandatory_requirement": "AIGP"})
-        self.assertEqual(session.phase, "forcing")
-        self.assertNotIn("agent_output", session.current_trial())
+        session.submit_forcing({"mandatory_requirement": "AIGP"})
+        forcing = session.current_trial()["forcing"]
+        self.assertEqual(session.phase, "agent")
+        self.assertTrue(forcing["accepted"])
+        self.assertFalse(forcing["is_correct"])
+        self.assertTrue(forcing["answer_coding"]["names_specific_certification"])
+        self.assertFalse(forcing["answer_coding"]["names_membership"])
 
-    def test_forcing_never_unlocks_after_repeated_incorrect_attempts(self) -> None:
+    def test_forcing_never_unlocks_for_unrelated_answers(self) -> None:
         session = self.session("P0_A0_F1")
         session.submit_unaided(self.decision())
         for _ in range(3):
-            with self.assertRaisesRegex(Study2WorkflowError, "qualifying-certification"):
+            with self.assertRaisesRegex(Study2WorkflowError, "job description"):
                 session.submit_forcing(
                     {"mandatory_requirement": "This candidate looks suitable."}
                 )
@@ -334,14 +337,14 @@ class Study2WorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(Study2WorkflowError, "requirement-reencoding"):
             Study2Session.restore(deepcopy(session.state), self.cases)
 
-    def test_restore_rejects_an_incorrect_forcing_response(self) -> None:
+    def test_restore_rejects_an_unaccepted_forcing_response(self) -> None:
         session = self.session("P1_A0_F1")
         session.submit_unaided(self.decision())
         session.state["phase"] = "agent"
         session.current_trial()["forcing"].update(
             {
                 "mandatory_requirement": "AIGP",
-                "is_correct": False,
+                "accepted": False,
             }
         )
         with self.assertRaisesRegex(Study2WorkflowError, "requirement-reencoding"):
@@ -402,7 +405,7 @@ class Study2InfrastructureTests(unittest.TestCase):
                 payload={"condition_id": condition.condition_id},
             )
             self.assertEqual(event["schema_version"], "study2-event-v12")
-            self.assertEqual(event["application_version"], "study2-app-v17")
+            self.assertEqual(event["application_version"], "study2-app-v18")
             self.assertEqual(event["event_sequence"], 1)
             self.assertEqual(event["event_id"], "sessiontest:000001")
             self.assertTrue(event["explanation_present"])
