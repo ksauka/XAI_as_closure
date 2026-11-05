@@ -1,6 +1,6 @@
 # Study Guide
 
-This non-recording research artifact documents the Study 2 workflow, participant interfaces and questionnaire. Opening it does not create a participant session or save data.
+This non-recording research artifact documents the Study 2 workflow, participant interfaces and questionnaire. The Tour Guide presents the study documentation. The Interactive Study Platform reproduces the assigned condition with the actual six-profile workflow, fixed recommendations and explanation interface. Neither view requires a Prolific ID, creates a participant record or saves responses.
 
 The [Study 1 Guide](https://study1.aitheoryelaboration.org/?guide=true) provides the complete six-profile expert-assessment package used to examine the materials before Study 2.
 

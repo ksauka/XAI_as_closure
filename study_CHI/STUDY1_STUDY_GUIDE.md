@@ -1,6 +1,6 @@
 # Study 1 Guide
 
-This non-recording research artifact documents the Study 1 expert-assessment workflow and the complete final material set. Opening it does not create a participant session or save data.
+This non-recording research artifact contains two views. The Tour Guide documents the Study 1 expert-assessment workflow and complete final material set. The Interactive Study Platform reproduces the six-profile expert assessment with the actual job description, recruitment policy, candidate files and administered questions. Neither view requires a participant ID, creates a participant record or saves responses.
 
 ## Study workflow
 

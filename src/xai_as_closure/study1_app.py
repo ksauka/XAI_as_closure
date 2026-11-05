@@ -38,6 +38,15 @@ def _round() -> str:
     return str(st.session_state.get("_study1_validation_round", "initial"))
 
 
+def _demo_mode() -> bool:
+    return bool(st.session_state.get("_study1_artifact_demo"))
+
+
+def _active_session() -> Study1Session:
+    key = "_study1_demo_session" if _demo_mode() else "_study1_session"
+    return st.session_state[key]
+
+
 def _local_preview() -> bool:
     return os.getenv("STUDY1_LOCAL_PREVIEW") == "1"
 
@@ -187,7 +196,9 @@ def _format_elapsed_time(elapsed_seconds: float) -> str:
 
 @st.fragment(run_every=1)
 def _render_elapsed_timer() -> None:
-    session: Study1Session | None = st.session_state.get("_study1_session")
+    session: Study1Session | None = st.session_state.get(
+        "_study1_demo_session" if _demo_mode() else "_study1_session"
+    )
     if session is None:
         return
     if session.complete:
@@ -215,7 +226,9 @@ def _log(
     component: str | None = None,
     payload: dict[str, Any] | None = None,
 ) -> None:
-    session: Study1Session = st.session_state["_study1_session"]
+    if _demo_mode():
+        return
+    session = _active_session()
     store: SessionStore = st.session_state["_study1_store"]
     if is_revalidation(_round()) and not _local_preview():
         session.state["archive_pending"] = True
@@ -233,9 +246,9 @@ def _log(
 
 def _sync_github() -> bool:
     """Coalesce snapshots and retry saving off the participant interaction thread."""
-    if _local_preview():
+    if _demo_mode() or _local_preview():
         return True
-    session: Study1Session = st.session_state["_study1_session"]
+    session = _active_session()
     store: SessionStore = st.session_state["_study1_store"]
     repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
     token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
@@ -476,13 +489,50 @@ def _initialize() -> None:
         "test_participant": tester})
 
 
+def _initialize_demo() -> None:
+    """Create the complete six-profile expert workflow in browser memory only."""
+    if isinstance(st.session_state.get("_study1_demo_session"), Study1Session):
+        return
+    cases = CaseRepository()
+    session = Study1Session.create(
+        session_id="demo-study1-six-profile",
+        linkage_hash="research-artifact",
+        seed="research-artifact:study1",
+        cases=cases,
+        validation_round="initial",
+    )
+    session.state["demo_mode"] = True
+    st.session_state["_study1_started"] = time.perf_counter()
+    st.session_state["_study1_demo_session"] = session
+
+
+def _reset_demo() -> None:
+    """Discard only the in-memory artifact session and its widget values."""
+    transient_keys = {
+        "_study1_demo_session",
+        "_study1_started",
+        "_study1_post_study_presented",
+        "_study1_document",
+        "_study1_document_visit",
+    }
+    for key in list(st.session_state):
+        if key in transient_keys or key.startswith(
+            ("_presented_", "screening_", "post_study_")
+        ):
+            del st.session_state[key]
+
+
 def _header(session: Study1Session) -> None:
     st.markdown(
         '<div class="study-kicker">STUDY 1 · EXPERT VALIDATION</div>',
         unsafe_allow_html=True,
     )
     st.title("Candidate screening task")
-    if is_revalidation(_round()):
+    if _demo_mode():
+        st.caption(
+            "Interactive, non-recording demonstration of the complete six-profile expert assessment. No AI recommendation is shown."
+        )
+    elif is_revalidation(_round()):
         st.caption("Assess each candidate independently against the supplied requirements.")
         if _round() == FOCUSED_ROUND:
             st.write("Review two fictional candidate profiles for an AI Governance Lead role, using the job description and recruitment policy. For each candidate, record your screening decision, whether the mandatory requirements are met, your confidence and a brief reason. You will then answer a question about possible professional disagreement and may leave feedback. No AI recommendation is shown in this assessment.")
@@ -612,13 +662,15 @@ def _document_navigation(session: Study1Session) -> bool:
         st.caption(
             "Fictional materials for research. Do not use for real hiring decisions."
         )
-        if st.session_state.get("_study1_pilot"):
+        if _demo_mode():
+            st.info("Interactive research demo - no data are recorded")
+        elif st.session_state.get("_study1_pilot"):
             st.warning("Pilot mode")
     return False
 
 
 def _render_cv(reference: str) -> None:
-    session: Study1Session = st.session_state["_study1_session"]
+    session = _active_session()
     case = session.cases.participant_case(reference)
     render_cv_document(
         st,
@@ -883,6 +935,19 @@ def _complete(session: Study1Session) -> None:
         st.info("Saving your responses. Please keep this page open.")
         return
 
+    if _demo_mode():
+        st.markdown(
+            '<div class="completion-panel"><strong>Demo complete</strong><br>'
+            f"All {len(session.state['profile_order'])} candidate judgments and the final materials review "
+            "were completed in this browser session.</div>",
+            unsafe_allow_html=True,
+        )
+        st.info("This was a non-recording demonstration. No responses were saved.")
+        if st.button("Restart interactive demo", type="primary"):
+            _reset_demo()
+            st.rerun()
+        return
+
     if st.session_state.get("_study1_resumed_complete"):
         st.info("This participant ID or code already has a completed session. Your recorded responses have been restored.")
     st.markdown(
@@ -907,7 +972,7 @@ def _complete(session: Study1Session) -> None:
         _start_another_attempt()
 
 
-def run(validation_round: str = "initial") -> None:
+def run(validation_round: str = "initial", *, artifact_demo: bool = False) -> None:
     st.set_page_config(
         page_title="Study 1 expert validation",
         page_icon=":material/fact_check:",
@@ -916,6 +981,7 @@ def run(validation_round: str = "initial") -> None:
     )
     instrument_version(validation_round)
     st.session_state["_study1_validation_round"] = validation_round
+    st.session_state["_study1_artifact_demo"] = artifact_demo
     _apply_theme()
     if is_revalidation(validation_round):
         try:
@@ -923,24 +989,31 @@ def run(validation_round: str = "initial") -> None:
         except WorkflowError as exc:
             st.error(str(exc))
             st.stop()
-    try:
-        _read_launch_params()
-        _prolific_gate()
-    except WorkflowError as exc:
-        st.error(f"Study link unavailable: {exc}")
-        st.stop()
-    _check_private_storage()
-    try:
-        _initialize()
-    except WorkflowError as exc:
-        if _local_preview():
-            st.error(str(exc))
-        else:
-            _LOGGER.warning("Study 1 resume could not finish: %s", exc)
-            st.info("We are reconnecting to your task. Please refresh this page in a moment.")
-        st.stop()
+    if artifact_demo:
+        st.title("Interactive Study Platform")
+        st.caption(
+            "Non-recording demonstration of Study 1. No participant ID is required and no responses are saved."
+        )
+        _initialize_demo()
+    else:
+        try:
+            _read_launch_params()
+            _prolific_gate()
+        except WorkflowError as exc:
+            st.error(f"Study link unavailable: {exc}")
+            st.stop()
+        _check_private_storage()
+        try:
+            _initialize()
+        except WorkflowError as exc:
+            if _local_preview():
+                st.error(str(exc))
+            else:
+                _LOGGER.warning("Study 1 resume could not finish: %s", exc)
+                st.info("We are reconnecting to your task. Please refresh this page in a moment.")
+            st.stop()
 
-    session: Study1Session = st.session_state["_study1_session"]
+    session = _active_session()
     _sync_github()
     _header(session)
     if _document_navigation(session):

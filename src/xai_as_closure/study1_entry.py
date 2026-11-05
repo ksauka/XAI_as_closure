@@ -5,7 +5,7 @@ from importlib import import_module
 import streamlit as st
 import os
 
-from .study1_guide import render_study1_guide
+from .study1_guide import render_guide_navigation, render_study1_guide
 
 
 def run_entry(validation_round: str, expected_release: str) -> None:
@@ -19,9 +19,16 @@ def run_entry(validation_round: str, expected_release: str) -> None:
     guide_value = st.query_params.get("guide", "")
     if isinstance(guide_value, list):
         guide_value = guide_value[0] if guide_value else ""
-    if str(guide_value).strip().lower() in {"1", "true", "yes"}:
-        render_study1_guide()
-        return
+    guide_mode = str(guide_value).strip().lower() in {"1", "true", "yes"}
+    if guide_mode:
+        view_value = st.query_params.get("view", "")
+        if isinstance(view_value, list):
+            view_value = view_value[0] if view_value else ""
+        view = "demo" if str(view_value).strip().lower() == "demo" else "tour"
+        render_guide_navigation(view)
+        if view == "tour":
+            render_study1_guide()
+            return
     app = import_module('xai_as_closure.study1_app')
     loaded_release = getattr(app, 'STUDY1_APP_RELEASE', None)
     if loaded_release != expected_release:
@@ -30,4 +37,7 @@ def run_entry(validation_round: str, expected_release: str) -> None:
         else:
             st.info('The task is reconnecting. Please refresh this page in a moment.')
         st.stop()
-    app.run(validation_round=validation_round)
+    app.run(
+        validation_round="initial" if guide_mode else validation_round,
+        artifact_demo=guide_mode,
+    )

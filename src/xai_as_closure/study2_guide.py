@@ -1,4 +1,4 @@
-"""Non-recording Study 2 research artifact rendered inside each condition app."""
+"""Non-recording Study 2 tour rendered inside each condition app."""
 
 from __future__ import annotations
 
@@ -33,6 +33,32 @@ def _condition_description(condition_id: str) -> str:
     return f"{explanation}; {delivery}; {forcing}"
 
 
+def render_guide_navigation(active: str) -> None:
+    """Render stable tab-like navigation without initialising a study session."""
+    tour_class = "artifact-tab artifact-tab--active" if active == "tour" else "artifact-tab"
+    demo_class = "artifact-tab artifact-tab--active" if active == "demo" else "artifact-tab"
+    st.markdown(
+        """
+        <style>
+        .artifact-tabs { display:flex; gap:.4rem; margin:.2rem 0 1rem; border-bottom:1px solid #d9dde5; }
+        .artifact-tab { display:inline-block; padding:.65rem 1rem; color:#344054 !important;
+          text-decoration:none !important; border:1px solid transparent; border-bottom:0;
+          border-radius:.45rem .45rem 0 0; }
+        .artifact-tab:hover { background:#f2f4f7; }
+        .artifact-tab--active { background:#fff; border-color:#d9dde5; font-weight:700; margin-bottom:-1px; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="artifact-tabs">'
+        f'<a class="{tour_class}" href="?guide=true&amp;view=tour">Tour Guide</a>'
+        f'<a class="{demo_class}" href="?guide=true&amp;view=demo">Interactive Study Platform</a>'
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+
 def render_study2_guide(condition_id: str) -> None:
     """Render the public guide without initialising or saving a study session."""
     root = Path(__file__).resolve().parents[2]
@@ -41,7 +67,7 @@ def render_study2_guide(condition_id: str) -> None:
     if markdown.startswith("# Study Guide"):
         markdown = markdown.removeprefix("# Study Guide").lstrip()
 
-    st.title("Study Guide")
+    st.title("Tour Guide")
     st.caption(f"Condition: {_condition_description(condition_id)}")
 
     cursor = 0

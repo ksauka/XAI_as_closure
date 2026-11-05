@@ -43,7 +43,7 @@ from .study2_delivery import (
     HIGH_ANTHROPOMORPHISM,
     LOW_ANTHROPOMORPHISM,
 )
-from .study2_guide import render_study2_guide
+from .study2_guide import render_guide_navigation, render_study2_guide
 from .theme import apply_anthrokit_theme, show_study_banner
 
 
@@ -71,6 +71,23 @@ def _query(name: str) -> str:
     if isinstance(value, list):
         return str(value[0]) if value else ""
     return str(value)
+
+
+def _demo_mode() -> bool:
+    return (
+        _query("guide").strip().lower() in {"1", "true", "yes"}
+        and _query("view").strip().lower() == "demo"
+    )
+
+
+def _active_session() -> Study2Session:
+    key = "_study2_demo_session" if _demo_mode() else "_study2_session"
+    return st.session_state[key]
+
+
+def _active_agent() -> Study2DecisionAgent:
+    key = "_study2_demo_agent" if _demo_mode() else "_study2_agent"
+    return st.session_state[key]
 
 
 def _elapsed() -> float:
@@ -185,7 +202,9 @@ def _log(
     component: str | None = None,
     payload: dict[str, Any] | None = None,
 ) -> None:
-    session: Study2Session = st.session_state["_study2_session"]
+    if _demo_mode():
+        return
+    session = _active_session()
     logger: EventLogger = st.session_state["_study2_logger"]
     position = (
         session.state["profile_order"].index(reference) + 1 if reference else None
@@ -207,11 +226,11 @@ def _log(
 
 def _sync_github() -> bool:
     """Back up the HAI session log off the participant interaction thread."""
-    if _local_preview():
+    if _demo_mode() or _local_preview():
         return True
     repo = _secret("GITHUB_REPO") or _secret("GITHUB_DATA_REPO")
     token = _secret("GITHUB_TOKEN") or _secret("GITHUB_DATA_TOKEN")
-    session: Study2Session = st.session_state["_study2_session"]
+    session = _active_session()
     logger: EventLogger = st.session_state["_study2_logger"]
 
     # Kept in the local state so the server-side uploader rebuilds the same payload.
@@ -318,6 +337,55 @@ def _initialize(locked_condition_id: str) -> None:
             "case_set_id": cases.case_set_id,
         },
     )
+
+
+def _initialize_demo(locked_condition_id: str) -> None:
+    """Create an in-memory copy of the real condition without persistence."""
+    existing = st.session_state.get("_study2_demo_session")
+    if isinstance(existing, Study2Session):
+        if existing.state.get("condition_id") == locked_condition_id:
+            return
+        del st.session_state["_study2_demo_session"]
+        st.session_state.pop("_study2_demo_agent", None)
+    condition = get_study2_condition(locked_condition_id)
+    cases = CaseRepository()
+    session = Study2Session.create(
+        session_id=f"demo-{locked_condition_id}",
+        participant_id="research-artifact",
+        prolific_pid="research-artifact",
+        condition=condition,
+        seed=f"research-artifact:{locked_condition_id}",
+        cases=cases,
+    )
+    session.state["demo_mode"] = True
+    st.session_state["_study2_started"] = time.perf_counter()
+    st.session_state["_study2_demo_session"] = session
+    st.session_state["_study2_demo_agent"] = Study2DecisionAgent(
+        condition=condition,
+        cases=cases,
+    )
+
+
+def _reset_demo() -> None:
+    """Discard only in-memory demo state and widget values."""
+    transient_prefixes = (
+        "_study2_demo_",
+        "_study2_presented_",
+        "unaided_confidence_",
+        "aided_confidence_",
+    )
+    transient_keys = {
+        "_study2_document",
+        "_study2_document_focus",
+        "_study2_active_source",
+        "_study2_document_opened_at",
+        "_study2_document_visit",
+        "_study2_citation_document",
+        "_study2_started",
+    }
+    for key in list(st.session_state):
+        if key in transient_keys or key.startswith(transient_prefixes):
+            del st.session_state[key]
 
 
 def _header(session: Study2Session) -> None:
@@ -509,11 +577,12 @@ def _sidebar(session: Study2Session) -> None:
             )
             _sync_github()
             st.rerun()
-        st.link_button(
-            "View Study Guide",
-            "?guide=true",
-            use_container_width=True,
-        )
+        if not _demo_mode():
+            st.link_button(
+                "View Study Guide",
+                "?guide=true&view=tour",
+                use_container_width=True,
+            )
         if (
             active_reference
             and session.phase != "unaided"
@@ -526,7 +595,9 @@ def _sidebar(session: Study2Session) -> None:
             _open_reference_document("cv", "sidebar_source_documents")
         st.divider()
         st.caption("The AI is advisory. You make every final screening decision.")
-        if st.session_state.get("_study2_pilot"):
+        if _demo_mode():
+            st.info("Interactive research demo · no data are recorded")
+        elif st.session_state.get("_study2_pilot"):
             st.warning(f"Pilot mode · {session.condition.condition_id}")
 
 
@@ -614,7 +685,7 @@ def _open_reference_document(document: str, origin: str) -> None:
     """Open an optional source document and start visit timing."""
     if document not in {"role", "policy", "cv"}:
         raise Study2WorkflowError("Unknown source document.")
-    session: Study2Session = st.session_state["_study2_session"]
+    session = _active_session()
     reference = session.current_reference() if session.state.get("introduction_step") == "complete" else None
     visit = {
         "document_visit_id": uuid4().hex,
@@ -962,7 +1033,7 @@ def _agent(session: Study2Session, reference: str) -> None:
         else LOW_ANTHROPOMORPHISM
     )
     if st.button(preset.request_label, type="primary", use_container_width=True):
-        agent: Study2DecisionAgent = st.session_state["_study2_agent"]
+        agent = _active_agent()
         try:
             with st.spinner(preset.spinner_label):
                 output = session.request_agent_assessment(agent)
@@ -1140,6 +1211,12 @@ def _complete(session: Study2Session) -> None:
     # uploaded by `python -m xai_as_closure.sync_pending` on the server.
     _sync_github()
     st.success("All six candidate trials are complete.")
+    if _demo_mode():
+        st.info("This was a non-recording demonstration. No responses were saved.")
+        if st.button("Restart interactive demo", type="primary"):
+            _reset_demo()
+            st.rerun()
+        return
     return_url = _build_final_return(
         str(st.session_state.get("return_raw", "")),
         str(session.state["prolific_pid"]),
@@ -1159,18 +1236,29 @@ def run(locked_condition_id: str) -> None:
         initial_sidebar_state="expanded",
     )
     apply_anthrokit_theme(st)
-    if _query("guide").strip().lower() in {"1", "true", "yes"}:
-        render_study2_guide(locked_condition_id)
-        return
-    _read_qualtrics_params()
-    _prolific_gate()
-    _check_private_storage()
-    try:
-        _initialize(locked_condition_id)
-    except (Study2WorkflowError, ValueError, TypeError) as exc:
-        st.error(f"Study link unavailable: {exc}")
-        st.stop()
-    session: Study2Session = st.session_state["_study2_session"]
+    guide_mode = _query("guide").strip().lower() in {"1", "true", "yes"}
+    if guide_mode:
+        view = _query("view").strip().lower()
+        view = "demo" if view == "demo" else "tour"
+        render_guide_navigation(view)
+        if view == "tour":
+            render_study2_guide(locked_condition_id)
+            return
+        st.title("Interactive Study Platform")
+        st.caption(
+            "Non-recording demonstration of this condition. No participant ID is required and no responses are saved."
+        )
+        _initialize_demo(locked_condition_id)
+    else:
+        _read_qualtrics_params()
+        _prolific_gate()
+        _check_private_storage()
+        try:
+            _initialize(locked_condition_id)
+        except (Study2WorkflowError, ValueError, TypeError) as exc:
+            st.error(f"Study link unavailable: {exc}")
+            st.stop()
+    session = _active_session()
     _sync_github()
     _header(session)
     _sidebar(session)
