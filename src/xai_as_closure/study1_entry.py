@@ -5,6 +5,8 @@ from importlib import import_module
 import streamlit as st
 import os
 
+from .study1_guide import render_study1_guide
+
 
 def run_entry(validation_round: str, expected_release: str) -> None:
     st.set_page_config(page_title='Study 1 expert validation',
@@ -14,6 +16,12 @@ def run_entry(validation_round: str, expected_release: str) -> None:
     label = labels.get(validation_round, 'Earlier Study 1 entry point')
     if os.getenv('STUDY1_LOCAL_PREVIEW') == '1':
         st.caption(f'Study 1 · {label} · Build {expected_release}')
+    guide_value = st.query_params.get("guide", "")
+    if isinstance(guide_value, list):
+        guide_value = guide_value[0] if guide_value else ""
+    if str(guide_value).strip().lower() in {"1", "true", "yes"}:
+        render_study1_guide()
+        return
     app = import_module('xai_as_closure.study1_app')
     loaded_release = getattr(app, 'STUDY1_APP_RELEASE', None)
     if loaded_release != expected_release:

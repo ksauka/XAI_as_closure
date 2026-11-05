@@ -43,6 +43,7 @@ from .study2_delivery import (
     HIGH_ANTHROPOMORPHISM,
     LOW_ANTHROPOMORPHISM,
 )
+from .study2_guide import render_study2_guide
 from .theme import apply_anthrokit_theme, show_study_banner
 
 
@@ -508,6 +509,11 @@ def _sidebar(session: Study2Session) -> None:
             )
             _sync_github()
             st.rerun()
+        st.link_button(
+            "View Study Guide",
+            "?guide=true",
+            use_container_width=True,
+        )
         if (
             active_reference
             and session.phase != "unaided"
@@ -1153,6 +1159,9 @@ def run(locked_condition_id: str) -> None:
         initial_sidebar_state="expanded",
     )
     apply_anthrokit_theme(st)
+    if _query("guide").strip().lower() in {"1", "true", "yes"}:
+        render_study2_guide(locked_condition_id)
+        return
     _read_qualtrics_params()
     _prolific_gate()
     _check_private_storage()
