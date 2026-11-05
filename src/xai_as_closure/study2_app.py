@@ -1251,7 +1251,7 @@ def run(locked_condition_id: str) -> None:
         st.title("Interactive Study Platform")
         st.subheader(condition_display_name(locked_condition_id))
         st.caption(
-            "Non-recording demonstration of this condition. No participant ID is required and no responses are saved."
+            "Non-recording demonstration of this condition. The condition label above is provided only for this research artifact; condition names were not shown during the experiment, to avoid priming participants. No participant ID is required and no responses are saved."
         )
         _initialize_demo(locked_condition_id)
     else:

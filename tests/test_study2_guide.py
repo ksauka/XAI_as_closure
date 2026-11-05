@@ -66,6 +66,11 @@ class Study2GuideTests(unittest.TestCase):
                 self.assertTrue(
                     app.subheader[0].value.startswith(f"Condition {condition_number}:")
                 )
+                captions = " ".join(element.value for element in app.caption)
+                self.assertIn(
+                    "condition names were not shown during the experiment",
+                    captions,
+                )
                 state = app.session_state.filtered_state
                 self.assertIn("_study2_demo_session", state)
                 self.assertNotIn("_study2_session", state)
