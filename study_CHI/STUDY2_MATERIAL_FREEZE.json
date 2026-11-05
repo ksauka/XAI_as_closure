@@ -16,7 +16,7 @@
     "src/xai_as_closure/anthrokit_hiring.yaml": "5635d3b1f0a4ba107cde356ddea1ac92c0ec532be961dbd2879a70729482038f",
     "src/xai_as_closure/decision_agent.py": "188be1335b740018d897b9fa2d585f7b1a2013b224a34cd031c26e5ac8ae2377",
     "src/xai_as_closure/logger.py": "96bcbd129bc792d956d872be92eb50dff076a9ddbf435b93670d33cb04361ea2",
-    "src/xai_as_closure/study2_app.py": "4226384f557a79b2cc75e7e3ae8d1d3560e360863e1653118f7253fa9742bc3d",
+    "src/xai_as_closure/study2_app.py": "90d38e6222ef7bbd7880bf37a51cae4ee1e0595a126abc7acdad6996ac07229b",
     "src/xai_as_closure/study2.py": "fc4d56557de0d974c68f627bb9172b4971996766a418b87c583625c9b55707fb"
   },
   "ground_truth": {

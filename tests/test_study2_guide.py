@@ -48,6 +48,7 @@ class Study2GuideTests(unittest.TestCase):
                 self.assertEqual(app.title[0].value, "Tour Guide")
                 rendered = " ".join(element.value for element in app.markdown)
                 self.assertIn("non-recording research artifact", rendered)
+                self.assertIn('target="_self"', rendered)
                 self.assertNotIn("_study2_session", app.session_state.filtered_state)
                 self.assertNotIn("_study2_demo_session", app.session_state.filtered_state)
 
@@ -61,6 +62,10 @@ class Study2GuideTests(unittest.TestCase):
                 app.run(timeout=20)
                 self.assertFalse(app.exception)
                 self.assertEqual(app.title[0].value, "Interactive Study Platform")
+                condition_number = int(path.name.split("_")[1])
+                self.assertTrue(
+                    app.subheader[0].value.startswith(f"Condition {condition_number}:")
+                )
                 state = app.session_state.filtered_state
                 self.assertIn("_study2_demo_session", state)
                 self.assertNotIn("_study2_session", state)

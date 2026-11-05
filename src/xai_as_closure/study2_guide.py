@@ -12,6 +12,17 @@ from .conditions import get_study2_condition
 
 _IMAGE = re.compile(r"!\[(?P<alt>[^]]+)]\((?P<path>[^)]+)\)")
 
+_CONDITION_NUMBERS = {
+    "P0_A0_F0": 1,
+    "P0_A0_F1": 2,
+    "P0_A1_F0": 3,
+    "P0_A1_F1": 4,
+    "P1_A0_F0": 5,
+    "P1_A0_F1": 6,
+    "P1_A1_F0": 7,
+    "P1_A1_F1": 8,
+}
+
 
 def _condition_description(condition_id: str) -> str:
     condition = get_study2_condition(condition_id)
@@ -33,6 +44,11 @@ def _condition_description(condition_id: str) -> str:
     return f"{explanation}; {delivery}; {forcing}"
 
 
+def condition_display_name(condition_id: str) -> str:
+    """Return the public condition number and its three assigned features."""
+    return f"Condition {_CONDITION_NUMBERS[condition_id]}: {_condition_description(condition_id)}"
+
+
 def render_guide_navigation(active: str) -> None:
     """Render stable tab-like navigation without initialising a study session."""
     tour_class = "artifact-tab artifact-tab--active" if active == "tour" else "artifact-tab"
@@ -52,8 +68,8 @@ def render_guide_navigation(active: str) -> None:
     )
     st.markdown(
         '<div class="artifact-tabs">'
-        f'<a class="{tour_class}" href="?guide=true&amp;view=tour">Tour Guide</a>'
-        f'<a class="{demo_class}" href="?guide=true&amp;view=demo">Interactive Study Platform</a>'
+        f'<a class="{tour_class}" href="?guide=true&amp;view=tour" target="_self">Tour Guide</a>'
+        f'<a class="{demo_class}" href="?guide=true&amp;view=demo" target="_self">Interactive Study Platform</a>'
         "</div>",
         unsafe_allow_html=True,
     )
@@ -68,7 +84,7 @@ def render_study2_guide(condition_id: str) -> None:
         markdown = markdown.removeprefix("# Study Guide").lstrip()
 
     st.title("Tour Guide")
-    st.caption(f"Condition: {_condition_description(condition_id)}")
+    st.caption(condition_display_name(condition_id))
 
     cursor = 0
     for match in _IMAGE.finditer(markdown):

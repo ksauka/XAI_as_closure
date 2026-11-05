@@ -33,8 +33,8 @@ def render_guide_navigation(active: str) -> None:
     )
     st.markdown(
         '<div class="artifact-tabs">'
-        f'<a class="{tour_class}" href="?guide=true&amp;view=tour">Tour Guide</a>'
-        f'<a class="{demo_class}" href="?guide=true&amp;view=demo">Interactive Study Platform</a>'
+        f'<a class="{tour_class}" href="?guide=true&amp;view=tour" target="_self">Tour Guide</a>'
+        f'<a class="{demo_class}" href="?guide=true&amp;view=demo" target="_self">Interactive Study Platform</a>'
         "</div>",
         unsafe_allow_html=True,
     )

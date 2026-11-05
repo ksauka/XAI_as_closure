@@ -991,6 +991,7 @@ def run(validation_round: str = "initial", *, artifact_demo: bool = False) -> No
             st.stop()
     if artifact_demo:
         st.title("Interactive Study Platform")
+        st.subheader("Study 1: six-profile expert assessment")
         st.caption(
             "Non-recording demonstration of Study 1. No participant ID is required and no responses are saved."
         )

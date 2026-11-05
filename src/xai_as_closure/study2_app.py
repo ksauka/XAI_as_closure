@@ -43,7 +43,11 @@ from .study2_delivery import (
     HIGH_ANTHROPOMORPHISM,
     LOW_ANTHROPOMORPHISM,
 )
-from .study2_guide import render_guide_navigation, render_study2_guide
+from .study2_guide import (
+    condition_display_name,
+    render_guide_navigation,
+    render_study2_guide,
+)
 from .theme import apply_anthrokit_theme, show_study_banner
 
 
@@ -1245,6 +1249,7 @@ def run(locked_condition_id: str) -> None:
             render_study2_guide(locked_condition_id)
             return
         st.title("Interactive Study Platform")
+        st.subheader(condition_display_name(locked_condition_id))
         st.caption(
             "Non-recording demonstration of this condition. No participant ID is required and no responses are saved."
         )

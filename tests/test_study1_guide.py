@@ -31,6 +31,7 @@ class Study1GuideTests(unittest.TestCase):
         self.assertEqual(app.title[0].value, "Tour Guide")
         rendered = " ".join(element.value for element in app.markdown)
         self.assertIn("non-recording research artifact", rendered)
+        self.assertIn('target="_self"', rendered)
         for reference in ("C-01", "C-02", "C-03", "C-04", "C-05", "C-06"):
             self.assertIn(reference, [tab.label for tab in app.tabs])
         self.assertNotIn("_study1_session", app.session_state.filtered_state)
@@ -45,6 +46,7 @@ class Study1GuideTests(unittest.TestCase):
         app.run(timeout=30)
         self.assertFalse(app.exception)
         self.assertEqual(app.title[0].value, "Interactive Study Platform")
+        self.assertEqual(app.subheader[0].value, "Study 1: six-profile expert assessment")
         state = app.session_state.filtered_state
         self.assertIn("_study1_demo_session", state)
         self.assertNotIn("_study1_session", state)
